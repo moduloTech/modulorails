@@ -1,4 +1,4 @@
-# Modulorails
+# Modulorails [![Build Status](https://travis-ci.com/Ezveus/modulorails.svg?branch=master)](https://travis-ci.com/Ezveus/modulorails)
 
 **Modulorails** is the common base for the Ruby on Rails project at [Modulotech](https://www.modulotech.fr/).
 
