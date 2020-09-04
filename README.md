@@ -19,15 +19,17 @@ And then execute:
 
 ## Usage
 
-To work the gem needs to find the following configuration file in `config/modulorails.yml`:
+To work the gem needs to be configured. Add an initializer `config/modulorails.rb`:
 
-```yaml
-name: 'The usual name of the application'
-developer: 'The login of the main developer/maintainer of the application'
-project_manager: 'The login of the project manager of the application'
+```ruby
+Modulorails.configure do |config|
+  config.name 'The usual name of the application'
+  config.main_developer 'The email of the main developer/maintainer of the application'
+  config.project_manager 'The email of the project manager of the application'
+  config.endpoint 'The url to the intranet'
+  config.api_key 'The API key'
+end
 ``` 
-
-Logins are of the form `michu_m` and are part of the email (`michu_m@modulotech.fr`).
 
 ## Development
 
@@ -38,7 +40,6 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at [https://github.com/moduloTech/modulorails](https://github.com/moduloTech/modulorails). This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/moduloTech/modulorails/blob/master/CODE_OF_CONDUCT.md).
-
 
 ## License
 
