@@ -1,0 +1,7 @@
+test:
+  host: HOST
+  adapter: ADAPTER
+  database: DATABASE
+  username: root
+  password: password
+  encoding: utf8

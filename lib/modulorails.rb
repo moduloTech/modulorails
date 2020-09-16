@@ -2,6 +2,7 @@ require 'modulorails/version'
 require 'modulorails/configuration'
 require 'modulorails/data'
 require 'modulorails/railtie' if defined?(Rails::Railtie)
+require 'generators/gitlabci_generator'
 require 'httparty'
 
 # Author: Matthieu 'ciappa_m' Ciappara
@@ -88,6 +89,22 @@ module Modulorails
       else
         raise Error.new('No endpoint or api key')
       end
+    end
+
+    # @author Matthieu 'ciappa_m' Ciappara
+    #
+    # Generate a CI/CD template unless it was already done.
+    # The check is done using a 'keepfile'.
+    def generate_ci_template
+      return if File.exists?(Rails.root.join('.modulorails-gitlab-ci'))
+
+      generator_options = [
+        '--app', data.rails_name.parameterize,
+        '--database', data.adapter,
+        '--bundler', data.bundler_version,
+        '--ruby_version', data.ruby_version
+      ]
+      GitlabciGenerator.new([], generator_options, {}).invoke_all
     end
   end
 end

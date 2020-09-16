@@ -5,6 +5,9 @@ module Modulorails
     config.after_initialize do
       # Effectively send the data to the intranet
       Modulorails.send_data
+
+      # Generate a template for CI/CD
+      Modulorails.generate_ci_template
     end
   end
 end
