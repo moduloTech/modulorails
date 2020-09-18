@@ -31,7 +31,6 @@ module Modulorails
 
       def call
         database_configuration = check_standard_config_file_location
-        puts("DB config: #{database_configuration}, #{database_configuration.class}")
         return false unless database_configuration
 
         check_test_database_not_equals_dev_database(database_configuration)
@@ -60,7 +59,6 @@ module Modulorails
 
         config
       rescue StandardError =>e
-        puts("E: #{e}")
         # An exception was raised, either the file is not a the standard location, either it just
         # cannot be read. Either way, we consider the config as invalid
         @rules[:standard_config_file_location] = false
