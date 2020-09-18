@@ -1,6 +1,7 @@
 require 'modulorails/version'
 require 'modulorails/configuration'
 require 'modulorails/data'
+require 'modulorails/validators/database_configuration'
 require 'modulorails/railtie' if defined?(Rails::Railtie)
 require 'generators/gitlabci_generator'
 require 'httparty'
@@ -105,6 +106,21 @@ module Modulorails
         '--ruby_version', data.ruby_version
       ]
       GitlabciGenerator.new([], generator_options, {}).invoke_all
+    end
+
+    # @author Matthieu 'ciappa_m' Ciappara
+    #
+    # Check the database configuration respects Modulotech's norms
+    def check_database_config
+      invalid_rules = Modulorails::Validators::DatabaseConfiguration.call
+      return true if invalid_rules.empty?
+
+      puts('[Modulorails] The database configuration (config/database.yml) has errors:')
+      invalid_rules.each do |rule|
+        puts("[Modulorails]    Invalid database configuration for rule: #{rule}")
+      end
+
+      false
     end
   end
 end

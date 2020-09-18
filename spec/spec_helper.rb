@@ -8,6 +8,10 @@ module Test
   # Currently, only an appropriate naming is necessary so no attributes
   class Application; end
 
+  # Simulate needed behaviours from Rails root
+  RAILS_ROOT = '/'
+  RAILS_ROOT.define_singleton_method(:join) { |s| self + s }
+
   # Simulate an HTTParty::Response
   # HTTParty::Response mocking does not work properly. RSpec mocks can not see the method `#[]` on
   # the object thus forbidding the allowance to answer `#[]` with a static return.

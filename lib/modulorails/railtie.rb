@@ -8,6 +8,9 @@ module Modulorails
 
       # Generate a template for CI/CD
       Modulorails.generate_ci_template
+
+      # Check database configuration
+      Modulorails.check_database_config
     end
   end
 end

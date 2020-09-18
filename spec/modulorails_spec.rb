@@ -32,7 +32,7 @@ RSpec.describe Modulorails do
     allow(db_connection).to receive(:select_value).and_return('1.2.3')
     allow(ActiveRecord::Base).to receive(:connection).and_return(db_connection)
     allow(Gem).to receive(:loaded_specs).and_return(loaded_specs)
-    allow(Rails).to receive(:root).and_return('/')
+    allow(Rails).to receive(:root).and_return(Test::RAILS_ROOT)
     allow(git_config).to receive(:config).and_return(git_url)
     allow(Git).to receive(:open).and_return(git_config)
     allow(Rails).to receive(:application).and_return(rails_app)
@@ -145,6 +145,89 @@ RSpec.describe Modulorails do
     end
   end
 
+  describe Modulorails::Validators::DatabaseConfiguration do
+    let(:valid_config) {
+      {
+        "development" => {
+          "host"     => "<%= ENV.fetch('MYSQL_HOST', 'localhost') %>",
+          "port"     => "<%= ENV.fetch('MYSQL_PORT', '3306') %>",
+          "adapter"  => "mysql2",
+          "encoding" => "utf8",
+          "pool"     => "<%= ENV.fetch(\"RAILS_MAX_THREADS\") { 5 } %>",
+          "username" => "<%= ENV.fetch('MYSQL_USER', 'root') %>",
+          "password" => "<%= ENV.fetch('MYSQL_PASSWORD', '') %>",
+          "database" => "<%= ENV.fetch('MYSQL_DB_DEV', 'development_db') %>"
+        },
+        "test"        => {
+          "host"     => "<%= ENV.fetch('MYSQL_HOST', 'localhost') %>",
+          "port"     => "<%= ENV.fetch('MYSQL_PORT', '3306') %>",
+          "adapter"  => "mysql2",
+          "encoding" => "utf8",
+          "pool"     => "<%= ENV.fetch(\"RAILS_MAX_THREADS\") { 5 } %>",
+          "username" => "<%= ENV.fetch('MYSQL_USER', 'root') %>",
+          "password" => "<%= ENV.fetch('MYSQL_PASSWORD', '') %>",
+          "database" => "<%= ENV.fetch('MYSQL_DB_DEV', 'test_db') %>"
+        }
+      }
+    }
+    let(:invalid_config) {
+      {
+        "development" => {
+          "adapter"  => "mysql2",
+          "encoding" => "utf8",
+          "pool"     => "<%= ENV.fetch(\"RAILS_MAX_THREADS\") { 5 } %>",
+          "username" => "<%= ENV.fetch('MYSQL_USER', 'root') %>",
+          "password" => "<%= ENV.fetch('MYSQL_PASSWORD', '') %>",
+          "database" => "<%= ENV.fetch('MYSQL_DB_DEV', 'development_db') %>"
+        },
+        "test"        => {
+          "adapter"  => "mysql2",
+          "encoding" => "utf8",
+          "pool"     => "<%= ENV.fetch(\"RAILS_MAX_THREADS\") { 5 } %>",
+          "username" => "<%= ENV.fetch('MYSQL_USER', 'root') %>",
+          "password" => "<%= ENV.fetch('MYSQL_PASSWORD', '') %>",
+          "database" => "<%= ENV.fetch('MYSQL_DB_DEV', 'test_db') %>"
+        }
+      }
+    }
+    let(:invalid_config_result) {
+      %w[
+        development.configurable_host development.configurable_port
+        test.configurable_host test.configurable_port
+      ]
+    }
+
+    it 'should return false when the database config file can not be load' do
+      # Raise ENOENT when file can not be found
+      allow(Psych).to receive(:load_file).and_raise(Errno::ENOENT)
+
+      result = nil
+      # No exception raised and `false` returned
+      expect { result = subject.call }.not_to(raise_error)
+      expect(result).to eq(false)
+    end
+
+    it 'should return an empty array when the database config file is valid' do
+      # Return a config
+      allow(Psych).to receive(:load_file).and_return(valid_config)
+
+      result = nil
+      # No exception raised and an empty array (aka no errors) returned
+      expect { result = subject.call }.not_to(raise_error)
+      expect(result).to eq([])
+    end
+
+    it 'should return an array with the error keys when the database config file is invalid' do
+      # Return a config
+      allow(Psych).to receive(:load_file).and_return(invalid_config)
+
+      result = nil
+      # No exception raised and an empty array (aka no errors) returned
+      expect { result = subject.call }.not_to(raise_error)
+      expect(result).to eq(invalid_config_result)
+    end
+  end
+
   describe 'send_data' do
     context 'invalid configuration' do
       it 'raise if there is no endpoint' do
@@ -235,6 +318,33 @@ RSpec.describe Modulorails do
         params  = Modulorails.data.to_params.to_json
         expect(HTTParty).to have_received(:post).with('endpoint', headers: headers, body: params)
       end
+    end
+  end
+
+  describe 'check_database_config' do
+    it 'returns true when the validator returns no errors' do
+      # Mock the validator
+      allow(Modulorails::Validators::DatabaseConfiguration).to receive(:call).and_return([])
+
+      # Returns true and log nothing
+      result = nil
+      expect { result = subject.check_database_config }.to(output('').to_stdout)
+      expect(result).to eq(true)
+    end
+
+    it 'returns false and display errors when the validator returns errors' do
+      errors = <<~EOS
+        [Modulorails] The database configuration (config/database.yml) has errors:
+        [Modulorails]    Invalid database configuration for rule: test
+      EOS
+
+      # Mock the validator
+      allow(Modulorails::Validators::DatabaseConfiguration).to receive(:call).and_return(['test'])
+
+      # Returns false and log errors
+      result = nil
+      expect { result = subject.check_database_config }.to(output(errors).to_stdout)
+      expect(result).to eq(false)
     end
   end
 end
