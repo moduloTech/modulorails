@@ -20,7 +20,12 @@ module Modulorails
       # Get the gem's configuration to get the application's usual name, main dev and PM
       configuration = Modulorails.configuration
       # Get the database connection to identify the database used by the application
-      db_connection = ActiveRecord::Base.connection
+      # or return nil if the database does not exist
+      db_connection = begin
+                        ActiveRecord::Base.connection
+                      rescue ActiveRecord::NoDatabaseError
+                        nil
+                      end
       # Get the gem's specifications to fetch the versions of critical gems
       loaded_specs = Gem.loaded_specs
 
@@ -64,7 +69,7 @@ module Modulorails
 
       # The version of the database engine; this request works only on MySQL and PostgreSQL
       # It should not be a problem since those are the sole database engines used at Modulotech
-      @db_version  = db_connection.select_value('SELECT version()')
+      @db_version = db_connection&.select_value('SELECT version()')
 
       # The version of the ActiveRecord adapter
       @adapter_version = loaded_specs[@adapter]&.version&.version
