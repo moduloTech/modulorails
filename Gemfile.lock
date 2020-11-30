@@ -4,6 +4,7 @@ PATH
     modulorails (0.2.0)
       git (~> 1.7, >= 1.7.0)
       httparty
+      i18n
       railties (>= 4.2.0)
 
 GEM

@@ -116,9 +116,10 @@ module Modulorails
       invalid_rules = Modulorails::Validators::DatabaseConfiguration.call
       return true if invalid_rules.empty?
 
-      puts('[Modulorails] The database configuration (config/database.yml) has errors:')
+      puts('[Modulorails] The database configuration (config/database.yml) has warnings:')
       invalid_rules.each do |rule|
-        puts("[Modulorails]    Invalid database configuration for rule: #{rule}")
+        t_rule = I18n.t(rule, scope: :modulorails, locale: :en)
+        puts("[Modulorails]    Invalid database configuration: #{t_rule}")
       end
 
       false

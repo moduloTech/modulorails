@@ -1,0 +1,16 @@
+en:
+  modulorails:
+    standard_config_file_location: The database configuration file can not be found at config/database.yml
+    test_database_not_equals_dev_database: The test database is equal to the development database
+    development:
+      configurable_host: Host is not configurable for development environment
+      configurable_username: Username is not configurable for development environment
+      configurable_password: Password is not configurable for development environment
+      configurable_database: Database name is not configurable for development environment
+      configurable_port: Port is not configurable for development environment
+    test:
+      configurable_host: Host is not configurable for test environment
+      configurable_username: Username is not configurable for test environment
+      configurable_password: Password is not configurable for test environment
+      configurable_database: Database name is not configurable for test environment
+      configurable_port: Port is not configurable for test environment

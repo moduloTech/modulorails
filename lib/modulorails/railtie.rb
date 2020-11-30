@@ -5,6 +5,9 @@ module Modulorails
     config.after_initialize do
       # For now, we limit everything to the development environment
       if Rails.env.development?
+        # Load translations
+        I18n.load_path += [File.expand_path('../../../config/locales/en.yml', __FILE__)]
+
         # Effectively send the data to the intranet
         Modulorails.send_data
 

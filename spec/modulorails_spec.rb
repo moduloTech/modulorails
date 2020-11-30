@@ -333,13 +333,15 @@ RSpec.describe Modulorails do
     end
 
     it 'returns false and display errors when the validator returns errors' do
+      I18n.load_path += [File.expand_path('../../config/locales/en.yml', __FILE__)]
       errors = <<~EOS
-        [Modulorails] The database configuration (config/database.yml) has errors:
-        [Modulorails]    Invalid database configuration for rule: test
+        [Modulorails] The database configuration (config/database.yml) has warnings:
+        [Modulorails]    Invalid database configuration: The database configuration file can not be found at config/database.yml
       EOS
 
       # Mock the validator
-      allow(Modulorails::Validators::DatabaseConfiguration).to receive(:call).and_return(['test'])
+      allow(Modulorails::Validators::DatabaseConfiguration).to(
+        receive(:call).and_return(['standard_config_file_location']))
 
       # Returns false and log errors
       result = nil
