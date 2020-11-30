@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    modulorails (0.1.0)
+    modulorails (0.2.0)
       git (~> 1.7, >= 1.7.0)
       httparty
       railties (>= 4.2.0)

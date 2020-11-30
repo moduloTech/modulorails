@@ -2,6 +2,7 @@ require 'modulorails/version'
 require 'modulorails/configuration'
 require 'modulorails/data'
 require 'modulorails/validators/database_configuration'
+require 'modulorails/updater'
 require 'modulorails/railtie' if defined?(Rails::Railtie)
 require 'generators/gitlabci_generator'
 require 'httparty'
@@ -121,6 +122,16 @@ module Modulorails
       end
 
       false
+    end
+
+    # @author Matthieu 'ciappa_m' Ciappara
+    #
+    # Check the last version of Modulorails available on rubygems and update if there was a
+    # publication
+    def self_update
+      Modulorails::Updater.call
+    rescue StandardError => e
+      puts("[Modulorails] An error occured: #{e.class} - #{e.message}")
     end
   end
 end
