@@ -124,7 +124,7 @@ class GitlabciGenerator < Rails::Generators::Base
     file = '.modulorails-gitlab-ci'
 
     # Create file to avoid this generator on next modulorails launch
-    create_file(file)
+    copy_file(file, file)
 
     say "Add #{file} to git"
     %x(git add #{file})
