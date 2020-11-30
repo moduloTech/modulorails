@@ -129,7 +129,7 @@ module Modulorails
     # Check the last version of Modulorails available on rubygems and update if there was a
     # publication
     def self_update
-      Modulorails::Updater.call
+      Modulorails::Updater.call unless configuration.no_auto_update
     rescue StandardError => e
       puts("[Modulorails] An error occured: #{e.class} - #{e.message}")
     end
