@@ -23,7 +23,8 @@ module Modulorails
       # or return nil if the database does not exist
       db_connection = begin
                         ActiveRecord::Base.connection
-                      rescue ActiveRecord::NoDatabaseError
+                      rescue ActiveRecord::NoDatabaseError => e
+                        $stderr.puts("[Modulorails] Error: #{e.message}")
                         nil
                       end
       # Get the gem's specifications to fetch the versions of critical gems

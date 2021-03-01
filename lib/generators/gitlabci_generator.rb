@@ -50,6 +50,8 @@ class GitlabciGenerator < Rails::Generators::Base
 
     # Create file to avoid this generator on next modulorails launch
     create_keep_file
+  rescue StandardError => e
+    $stderr.puts("[Modulorails] Error: cannot generate CI configuration: #{e.message}")
   end
 
   private
@@ -106,7 +108,7 @@ class GitlabciGenerator < Rails::Generators::Base
     when 'postgres', 'postgresql'
       { header: POSTGRES_DOCKER_DB, host: 'postgres', adapter: 'postgresql' }
     else
-      raise 'Unknown database: either mysql or postgres'
+      raise "Unknown database adapter `#{database}`: either mysql or postgres"
     end
   end
 

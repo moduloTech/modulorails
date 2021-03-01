@@ -84,7 +84,7 @@ module Modulorails
         # went wrong with an `errors` field. We do not want to raise since the gem's user is not
         # (necessarily) responsible for the error but we still need to display it somewhere to warn
         # the user something went wrong.
-        puts("Modulorails errors: #{response['errors'].join(', ')}") if response.code == 400
+        puts("[Modulorails] Error: #{response['errors'].join(', ')}") if response.code == 400
 
         # Return the response to allow users to do some more
         response

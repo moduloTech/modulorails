@@ -44,7 +44,7 @@ RSpec.describe Modulorails do
   end
 
   it 'has a version number' do
-    expect(Modulorails::VERSION).to eq('0.2.0')
+    expect(Modulorails::VERSION).to eq('0.2.1')
   end
 
   describe Modulorails::Configuration do

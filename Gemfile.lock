@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    modulorails (0.2.0)
+    modulorails (0.2.1)
       git (~> 1.7, >= 1.7.0)
       httparty
       i18n
@@ -38,21 +38,21 @@ GEM
     concurrent-ruby (1.1.7)
     crass (1.0.6)
     diff-lcs (1.4.4)
-    erubi (1.9.0)
-    git (1.7.0)
+    erubi (1.10.0)
+    git (1.8.1)
       rchardet (~> 1.8)
     httparty (0.18.1)
       mime-types (~> 3.0)
       multi_xml (>= 0.5.2)
     i18n (1.8.5)
       concurrent-ruby (~> 1.0)
-    loofah (2.7.0)
+    loofah (2.8.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
     method_source (1.0.0)
     mime-types (3.3.1)
       mime-types-data (~> 3.2015)
-    mime-types-data (3.2020.0512)
+    mime-types-data (3.2020.1104)
     mini_portile2 (2.4.0)
     minitest (5.14.1)
     multi_xml (0.6.0)
