@@ -23,9 +23,13 @@ module Modulorails
     private
 
     def edit_gemfile
+      # Log to warn the user
+      puts("[Modulorails] Last version for modulorails is #{@last_published_version} while you "\
+        "are using version #{Modulorails::VERSION}. Running auto-update.")
+
       # Read the lines of the Gemfile
       gemfile_location = Rails.root.join('Gemfile')
-      lines = File.readlines gemfile_location
+      lines            = File.readlines gemfile_location
 
       # Search and replace the modulorails line
       index = lines.index { |l| l =~ /gem\s['"]modulorails['"]/ }
@@ -35,8 +39,8 @@ module Modulorails
       # Update the Gemfile
       File.open(gemfile_location, 'w') { |f| f.puts(lines) }
 
-      # Update the gem
-      `bundle install || bundle update modulorails`
+      # Update the gem and the Gemfile.lock
+      system('bundle install')
     end
   end
 end
