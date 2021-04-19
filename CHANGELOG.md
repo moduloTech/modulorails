@@ -2,7 +2,13 @@
 
 This file is used to list changes made in each version of the gem.
 
-# 0.2.1
+# 0.2.3
+
+Gitlab-ci generator.
+
+- Fixes the Ruby version put in the generated `.gitlab-ci.yml`.
+
+# 0.2.2
 
 Auto-update fixes.
 

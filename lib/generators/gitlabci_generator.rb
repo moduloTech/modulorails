@@ -76,7 +76,7 @@ class GitlabciGenerator < Rails::Generators::Base
     gsub_file file, 'BUNDLER_VERSION', options[:bundler]
 
     # Replace ruby version
-    gsub_file file, 'RUBY_VERSION', '2.5.0'
+    gsub_file file, 'RUBY_VERSION', options[:ruby_version]
 
     # Warn the user about file overwrite/creation
     warn_file_update(file, exists)
