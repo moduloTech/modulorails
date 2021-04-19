@@ -1,0 +1,21 @@
+<%- image_name = Modulorails.data.name.parameterize -%>
+<%- upper_image_name = image_name.upcase -%>
+development: &default
+  adapter: mysql2
+  encoding: utf8mb4
+  collation: utf8mb4_unicode_ci
+  database: <%%= ENV.fetch('<%= upper_image_name %>_DATABASE_NAME', '<%= image_name %>') %>
+  username: <%%= ENV.fetch('<%= upper_image_name %>_DATABASE_USERNAME', 'root') %>
+  password: <%%= ENV.fetch('<%= upper_image_name %>_DATABASE_PASSWORD', '') %>
+  host: <%%= ENV.fetch('<%= upper_image_name %>_DATABASE_HOST', 'database') %>
+  port: <%%= ENV.fetch('<%= upper_image_name %>_DATABASE_PORT', 3306) %>
+
+test:
+  <<: *default
+  database: <%%= ENV.fetch('<%= upper_image_name %>_TEST_DATABASE_NAME', '<%= image_name %>_test') %>
+
+staging:
+  <<: *default
+
+production:
+  <<: *default

@@ -1,0 +1,52 @@
+FROM surnet/alpine-wkhtmltopdf:3.12-0.12.6-small as wkhtmltopdf
+# BUILD IMAGE
+FROM ruby:<%= Modulorails.data.ruby_version %>-alpine as builder
+
+ENV RAILS_ENV=production
+WORKDIR /app
+
+RUN apk add --update --no-cache \
+    alpine-sdk \
+    mysql-dev \
+    nodejs \
+    sqlite-dev \
+    tzdata \
+    yarn \
+    shared-mime-info
+RUN gem install bundler -v <%= Modulorails.data.bundler_version %>
+
+COPY Gemfile Gemfile.lock ./
+RUN bundle check || bundle install --deployment --jobs=2 \
+    && rm -rf vendor/bundle/ruby/*/cache/*
+
+COPY package.json yarn.lock ./
+RUN yarn install
+
+COPY . .
+RUN bundle exec rake assets:precompile
+
+# FINAL IMAGE
+FROM ruby:<%= Modulorails.data.ruby_version %>-alpine
+
+WORKDIR /app
+
+RUN apk add --update --no-cache \
+    curl \
+    git \
+    mysql-dev \
+    nodejs \
+    sqlite-dev \
+    tzdata \
+    shared-mime-info
+    && rm -rf .git/
+
+# Replace segfault version with patched one
+COPY --from=wkhtmltopdf /bin/wkhtmltopdf /usr/bin/wkhtmltopdf
+COPY --from=builder /app .
+
+RUN bundle config --local path vendor/bundle \
+    && bundle config --local without development:test:assets
+
+EXPOSE 3000
+
+ENTRYPOINT ["./entrypoints/docker-entrypoint.sh"]

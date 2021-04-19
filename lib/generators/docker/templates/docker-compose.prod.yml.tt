@@ -1,0 +1,36 @@
+version: '3.7'
+
+<% image_name = Modulorails.data.name.parameterize %>
+
+services:
+  app:
+    image: modulotechgroup/<%=  image_name %>
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    depends_on:
+      - database
+      - redis
+    ports:
+      - '3000:3000'
+    environment:
+      RAILS_ENV: production
+      URL: http://localhost:3000
+      <%= image_name.upcase %>_DATABASE_HOST: database
+      <%= image_name.upcase %>_DATABASE_NAME: <%= image_name %>
+      RAILS_SERVE_STATIC_FILES: 'true'
+
+  database:
+    image: mysql:8.0
+    volumes:
+      - db_data:/var/lib/mysql
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'true'
+      MYSQL_DATABASE: <%= image_name %>
+
+  redis:
+    image: redis:6.2-alpine
+
+# Define the volumes references in the services
+volumes:
+  db_data:
