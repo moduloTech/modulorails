@@ -2,6 +2,13 @@
 
 This file is used to list changes made in each version of the gem.
 
+# 0.3.0
+
+Docker release.
+
+- Add generator for Docker.
+- Use templates for Gitlabci generator. 
+
 # 0.2.3
 
 Gitlab-ci generator.

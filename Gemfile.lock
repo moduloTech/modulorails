@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    modulorails (0.2.3)
+    modulorails (0.3.0)
       git (~> 1.7, >= 1.7.0)
       httparty
       i18n
