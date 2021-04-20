@@ -1,10 +1,17 @@
-image: ruby:RUBY_VERSION
+<%- adapter = Modulorails.data.adapter -%>
+<%- if adapter =~ /mysql/ -%>
+<%= GitlabciGenerator::MYSQL_DOCKER_DB -%>
+<%- else -%>
+<%= GitlabciGenerator::POSTGRES_DOCKER_DB -%>
+<%- end -%>
+
+image: ruby:<%= Modulorails.data.ruby_version %>
 stages:
   - lint
   - test
   - deploy
 cache:
-  key: CI_CD_CACHE_KEY
+  key: <%= Modulorails.data.rails_name.parameterize %>-ci_cd
   paths:
     - vendor/ruby
 
@@ -16,7 +23,7 @@ before_script:
   - mkdir -p ~/.ssh
   - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
   - apt-get install -y ruby-dev
-  - gem install bundler -v BUNDLER_VERSION --no-document
+  - gem install bundler -v <%= Modulorails.data.bundler_version %> --no-document
   # You might need DPL if you're deploying using Heroku
   #- gem install dpl -v 1.10.15 --no-document
   # You might need to add some configurations here like a key for a theme
