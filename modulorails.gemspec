@@ -35,4 +35,5 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'i18n'
 
   spec.add_development_dependency 'activerecord', '>= 4.2.0'
+  spec.add_development_dependency "appraisal"
 end

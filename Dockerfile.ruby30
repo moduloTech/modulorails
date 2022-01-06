@@ -1,0 +1,25 @@
+#
+# BUILD IMAGE
+#
+FROM ruby:3.0-alpine
+
+WORKDIR /app
+
+RUN apk add --update --no-cache \
+    alpine-sdk \
+    tzdata
+
+RUN gem install bundler
+
+COPY . .
+
+RUN bundle config set specific_platform true
+
+# Install the basic dependencies
+RUN bundle install
+
+# Install dependencies for all supported Rails versions
+RUN bundle exec appraisal install
+
+# Run the tests
+CMD ['./entrypoints/appraisal_test.sh']
