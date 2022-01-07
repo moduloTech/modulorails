@@ -267,6 +267,19 @@ RSpec.describe Modulorails do
         end
       end
 
+      it 'silently ignores when the server does not respond' do
+        # Mock the call to the webservice and raise a "SocketError" code - no connection to server
+        allow(HTTParty).to receive(:post).and_raise(SocketError)
+
+        # Even on endpoint error, the gem does not raise
+        expect { subject.send_data }.not_to raise_error
+
+        # The endpoint should have been called
+        headers = { 'Content-Type' => 'application/json', 'X-MODULORAILS-TOKEN' => 'key' }
+        params  = Modulorails.data.to_params.to_json
+        expect(HTTParty).to have_received(:post).with('endpoint', headers: headers, body: params)
+      end
+
       it 'silently ignores when the server responds with a bad request' do
         # Mock the call to the webservice and return a "bad request" code
         allow(HTTParty).to receive(:post).and_return(bad_request)

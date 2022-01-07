@@ -77,17 +77,25 @@ module Modulorails
         # Define the JSON body of the request
         body = data.to_params.to_json
 
-        # Post to the configured endpoint on the Intranet
-        response = HTTParty.post(configuration.endpoint, headers: headers, body: body)
+        # Prevent HTTParty to raise error and crash the server in dev
+        begin
+          # Post to the configured endpoint on the Intranet
+          response = HTTParty.post(configuration.endpoint, headers: headers, body: body)
 
-        # According to the API specification, on a "Bad request" response, the server explicits what
-        # went wrong with an `errors` field. We do not want to raise since the gem's user is not
-        # (necessarily) responsible for the error but we still need to display it somewhere to warn
-        # the user something went wrong.
-        puts("[Modulorails] Error: #{response['errors'].join(', ')}") if response.code == 400
+          # According to the API specification, on a "Bad request" response, the server explicits what
+          # went wrong with an `errors` field. We do not want to raise since the gem's user is not
+          # (necessarily) responsible for the error but we still need to display it somewhere to warn
+          # the user something went wrong.
+          puts("[Modulorails] Error: #{response['errors'].join(', ')}") if response.code == 400
 
-        # Return the response to allow users to do some more
-        response
+          # Return the response to allow users to do some more
+          response
+        rescue StandardError => e
+          # Still need to notify the user
+          puts("[Modulorails] Error: Could not post to #{configuration.endpoint}")
+          puts e.message
+          nil
+        end
       else
         raise Error.new('No endpoint or api key')
       end
