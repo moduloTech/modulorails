@@ -9,8 +9,7 @@ module Test
   class Application; end
 
   # Simulate needed behaviours from Rails root
-  RAILS_ROOT = '/'
-  RAILS_ROOT.define_singleton_method(:join) { |s| self + s }
+  RAILS_ROOT = Pathname.new(File.expand_path('../..', __FILE__))
 
   # Simulate an HTTParty::Response
   # HTTParty::Response mocking does not work properly. RSpec mocks can not see the method `#[]` on

@@ -197,14 +197,14 @@ RSpec.describe Modulorails do
       ]
     }
 
-    it 'should return false when the database config file can not be load' do
+    it 'should return [:standard_config_file_location] when the database config file can not be loaded' do
       # Raise ENOENT when file can not be found
       allow(Psych).to receive(:load_file).and_raise(Errno::ENOENT)
 
       result = nil
       # No exception raised and `false` returned
       expect { result = subject.call }.not_to(raise_error)
-      expect(result).to eq(false)
+      expect(result).to eq([:standard_config_file_location])
     end
 
     it 'should return an empty array when the database config file is valid' do
@@ -336,8 +336,10 @@ RSpec.describe Modulorails do
 
   describe 'check_database_config' do
     it 'returns true when the validator returns no errors' do
-      # Mock the validator
-      allow(Modulorails::Validators::DatabaseConfiguration).to receive(:call).and_return([])
+      # Copy the test configuration
+      valid_configuration = File.expand_path('../../spec/support/valid_database.yml', __FILE__)
+      expected_configuration = File.expand_path('../../config/database.yml', __FILE__)
+      FileUtils.cp(valid_configuration, expected_configuration)
 
       # Returns true and log nothing
       result = nil
@@ -345,18 +347,43 @@ RSpec.describe Modulorails do
       expect(result).to eq(true)
     end
 
-    it 'returns false and display errors when the validator returns errors' do
+    it 'returns false and display errors when the database configuration does not exists' do
+      # Ensure there is no database configuration from a previous test
+      expected_configuration = File.expand_path('../../config/database.yml', __FILE__)
+      FileUtils.rm(expected_configuration, force: true)
+
+      # Set up the I18n load path
       I18n.load_path += [File.expand_path('../../config/locales/en.yml', __FILE__)]
+
+      # Returns false and log errors
       errors = <<~EOS
         [Modulorails] The database configuration (config/database.yml) has warnings:
         [Modulorails]    Invalid database configuration: The database configuration file can not be found at config/database.yml
       EOS
+      result = nil
+      expect { result = subject.check_database_config }.to(output(errors).to_stdout)
+      expect(result).to eq(false)
+    end
 
-      # Mock the validator
-      allow(Modulorails::Validators::DatabaseConfiguration).to(
-        receive(:call).and_return(['standard_config_file_location']))
+    it 'returns false and display errors when the validator returns errors' do
+      # Copy the test configuration
+      invalid_configuration = File.expand_path('../../spec/support/invalid_database.yml', __FILE__)
+      expected_configuration = File.expand_path('../../config/database.yml', __FILE__)
+      FileUtils.cp(invalid_configuration, expected_configuration)
+
+      # Set up the I18n load path
+      I18n.load_path += [File.expand_path('../../config/locales/en.yml', __FILE__)]
 
       # Returns false and log errors
+      errors = <<~EOS
+        [Modulorails] The database configuration (config/database.yml) has warnings:
+        [Modulorails]    Invalid database configuration: Database name is not configurable for development environment
+        [Modulorails]    Invalid database configuration: Host is not configurable for development environment
+        [Modulorails]    Invalid database configuration: Port is not configurable for development environment
+        [Modulorails]    Invalid database configuration: Database name is not configurable for test environment
+        [Modulorails]    Invalid database configuration: Host is not configurable for test environment
+        [Modulorails]    Invalid database configuration: Port is not configurable for test environment
+      EOS
       result = nil
       expect { result = subject.check_database_config }.to(output(errors).to_stdout)
       expect(result).to eq(false)

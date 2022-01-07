@@ -31,7 +31,7 @@ module Modulorails
 
       def call
         database_configuration = check_standard_config_file_location
-        return false unless database_configuration
+        return [:standard_config_file_location] unless database_configuration
 
         check_test_database_not_equals_dev_database(database_configuration)
         check_rules_for_environment(database_configuration, :development)
