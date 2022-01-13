@@ -4,7 +4,7 @@ require 'modulorails/data'
 require 'modulorails/validators/database_configuration'
 require 'modulorails/updater'
 require 'modulorails/railtie' if defined?(Rails::Railtie)
-require 'generators/gitlabci/gitlabci_generator'
+require 'generators/modulorails/gitlabci/gitlabci_generator'
 require 'httparty'
 
 # Author: Matthieu 'ciappa_m' Ciappara
@@ -108,7 +108,7 @@ module Modulorails
     def generate_ci_template
       return if File.exists?(Rails.root.join('.modulorails-gitlab-ci'))
 
-      GitlabciGenerator.new([], {}, {}).invoke_all
+      Modulorails::GitlabciGenerator.new([], {}, {}).invoke_all
     end
 
     # @author Matthieu 'ciappa_m' Ciappara
