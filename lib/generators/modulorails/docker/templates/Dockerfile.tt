@@ -1,6 +1,3 @@
-# Import wkhtmltopdf with qt patched because from alpine it's not and segfault
-FROM surnet/alpine-wkhtmltopdf:3.12-0.12.6-small as wkhtmltopdf
-
 FROM ruby:<%= Modulorails.data.ruby_version %>-alpine
 
 ENV RAILS_ENV=development
@@ -10,18 +7,19 @@ RUN apk add --update --no-cache \
     alpine-sdk \
     nodejs \
     yarn \
-    sqlite-dev \
     tzdata \
+    <%- adapter = Modulorails.data.adapter -%>
+    <%- if adapter =~ /mysql/ -%>
     mysql-dev
+    <%- else -%>
+    postgresql-dev
+    <%- end -%>
 RUN gem install bundler -v <%= Modulorails.data.bundler_version %>
 
 COPY Gemfile Gemfile.lock ./
 RUN bundle install --jobs=2
 
 COPY . .
-
-# Replace segfault version with patched one
-COPY --from=wkhtmltopdf /bin/wkhtmltopdf /usr/bin/wkhtmltopdf
 
 EXPOSE 3000
 

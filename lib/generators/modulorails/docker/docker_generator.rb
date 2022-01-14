@@ -2,7 +2,7 @@
 
 require 'rails/generators'
 
-class DockerGenerator < Rails::Generators::Base
+class Modulorails::DockerGenerator < Rails::Generators::Base
   source_root File.expand_path('templates', __dir__)
   desc 'This generator creates Dockerfiles for an app'
 

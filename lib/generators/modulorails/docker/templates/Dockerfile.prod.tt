@@ -1,4 +1,3 @@
-FROM surnet/alpine-wkhtmltopdf:3.12-0.12.6-small as wkhtmltopdf
 # BUILD IMAGE
 FROM ruby:<%= Modulorails.data.ruby_version %>-alpine as builder
 
@@ -7,12 +6,16 @@ WORKDIR /app
 
 RUN apk add --update --no-cache \
     alpine-sdk \
-    mysql-dev \
     nodejs \
-    sqlite-dev \
     tzdata \
     yarn \
-    shared-mime-info
+    shared-mime-info \
+    <%- adapter = Modulorails.data.adapter -%>
+    <%- if adapter =~ /mysql/ -%>
+    mysql-dev
+    <%- else -%>
+    postgresql-dev
+    <%- end -%>
 RUN gem install bundler -v <%= Modulorails.data.bundler_version %>
 
 COPY Gemfile Gemfile.lock ./
@@ -33,15 +36,17 @@ WORKDIR /app
 RUN apk add --update --no-cache \
     curl \
     git \
-    mysql-dev \
     nodejs \
-    sqlite-dev \
     tzdata \
-    shared-mime-info
+    shared-mime-info \
+    <%- adapter = Modulorails.data.adapter -%>
+    <%- if adapter =~ /mysql/ -%>
+    mysql-dev \
+    <%- else -%>
+    postgresql-dev \
+    <%- end -%>
     && rm -rf .git/
 
-# Replace segfault version with patched one
-COPY --from=wkhtmltopdf /bin/wkhtmltopdf /usr/bin/wkhtmltopdf
 COPY --from=builder /app .
 
 RUN bundle config --local path vendor/bundle \

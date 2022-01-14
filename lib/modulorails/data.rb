@@ -10,7 +10,8 @@ module Modulorails
     # All the data handled by this class
     ATTRIBUTE_KEYS = %i[
       name main_developer project_manager repository type rails_name ruby_version rails_version
-      bundler_version modulorails_version adapter db_version adapter_version
+      bundler_version modulorails_version adapter db_version adapter_version production_url
+      staging_url review_base_url
     ].freeze
 
     # Useful if the gem's user need to read one of the data
@@ -30,7 +31,7 @@ module Modulorails
       # Get the gem's specifications to fetch the versions of critical gems
       loaded_specs = Gem.loaded_specs
 
-      # The three data written by the user in the configuration
+      # The data written by the user in the configuration
       # The name is the usual name of the project, the one used in conversations at Modulotech
       @name = configuration.name
       # The main developer, the lead developer, in short the developer to call when something's
@@ -39,6 +40,19 @@ module Modulorails
       # The project manager of the application; the other person to call when something's wrong with
       # the application ;)
       @project_manager = configuration.project_manager
+      # The URL of the production environment for the application
+      @production_url = configuration.production_url
+      # The URL of the staging environment for the application
+      @staging_url = configuration.staging_url
+      # The base URL of the review environment for the application.
+      # A real review URL is built like this at Modulotech:
+      # https://review-#{shortened_branch_name}-#{ci_slug}.#{review_base_url}
+      # Example:
+      # review_base_url: dev.app.com
+      # branch_name: 786-a_super_branch => shortened_branch_name: 786-a_sup
+      # ci_slug: jzzham
+      # |-> https://review-786-a_sup-jzzham.dev.app.com/
+      @review_base_url = configuration.review_base_url
 
       # Theorically, origin is the main repository of the project and git is the sole VCS we use
       # at Modulotech
@@ -101,6 +115,11 @@ module Modulorails
             'adapter'     => @adapter,
             'db_version'  => @db_version,
             'gem_version' => @adapter_version
+          },
+          'urls'                => {
+            'production'  => @production_url,
+            'staging'     => @staging_url,
+            'review_base' => @review_base_url
           }
         }
       }

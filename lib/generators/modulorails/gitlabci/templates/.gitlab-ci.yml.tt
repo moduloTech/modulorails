@@ -1,0 +1,118 @@
+<%- image_name = Modulorails.data.name.parameterize -%>
+include:
+  - project: 'modulosource/modulotech/devops/gitlab-ci-templates'
+    file:
+      - '/templates/helm.gitlab-ci.yml'
+      - '/templates/integration.gitlab-ci.yml'
+      - '/templates/docker-buildx.gitlab-ci.yml'
+
+services:
+  <%- adapter = Modulorails.data.adapter -%>
+  <%- if adapter =~ /mysql/ -%>
+  - mysql:8.0
+  <%- else -%>
+  - postgres:13.5
+  <%- end -%>
+  - redis:6.2
+
+variables:
+  IMAGE_NAME: <%= image_name %>
+  MYSQL_DATABASE: <%= image_name %>_test
+  MYSQL_ALLOW_EMPTY_PASSWORD: 'true'
+  <%= image_name.upcase %>_DATABASE_HOST: mysql
+
+stages:
+  - test
+  - build
+  - deploy
+
+test:
+  extends: .test
+  script:
+    - "bundle exec rake db:create RAILS_ENV=test"
+    - "RAILS_ENV=test bundle exec rake db:migrate:reset"
+    - RAILS_ENV=test bundle exec rspec --format progress --format RspecJunitFormatter --out rspec.xml
+
+build_integration_image:
+  extends: .build_integration_image
+
+docker_build:
+  extends: .docker_buildx_push
+  only:
+    - merge_requests
+    - staging
+
+<%- review_base_url = Modulorails.data.review_base_url -%>
+<%- if review_base_url.present? -%>
+deploy_review:
+  extends: .deploy_helm
+  variables:
+    NAMESPACE: <%= image_name %>-$CI_ENVIRONMENT_SLUG
+    NAME: <%= image_name %>
+    CHART_NAME: <%= image_name %>
+    CONFIG_FILE: config/deploy/kubernetes/review.yaml
+    EXTRA_VARS: --set image.tag=$CI_COMMIT_SHORT_SHA --set ingress.hosts[0].host=${CI_ENVIRONMENT_SLUG}.<%= review_base_url %> --set ingress.tls[0].hosts[0]=${CI_ENVIRONMENT_SLUG}.<%= review_base_url %> --set env.url=${CI_ENVIRONMENT_SLUG}.<%= review_base_url %> --set database.password=$DB_PASSWORD --set encryption.key=$ENCRYPTION_KEY
+  environment:
+    name: review/$CI_COMMIT_REF_SLUG
+    url: https://${CI_ENVIRONMENT_SLUG}.<%= review_base_url %>
+    on_stop: stop_review
+    auto_stop_in: 3 days
+  only:
+    - merge_requests
+
+stop_review:
+  extends: .stop_review
+  variables:
+    NAMESPACE: <%= image_name %>-$CI_ENVIRONMENT_SLUG
+    NAME: <%= image_name %>
+  only:
+    - merge_requests
+<%- end -%>
+
+<%- staging_url = Modulorails.data.staging_url -%>
+<%- if staging_url.present? -%>
+deploy_staging:
+  extends: .deploy_helm
+  variables:
+    NAMESPACE: <%= image_name %>
+    NAME: <%= image_name %>
+    CHART_NAME: <%= image_name %>
+    CONFIG_FILE: config/deploy/kubernetes/staging.yaml
+    EXTRA_VARS: --set image.tag=$CI_COMMIT_SHORT_SHA --set database.password=$DB_PASSWORD
+  environment:
+    name: staging
+    url: https://<%= staging_url %>
+  only:
+    - staging
+<%- else -%>
+deploy_staging:
+  extends: .deploy_capistrano
+  variables:
+    STAGE: staging
+  only:
+    - staging
+<%- end -%>
+
+<%- production_url = Modulorails.data.production_url -%>
+<%- if production_url.present? -%>
+deploy_production:
+  extends: .deploy_helm
+  variables:
+    NAMESPACE: <%= image_name %>
+    NAME: <%= image_name %>
+    CHART_NAME: <%= image_name %>
+    CONFIG_FILE: config/deploy/kubernetes/production.yaml
+    EXTRA_VARS: --set image.tag=$CI_COMMIT_SHORT_SHA --set database.password=$DB_PASSWORD
+  environment:
+    name: production
+    url: https://<%= production_url %>
+  only:
+    - master
+<%- else -%>
+deploy_production:
+  extends: .deploy_capistrano
+  variables:
+    STAGE: production
+  only:
+    - master
+<%- end -%>

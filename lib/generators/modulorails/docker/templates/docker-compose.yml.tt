@@ -1,0 +1,71 @@
+version: '3.7'
+
+<%- image_name = Modulorails.data.name.parameterize -%>
+services:
+  app:
+    image: modulotechgroup/<%= image_name %>:dev
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - database
+      - redis
+    ports:
+      - '3000:3000'
+    volumes:
+      - .:/app
+    environment:
+      RAILS_ENV: development
+      URL: http://localhost:3000
+      <%= image_name.upcase %>_DATABASE_HOST: database
+      <%= image_name.upcase %>_DATABASE_NAME: <%= image_name %>
+    entrypoint: ./entrypoints/docker-entrypoint.sh
+
+  <%- adapter = Modulorails.data.adapter -%>
+  <%- if adapter =~ /mysql/ -%>
+  database:
+    image: mysql/mysql-server:8.0
+    volumes:
+      - db_data:/var/lib/mysql
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'true'
+      MYSQL_DATABASE: <%= image_name %>
+      MYSQL_ROOT_HOST: '%'
+  <%- else-%>
+  database:
+    image: postgres:13.5
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: <%= image_name %>
+      LC_COLLATE: 'en_US.UTF-8'
+      LC_CTYPE: 'en_US.UTF-8'
+  <%- end-%>
+
+  redis:
+    image: redis:6.2-alpine
+
+  mailcatcher:
+    image: tophfr/mailcatcher
+    ports:
+      - 1080:80
+
+ webpack:
+   image: modulotechgroup/<%= image_name %>:dev
+   build:
+     context: .
+     dockerfile: Dockerfile
+   entrypoint: ./entrypoints/webpack-entrypoint.sh
+   volumes:
+     - .:/app
+   ports:
+     - '3035:3035'
+   environment:
+     NODE_ENV: development
+     RAILS_ENV: development
+     WEBPACKER_DEV_SERVER_HOST: 0.0.0.0
+
+volumes:
+  db_data:

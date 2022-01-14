@@ -48,7 +48,8 @@ RSpec.describe Modulorails do
   end
 
   describe Modulorails::Configuration do
-    %i[name main_developer project_manager endpoint api_key].each do |field|
+    %i[name main_developer project_manager endpoint api_key production_url
+      staging_url review_base_url].each do |field|
       it "#{field} can be read and configured" do
         expect(subject.send(field)).to be_nil
         subject.send(field, 'test')
@@ -66,6 +67,9 @@ RSpec.describe Modulorails do
         config.project_manager 'pm'
         config.endpoint 'endpoint'
         config.api_key 'key'
+        config.production_url 'url'
+        config.staging_url 'url'
+        config.review_base_url 'url'
       end
     end
 
@@ -79,6 +83,18 @@ RSpec.describe Modulorails do
 
     it 'project_manager has the correct value' do
       expect(subject.project_manager).to eq('pm')
+    end
+
+    it 'production_url has the correct value' do
+      expect(subject.production_url).to eq('url')
+    end
+
+    it 'staging_url has the correct value' do
+      expect(subject.staging_url).to eq('url')
+    end
+
+    it 'review_base_url has the correct value' do
+      expect(subject.review_base_url).to eq('url')
     end
 
     it 'repository has the correct value' do
@@ -138,6 +154,11 @@ RSpec.describe Modulorails do
             'adapter'     => 'test',
             'db_version'  => '1.2.3',
             'gem_version' => '1.2.3'
+          },
+          'urls'                => {
+            'production'  => 'url',
+            'staging'     => 'url',
+            'review_base' => 'url'
           }
         }
       }
@@ -337,7 +358,7 @@ RSpec.describe Modulorails do
   describe 'check_database_config' do
     it 'returns true when the validator returns no errors' do
       # Copy the test configuration
-      valid_configuration = File.expand_path('../../spec/support/valid_database.yml', __FILE__)
+      valid_configuration    = File.expand_path('../../spec/support/valid_database.yml', __FILE__)
       expected_configuration = File.expand_path('../../config/database.yml', __FILE__)
       FileUtils.cp(valid_configuration, expected_configuration)
 
@@ -367,7 +388,7 @@ RSpec.describe Modulorails do
 
     it 'returns false and display errors when the validator returns errors' do
       # Copy the test configuration
-      invalid_configuration = File.expand_path('../../spec/support/invalid_database.yml', __FILE__)
+      invalid_configuration  = File.expand_path('../../spec/support/invalid_database.yml', __FILE__)
       expected_configuration = File.expand_path('../../config/database.yml', __FILE__)
       FileUtils.cp(invalid_configuration, expected_configuration)
 
