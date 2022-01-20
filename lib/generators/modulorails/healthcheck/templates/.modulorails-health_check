@@ -1,0 +1,6 @@
+This file ensures the modulorails gem will not try to override your current
+config/initializers/health_check.rb file on Rails start.
+
+If you want to reset your heal_check configuration, you can either:
+- remove this file,
+- or run `rails g modulorails:health_check`.

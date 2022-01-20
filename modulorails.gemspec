@@ -33,6 +33,7 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'git', '~> 1.7', '>= 1.7.0'
   spec.add_runtime_dependency 'httparty'
   spec.add_runtime_dependency 'i18n'
+  spec.add_runtime_dependency 'health_check', '~> 3.1'
 
   spec.add_development_dependency 'activerecord', '>= 4.2.0'
   spec.add_development_dependency "appraisal"

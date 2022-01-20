@@ -5,6 +5,7 @@ require 'modulorails/validators/database_configuration'
 require 'modulorails/updater'
 require 'modulorails/railtie' if defined?(Rails::Railtie)
 require 'generators/modulorails/gitlabci/gitlabci_generator'
+require 'generators/modulorails/healthcheck/health_check_generator'
 require 'httparty'
 
 # Author: Matthieu 'ciappa_m' Ciappara
@@ -135,6 +136,16 @@ module Modulorails
       Modulorails::Updater.call unless configuration.no_auto_update
     rescue StandardError => e
       puts("[Modulorails] An error occured: #{e.class} - #{e.message}")
+    end
+
+    # @author Matthieu 'ciappa_m' Ciappara
+    #
+    # Generate a health_check configuration unless it was already done.
+    # The check is done using a 'keepfile'.
+    def generate_healthcheck_template
+      return if File.exists?(Rails.root.join('.modulorails-health_check'))
+
+      Modulorails::HealthCheckGenerator.new([], {}, {}).invoke_all
     end
   end
 end
