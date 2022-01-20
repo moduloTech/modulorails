@@ -10,7 +10,7 @@ provides templates for the common configurations and defines common dependencies
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'modulorails', git: 'git://github.com/moduloTech/modulorails.git'
+gem 'modulorails'
 ```
 
 And then execute:
