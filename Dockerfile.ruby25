@@ -1,0 +1,34 @@
+#
+# BUILD IMAGE
+#
+FROM ruby:2.5-alpine
+
+WORKDIR /app
+
+RUN apk add --update --no-cache \
+    alpine-sdk \
+    tzdata
+
+RUN gem install bundler
+
+# Your RubyGems version (3.0.3)) has a bug that prevents `required_ruby_version` from working for
+# Bundler. Any scripts that use `gem install bundler` will break as soon as Bundler drops support
+# for your Ruby version. Please upgrade RubyGems to avoid future breakage and silence this warning
+# by running `gem update --system 3.2.3`
+RUN gem update --system 3.2.3
+
+COPY . .
+
+RUN bundle config set specific_platform true
+
+# Ensure the use of a Gemfile working with Ruby 2.5
+RUN sed -e 's/"..\/"/".\/"/' gemfiles/rails_52.gemfile > Gemfile
+
+# Install the basic dependencies
+RUN bundle install
+
+# Install dependencies for all supported Rails versions
+RUN bundle exec appraisal install
+
+# Run the tests
+CMD ['./entrypoints/appraisal_test.sh']

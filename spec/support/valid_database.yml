@@ -1,0 +1,19 @@
+development: &default
+  adapter: mysql2
+  encoding: utf8mb4
+  collation: utf8mb4_unicode_ci
+  database: <%= ENV.fetch('DB', 'database') %>
+  username: <%= ENV.fetch('DB_USERNAME', 'root') %>
+  password: <%= ENV.fetch('DB_PASSWORD', '') %>
+  host: <%= ENV.fetch('DB_HOST', '127.0.0.1') %>
+  port: <%= ENV.fetch('DB_PORT', 3306) %>
+
+test:
+  <<: *default
+  database: <%= ENV.fetch('TEST_DB', 'database_test') %>
+
+staging:
+  <<: *default
+
+production:
+  <<: *default

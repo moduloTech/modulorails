@@ -1,9 +1,24 @@
 module Modulorails
+  # Bind in the Rails lifecycle
   class Railtie < ::Rails::Railtie
-    # Binding in the Rails lifecycle. Sending data after the initialization ensures we can access
-    # all gems and symbols we might have to use.
+    # Update and add gems before we load the configuration
+    config.before_configuration do
+      # Currently, we limit everything to the development environment
+      if Rails.env.development?
+        # Check database configuration
+        Modulorails.generate_healthcheck_template
+      end
+    end
+
+    # Require the gem before we read the health_check initializer
+    config.before_initialize do
+      require 'health_check'
+    end
+
+    # Sending data after the initialization ensures we can access
+    # all gems, constants and configurations we might need.
     config.after_initialize do
-      # For now, we limit everything to the development environment
+      # Currently, we limit everything to the development environment
       if Rails.env.development?
         # Load translations
         I18n.load_path += [File.expand_path('../../../config/locales/en.yml', __FILE__)]

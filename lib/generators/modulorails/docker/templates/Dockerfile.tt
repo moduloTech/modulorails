@@ -1,0 +1,26 @@
+FROM ruby:<%= Modulorails.data.ruby_version %>-alpine
+
+ENV RAILS_ENV=development
+WORKDIR /app
+
+RUN apk add --update --no-cache \
+    alpine-sdk \
+    nodejs \
+    yarn \
+    tzdata \
+    <%- adapter = Modulorails.data.adapter -%>
+    <%- if adapter =~ /mysql/ -%>
+    mysql-dev
+    <%- else -%>
+    postgresql-dev
+    <%- end -%>
+RUN gem install bundler -v <%= Modulorails.data.bundler_version %>
+
+COPY Gemfile Gemfile.lock ./
+RUN bundle install --jobs=2
+
+COPY . .
+
+EXPOSE 3000
+
+ENTRYPOINT ["./entrypoints/docker-entrypoint.sh"]

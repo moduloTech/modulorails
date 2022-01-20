@@ -1,0 +1,8 @@
+<%- adapter = Modulorails.data.adapter -%>
+test:
+  host: <%= adapter =~ /mysql/ ? 'mysql' : 'postgres' %>
+  adapter: <%= adapter %>
+  database: test
+  username: root
+  password: password
+  encoding: utf8

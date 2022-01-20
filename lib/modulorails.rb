@@ -2,9 +2,10 @@ require 'modulorails/version'
 require 'modulorails/configuration'
 require 'modulorails/data'
 require 'modulorails/validators/database_configuration'
-require 'modulorails/updater'
 require 'modulorails/railtie' if defined?(Rails::Railtie)
-require 'generators/gitlabci_generator'
+require 'generators/modulorails/gitlabci/gitlabci_generator'
+require 'generators/modulorails/healthcheck/health_check_generator'
+require 'generators/modulorails/self_update/self_update_generator'
 require 'httparty'
 
 # Author: Matthieu 'ciappa_m' Ciappara
@@ -77,17 +78,25 @@ module Modulorails
         # Define the JSON body of the request
         body = data.to_params.to_json
 
-        # Post to the configured endpoint on the Intranet
-        response = HTTParty.post(configuration.endpoint, headers: headers, body: body)
+        # Prevent HTTParty to raise error and crash the server in dev
+        begin
+          # Post to the configured endpoint on the Intranet
+          response = HTTParty.post(configuration.endpoint, headers: headers, body: body)
 
-        # According to the API specification, on a "Bad request" response, the server explicits what
-        # went wrong with an `errors` field. We do not want to raise since the gem's user is not
-        # (necessarily) responsible for the error but we still need to display it somewhere to warn
-        # the user something went wrong.
-        puts("[Modulorails] Error: #{response['errors'].join(', ')}") if response.code == 400
+          # According to the API specification, on a "Bad request" response, the server explicits what
+          # went wrong with an `errors` field. We do not want to raise since the gem's user is not
+          # (necessarily) responsible for the error but we still need to display it somewhere to warn
+          # the user something went wrong.
+          puts("[Modulorails] Error: #{response['errors'].join(', ')}") if response.code == 400
 
-        # Return the response to allow users to do some more
-        response
+          # Return the response to allow users to do some more
+          response
+        rescue StandardError => e
+          # Still need to notify the user
+          puts("[Modulorails] Error: Could not post to #{configuration.endpoint}")
+          puts e.message
+          nil
+        end
       else
         raise Error.new('No endpoint or api key')
       end
@@ -100,13 +109,7 @@ module Modulorails
     def generate_ci_template
       return if File.exists?(Rails.root.join('.modulorails-gitlab-ci'))
 
-      generator_options = [
-        '--app', data.rails_name.parameterize,
-        '--database', data.adapter,
-        '--bundler', data.bundler_version,
-        '--ruby_version', data.ruby_version
-      ]
-      GitlabciGenerator.new([], generator_options, {}).invoke_all
+      Modulorails::GitlabciGenerator.new([], {}, {}).invoke_all
     end
 
     # @author Matthieu 'ciappa_m' Ciappara
@@ -130,9 +133,19 @@ module Modulorails
     # Check the last version of Modulorails available on rubygems and update if there was a
     # publication
     def self_update
-      Modulorails::Updater.call unless configuration.no_auto_update
+      Modulorails::SelfUpdateGenerator.new([], {}, {}).invoke_all unless configuration.no_auto_update
     rescue StandardError => e
       puts("[Modulorails] An error occured: #{e.class} - #{e.message}")
+    end
+
+    # @author Matthieu 'ciappa_m' Ciappara
+    #
+    # Generate a health_check configuration unless it was already done.
+    # The check is done using a 'keepfile'.
+    def generate_healthcheck_template
+      return if File.exists?(Rails.root.join('.modulorails-health_check'))
+
+      Modulorails::HealthCheckGenerator.new([], {}, {}).invoke_all
     end
   end
 end

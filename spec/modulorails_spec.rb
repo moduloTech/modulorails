@@ -44,11 +44,12 @@ RSpec.describe Modulorails do
   end
 
   it 'has a version number' do
-    expect(Modulorails::VERSION).to eq('0.2.2')
+    expect(Modulorails::VERSION).to eq('0.4.0')
   end
 
   describe Modulorails::Configuration do
-    %i[name main_developer project_manager endpoint api_key].each do |field|
+    %i[name main_developer project_manager endpoint api_key production_url
+      staging_url review_base_url].each do |field|
       it "#{field} can be read and configured" do
         expect(subject.send(field)).to be_nil
         subject.send(field, 'test')
@@ -66,6 +67,9 @@ RSpec.describe Modulorails do
         config.project_manager 'pm'
         config.endpoint 'endpoint'
         config.api_key 'key'
+        config.production_url 'url'
+        config.staging_url 'url'
+        config.review_base_url 'url'
       end
     end
 
@@ -79,6 +83,18 @@ RSpec.describe Modulorails do
 
     it 'project_manager has the correct value' do
       expect(subject.project_manager).to eq('pm')
+    end
+
+    it 'production_url has the correct value' do
+      expect(subject.production_url).to eq('url')
+    end
+
+    it 'staging_url has the correct value' do
+      expect(subject.staging_url).to eq('url')
+    end
+
+    it 'review_base_url has the correct value' do
+      expect(subject.review_base_url).to eq('url')
     end
 
     it 'repository has the correct value' do
@@ -138,6 +154,11 @@ RSpec.describe Modulorails do
             'adapter'     => 'test',
             'db_version'  => '1.2.3',
             'gem_version' => '1.2.3'
+          },
+          'urls'                => {
+            'production'  => 'url',
+            'staging'     => 'url',
+            'review_base' => 'url'
           }
         }
       }
@@ -197,14 +218,14 @@ RSpec.describe Modulorails do
       ]
     }
 
-    it 'should return false when the database config file can not be load' do
+    it 'should return [:standard_config_file_location] when the database config file can not be loaded' do
       # Raise ENOENT when file can not be found
       allow(Psych).to receive(:load_file).and_raise(Errno::ENOENT)
 
       result = nil
       # No exception raised and `false` returned
       expect { result = subject.call }.not_to(raise_error)
-      expect(result).to eq(false)
+      expect(result).to eq([:standard_config_file_location])
     end
 
     it 'should return an empty array when the database config file is valid' do
@@ -267,6 +288,19 @@ RSpec.describe Modulorails do
         end
       end
 
+      it 'silently ignores when the server does not respond' do
+        # Mock the call to the webservice and raise a "SocketError" code - no connection to server
+        allow(HTTParty).to receive(:post).and_raise(SocketError)
+
+        # Even on endpoint error, the gem does not raise
+        expect { subject.send_data }.not_to raise_error
+
+        # The endpoint should have been called
+        headers = { 'Content-Type' => 'application/json', 'X-MODULORAILS-TOKEN' => 'key' }
+        params  = Modulorails.data.to_params.to_json
+        expect(HTTParty).to have_received(:post).with('endpoint', headers: headers, body: params)
+      end
+
       it 'silently ignores when the server responds with a bad request' do
         # Mock the call to the webservice and return a "bad request" code
         allow(HTTParty).to receive(:post).and_return(bad_request)
@@ -323,8 +357,10 @@ RSpec.describe Modulorails do
 
   describe 'check_database_config' do
     it 'returns true when the validator returns no errors' do
-      # Mock the validator
-      allow(Modulorails::Validators::DatabaseConfiguration).to receive(:call).and_return([])
+      # Copy the test configuration
+      valid_configuration    = File.expand_path('../../spec/support/valid_database.yml', __FILE__)
+      expected_configuration = File.expand_path('../../config/database.yml', __FILE__)
+      FileUtils.cp(valid_configuration, expected_configuration)
 
       # Returns true and log nothing
       result = nil
@@ -332,18 +368,43 @@ RSpec.describe Modulorails do
       expect(result).to eq(true)
     end
 
-    it 'returns false and display errors when the validator returns errors' do
+    it 'returns false and display errors when the database configuration does not exists' do
+      # Ensure there is no database configuration from a previous test
+      expected_configuration = File.expand_path('../../config/database.yml', __FILE__)
+      FileUtils.rm(expected_configuration, force: true)
+
+      # Set up the I18n load path
       I18n.load_path += [File.expand_path('../../config/locales/en.yml', __FILE__)]
+
+      # Returns false and log errors
       errors = <<~EOS
         [Modulorails] The database configuration (config/database.yml) has warnings:
         [Modulorails]    Invalid database configuration: The database configuration file can not be found at config/database.yml
       EOS
+      result = nil
+      expect { result = subject.check_database_config }.to(output(errors).to_stdout)
+      expect(result).to eq(false)
+    end
 
-      # Mock the validator
-      allow(Modulorails::Validators::DatabaseConfiguration).to(
-        receive(:call).and_return(['standard_config_file_location']))
+    it 'returns false and display errors when the validator returns errors' do
+      # Copy the test configuration
+      invalid_configuration  = File.expand_path('../../spec/support/invalid_database.yml', __FILE__)
+      expected_configuration = File.expand_path('../../config/database.yml', __FILE__)
+      FileUtils.cp(invalid_configuration, expected_configuration)
+
+      # Set up the I18n load path
+      I18n.load_path += [File.expand_path('../../config/locales/en.yml', __FILE__)]
 
       # Returns false and log errors
+      errors = <<~EOS
+        [Modulorails] The database configuration (config/database.yml) has warnings:
+        [Modulorails]    Invalid database configuration: Database name is not configurable for development environment
+        [Modulorails]    Invalid database configuration: Host is not configurable for development environment
+        [Modulorails]    Invalid database configuration: Port is not configurable for development environment
+        [Modulorails]    Invalid database configuration: Database name is not configurable for test environment
+        [Modulorails]    Invalid database configuration: Host is not configurable for test environment
+        [Modulorails]    Invalid database configuration: Port is not configurable for test environment
+      EOS
       result = nil
       expect { result = subject.check_database_config }.to(output(errors).to_stdout)
       expect(result).to eq(false)
