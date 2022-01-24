@@ -7,6 +7,10 @@ require 'generators/modulorails/gitlabci/gitlabci_generator'
 require 'generators/modulorails/healthcheck/health_check_generator'
 require 'generators/modulorails/self_update/self_update_generator'
 require 'httparty'
+require 'modulorails/error_data'
+require 'modulorails/success_data'
+require 'modulorails/errors/errors'
+require 'modulorails/services/services'
 
 # Author: Matthieu 'ciappa_m' Ciappara
 # The entry point of the gem. It exposes the configurator, the gathered data and the method to
