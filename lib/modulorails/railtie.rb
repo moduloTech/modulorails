@@ -46,6 +46,9 @@ module Modulorails
         # Check database configuration
         Modulorails.check_database_config
 
+        # Add/update Rubocop config
+        Modulorails.generate_rubocop_template
+
         # Gem's self-update if a new version was released
         Modulorails.self_update
       end
