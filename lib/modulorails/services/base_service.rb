@@ -3,7 +3,7 @@
 # ActiveRecord::Base and ApplicationRecord.
 class Modulorails::BaseService
   # Allow to instantiate the service and call the service in one go.
-  if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('3.0')
+  if Modulorails::COMPARABLE_RUBY_VERSION < Gem::Version.new('3.0')
     def self.call(*args, &block)
       new(*args, &block).call
     end

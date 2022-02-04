@@ -52,7 +52,7 @@ module Modulorails
 
       def check_standard_config_file_location
         # Load the configuration
-        config = if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('3.1')
+        config = if Modulorails::COMPARABLE_RUBY_VERSION >= Gem::Version.new('3.1')
                    # Ruby 3.1 uses Psych4 which changes the default way of handling aliases in
                    # `load_file`.
                    Psych.load_file(Rails.root.join('config/database.yml'), aliases: true)
