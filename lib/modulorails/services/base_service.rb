@@ -2,9 +2,15 @@
 # The base class for services. Should be implemented by ApplicationService following the model of
 # ActiveRecord::Base and ApplicationRecord.
 class Modulorails::BaseService
-  # Allow to instanciate the service and call the service in one go.
-  def self.call(*args, &block)
-    new(*args, &block).call
+  # Allow to instantiate the service and call the service in one go.
+  if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('3.0')
+    def self.call(*args, &block)
+      new(*args, &block).call
+    end
+  else
+    def self.call(*args, **kwargs, &block)
+      new(*args, **kwargs, &block).call
+    end
   end
 
   # @abstract The main method to implement for your service to do something
