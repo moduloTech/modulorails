@@ -52,13 +52,19 @@ module Modulorails
 
       def check_standard_config_file_location
         # Load the configuration
-        config = Psych.load_file(Rails.root.join('config/database.yml'))
+        config = if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('3.1')
+                   # Ruby 3.1 uses Psych4 which changes the default way of handling aliases in
+                   # `load_file`.
+                   Psych.load_file(Rails.root.join('config/database.yml'), aliases: true)
+                 else
+                   Psych.load_file(Rails.root.join('config/database.yml'))
+                 end
 
         # If no exception was raised, then the database configuration file is at standard location
         @rules[:standard_config_file_location] = true
 
         config
-      rescue StandardError =>e
+      rescue StandardError => e
         # An exception was raised, either the file is not a the standard location, either it just
         # cannot be read. Either way, we consider the config as invalid
         @rules[:standard_config_file_location] = false
