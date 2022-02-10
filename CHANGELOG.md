@@ -2,6 +2,16 @@
 
 This file is used to list changes made in each version of the gem.
 
+# 1.0.0
+
+The Rubocop release.
+
+- Add Modulorails helper `powered_by`.
+- Add `Modulorails::BaseService`, `Modulorails::LogsForMethodService`,
+  `Modulorails::SuccessData` and `Modulorails::ErrorData`.
+- Add Rubocop dependency with empty configuration.
+- Ensure the compatibility of the gem with Ruby 3.0 and Ruby 3.1.
+
 # 0.4.0
 
 Fixes, updates and health_check release.
