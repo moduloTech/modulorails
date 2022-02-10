@@ -1,0 +1,21 @@
+/**
+ ** Modulorails style
+**/
+.modulolink {
+    text-decoration: none;
+    font-weight: 500;
+    color: #202D4C;
+}
+
+.modulolink span {
+    color: #FFCE19;
+}
+
+.modulolink:hover {
+    color: #374D82;
+    text-decoration: none;
+}
+
+.modulolink:hover span {
+    color: #FFCB0C;
+}

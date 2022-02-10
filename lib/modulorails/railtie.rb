@@ -1,3 +1,5 @@
+require_relative '../../app/helpers/modulorails/application_helper'
+
 module Modulorails
   # Bind in the Rails lifecycle
   class Railtie < ::Rails::Railtie
@@ -13,6 +15,18 @@ module Modulorails
     # Require the gem before we read the health_check initializer
     config.before_initialize do
       require 'health_check'
+    end
+
+    initializer 'modulorails.action_view' do
+      ActiveSupport.on_load :action_view do
+        include Modulorails::ApplicationHelper
+      end
+    end
+
+    initializer 'modulorails.assets' do |app|
+      %w[stylesheets javascripts].each do |subdirectory|
+        app.config.assets.paths << File.expand_path("../../../app/assets/#{subdirectory}", __FILE__)
+      end
     end
 
     # Sending data after the initialization ensures we can access
@@ -31,6 +45,9 @@ module Modulorails
 
         # Check database configuration
         Modulorails.check_database_config
+
+        # Add/update Rubocop config
+        Modulorails.generate_rubocop_template
 
         # Gem's self-update if a new version was released
         Modulorails.self_update

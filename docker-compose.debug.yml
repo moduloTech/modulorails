@@ -1,0 +1,47 @@
+version: '3.7'
+
+services:
+  ruby25:
+    image: modulotechgroup/modulorails:testruby25
+    volumes:
+      - .:/app
+    build:
+      context: .
+      dockerfile: Dockerfile.ruby25
+    command: ./entrypoints/appraisal_test.sh
+
+  ruby26:
+    image: modulotechgroup/modulorails:testruby26
+    volumes:
+      - .:/app
+    build:
+      context: .
+      dockerfile: Dockerfile.ruby26
+    command: ./entrypoints/appraisal_test.sh
+
+  ruby27:
+    image: modulotechgroup/modulorails:testruby27
+    volumes:
+      - .:/app
+    build:
+      context: .
+      dockerfile: Dockerfile.ruby27
+    command: ./entrypoints/appraisal_test.sh
+
+  ruby30:
+    image: modulotechgroup/modulorails:testruby30
+    volumes:
+      - .:/app
+    build:
+      context: .
+      dockerfile: Dockerfile.ruby30
+    command: ./entrypoints/appraisal_test.sh
+
+  ruby31:
+    image: modulotechgroup/modulorails:testruby31
+    volumes:
+      - .:/app
+    build:
+      context: .
+      dockerfile: Dockerfile.ruby31
+    command: ./entrypoints/appraisal_test.sh

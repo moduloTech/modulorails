@@ -6,7 +6,12 @@ require 'modulorails/railtie' if defined?(Rails::Railtie)
 require 'generators/modulorails/gitlabci/gitlabci_generator'
 require 'generators/modulorails/healthcheck/health_check_generator'
 require 'generators/modulorails/self_update/self_update_generator'
+require 'generators/modulorails/rubocop/rubocop_generator'
 require 'httparty'
+require 'modulorails/error_data'
+require 'modulorails/success_data'
+require 'modulorails/errors/errors'
+require 'modulorails/services/services'
 
 # Author: Matthieu 'ciappa_m' Ciappara
 # The entry point of the gem. It exposes the configurator, the gathered data and the method to
@@ -146,6 +151,13 @@ module Modulorails
       return if File.exists?(Rails.root.join('.modulorails-health_check'))
 
       Modulorails::HealthCheckGenerator.new([], {}, {}).invoke_all
+    end
+
+    # @author Matthieu 'ciappa_m' Ciappara
+    #
+    # Generate a rubocop configuration.
+    def generate_rubocop_template
+      Modulorails::RubocopGenerator.new([], {}, {}).invoke_all
     end
   end
 end

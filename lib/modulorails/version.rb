@@ -1,3 +1,6 @@
 module Modulorails
-  VERSION = '0.4.0'
+  VERSION = '1.0.0'
+
+  # Useful to compare the current Ruby version
+  COMPARABLE_RUBY_VERSION = Gem::Version.new(RUBY_VERSION)
 end

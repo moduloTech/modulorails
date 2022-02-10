@@ -14,3 +14,6 @@ en:
       configurable_password: Password is not configurable for test environment
       configurable_database: Database name is not configurable for test environment
       configurable_port: Port is not configurable for test environment
+    errors:
+      invalid_format: Invalid format for field %{field}
+      invalid_value: Invalid value for field %{field}

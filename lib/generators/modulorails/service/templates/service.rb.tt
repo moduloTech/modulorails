@@ -1,0 +1,28 @@
+<% module_namespacing do -%>
+# @author <INSERT YOUR NAME HERE>
+# <DESCRIBE YOUR CLASS HERE>
+<%- if arguments.size >= 1 -%>
+#
+<%- arguments.each do |argument| -%>
+# @!attribute <%= argument %>
+#   @return <DESCRIBE YOUR ARGUMENT HERE>
+<%- end -%>
+<%- end -%>
+class <%= class_name %>Service < ::ApplicationService
+  <%- if arguments.size >= 1 -%>
+
+  def initialize(<%= arguments.join(', ') %>)
+    super()
+
+    <%- arguments.each do |argument| -%>
+    <%= "@#{argument} = #{argument}" %>
+    <%- end -%>
+  end
+  <%- end -%>
+
+  def call
+    # TODO
+  end
+
+end
+<% end -%>
