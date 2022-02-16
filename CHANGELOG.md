@@ -2,6 +2,12 @@
 
 This file is used to list changes made in each version of the gem.
 
+# 1.0.1
+
+First Rubocop rules.
+
+- Add Style/StringLiterals, Style/QuotedSymbols and Lint/SymbolConversion.
+
 # 1.0.0
 
 The Rubocop release.
