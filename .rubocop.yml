@@ -44,3 +44,19 @@ Rails/UnknownEnv:
     - test
     - staging
     - preprod
+
+# Checks if String literals are using single quotes when no interpolation is required
+Style/StringLiterals:
+  Enabled: true
+  EnforcedStyle: single_quotes
+  ConsistentQuotesInMultiline: false
+
+# Checks if the quotes used for quoted symbols are single quotes when no interpolation is required
+Style/QuotedSymbols:
+  Enabled: true
+  EnforcedStyle: same_as_string_literals
+
+# This cop checks for uses of literal strings converted to a symbol where a literal symbol could be used instead.
+Lint/SymbolConversion:
+  Enabled: true
+  EnforcedStyle: strict
