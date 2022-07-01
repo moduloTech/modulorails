@@ -2,6 +2,10 @@
 
 This file is used to list changes made in each version of the gem.
 
+# 1.0.2
+
+Fix error in with_transaction: `uninitialized constant Modulorails::BaseService::ErrorData`.
+
 # 1.0.1
 
 First Rubocop rules.
