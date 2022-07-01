@@ -12,3 +12,4 @@
 *.gem
 gemfiles/*.lock
 /config/database.yml
+.idea
