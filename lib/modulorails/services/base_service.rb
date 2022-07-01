@@ -58,10 +58,10 @@ class Modulorails::BaseService
       data = yield
     end
 
-    SuccessData.new(data)
+    ::Modulorails::SuccessData.new(data)
   rescue ActiveRecord::RecordInvalid => e
     # Known error, no need for a log, it just needs to be returned
-    ErrorData.new(e.message, exception: e)
+    ::Modulorails::ErrorData.new(e.message, exception: e)
   rescue StandardError => e
     # Unknown error, log the error
     Rails.logger.error("#{self}: #{e.message}")
@@ -69,7 +69,7 @@ class Modulorails::BaseService
     Rails.logger.error(e.backtrace&.join("\n"))
 
     # Return the error
-    ErrorData.new(e.message, exception: e)
+    ::Modulorails::ErrorData.new(e.message, exception: e)
   end
 
   # Cast the date/datetime parameters to time with zones.
