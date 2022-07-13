@@ -67,8 +67,8 @@ class Modulorails::BaseService
     # Unknown error, log the error
     Rails.logger.error("#{self}: #{e.message}")
     Rails.logger.error("Local variables: #{local_variables.map! { |v|
-                                             { v => eval(v.to_s, binding) }
-                                           } }")
+      { v => binding.local_variable_get(v) }
+    } }")
     Rails.logger.error(e.backtrace&.join("\n"))
 
     # Return the error
@@ -145,8 +145,8 @@ class Modulorails::BaseService
 
     if value.respond_to?(:each)
       raise InvalidValueError.new(keys.join('/')) unless value.all? { |v|
-                                                           allowed_values.include?(v)
-                                                         }
+        allowed_values.include?(v)
+      }
     else
       return nil if !value && allow_nil
 
@@ -167,11 +167,9 @@ class Modulorails::BaseService
     value = params.dig(*keys)
 
     unless value
-      if allow_nil
-        return nil
-      else
-        raise InvalidValueError.new(keys.join('/'))
-      end
+      return nil if allow_nil
+
+      raise InvalidValueError.new(keys.join('/'))
     end
 
     result = model.find_by(field => value)
@@ -192,11 +190,9 @@ class Modulorails::BaseService
     values = params.dig(*keys)
 
     if values.blank?
-      if allow_nil
-        return nil
-      else
-        raise InvalidValueError.new(keys.join('/'))
-      end
+      return nil if allow_nil
+
+      raise InvalidValueError.new(keys.join('/'))
     end
 
     results = model.where(field => values)
