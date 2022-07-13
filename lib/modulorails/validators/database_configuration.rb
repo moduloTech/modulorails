@@ -40,19 +40,21 @@ module Modulorails
         check_rules_for_environment(database_configuration, :development)
         check_rules_for_environment(database_configuration, :test)
 
-        get_invalid_rules
+        fetch_invalid_rules
       end
 
       private
 
-      def get_invalid_rules
-        dev     = @rules[:development].select { |_k, v|
-                    v == false
-                  }.keys.map { |k| "development.#{k}" }
-        test    = @rules[:test].select { |_k, v| v == false }.keys.map { |k| "test.#{k}" }
-        general = @rules.select { |_k, v| v == false }.keys
+      def fetch_invalid_rules
+        dev     = select_invalid_keys(@rules[:development]).map { |k| "development.#{k}" }
+        test    = select_invalid_keys(@rules[:test]).map { |k| "test.#{k}" }
+        general = select_invalid_keys(@rules)
 
         general + dev + test
+      end
+
+      def select_invalid_keys(hash)
+        hash.select { |_k, v| v == false }.keys
       end
 
       def check_standard_config_file_location
@@ -69,7 +71,7 @@ module Modulorails
         @rules[:standard_config_file_location] = true
 
         config
-      rescue StandardError => e
+      rescue StandardError
         # An exception was raised, either the file is not a the standard location, either it just
         # cannot be read. Either way, we consider the config as invalid
         @rules[:standard_config_file_location] = false
@@ -79,13 +81,13 @@ module Modulorails
       # The database for tests MUST NOT be the same as the development database since the test
       # database is rewritten each time the tests are launched
       def check_test_database_not_equals_dev_database(config)
-        test_eq_database                               = config['test']['database'] != config['development']['database']
-        @rules[:test_database_not_equals_dev_database] = test_eq_database
+        @rules[:test_database_not_equals_dev_database] =
+          config['test']['database'] != config['development']['database']
       end
 
       # Check all rules for an environment
       def check_rules_for_environment(config, env)
-        @rules[env].keys.each do |rule|
+        @rules[env].each_key do |rule|
           key = rule.to_s.gsub(/configurable_/, '')
           check_configurable_key_for_environment(config, env, key)
         end
