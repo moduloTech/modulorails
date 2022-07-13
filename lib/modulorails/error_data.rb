@@ -1,6 +1,7 @@
 # @author Matthieu Ciappara <ciappa_m@modulotech>
 # An error encountered during an operation with additional data.
 class Modulorails::ErrorData
+
   # @!attribute r errors
   #   An error message or an array of error messages (those will be joined by a coma and a space).
   # @!attribute r exception
@@ -18,4 +19,5 @@ class Modulorails::ErrorData
   def success?
     false
   end
+
 end

@@ -39,4 +39,5 @@ class Modulorails::LogsForMethodService < Modulorails::BaseService
   def jsonify
     @message.to_json
   end
+
 end

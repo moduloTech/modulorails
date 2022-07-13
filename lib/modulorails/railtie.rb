@@ -1,8 +1,10 @@
 require_relative '../../app/helpers/modulorails/application_helper'
 
 module Modulorails
+
   # Bind in the Rails lifecycle
   class Railtie < ::Rails::Railtie
+
     # Update and add gems before we load the configuration
     config.before_configuration do
       # Currently, we limit everything to the development environment
@@ -35,7 +37,7 @@ module Modulorails
       # Currently, we limit everything to the development environment
       if Rails.env.development?
         # Load translations
-        I18n.load_path += [File.expand_path('../../../config/locales/en.yml', __FILE__)]
+        I18n.load_path += [File.expand_path('../../config/locales/en.yml', __dir__)]
 
         # Effectively send the data to the intranet
         Modulorails.send_data
@@ -53,5 +55,7 @@ module Modulorails
         Modulorails.self_update
       end
     end
+
   end
+
 end

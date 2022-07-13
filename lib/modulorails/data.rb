@@ -3,10 +3,12 @@ require 'active_record'
 require 'git'
 
 module Modulorails
+
   # Author: Matthieu 'ciappa_m' Ciappara
   # This holds the data gathered by the gem. Some come from the configuration by the gem's user.
   # Some are fetched dynamically.
   class Data
+
     # All the data handled by this class
     ATTRIBUTE_KEYS = %i[
       name main_developer project_manager repository type rails_name ruby_version rails_version
@@ -15,7 +17,7 @@ module Modulorails
     ].freeze
 
     # Useful if the gem's user need to read one of the data
-    attr_reader *ATTRIBUTE_KEYS
+    attr_reader(*ATTRIBUTE_KEYS)
 
     def initialize
       # Get the gem's configuration to get the application's usual name, main dev and PM
@@ -23,11 +25,11 @@ module Modulorails
       # Get the database connection to identify the database used by the application
       # or return nil if the database does not exist
       db_connection = begin
-                        ActiveRecord::Base.connection
-                      rescue ActiveRecord::NoDatabaseError => e
-                        $stderr.puts("[Modulorails] Error: #{e.message}")
-                        nil
-                      end
+        ActiveRecord::Base.connection
+      rescue ActiveRecord::NoDatabaseError => e
+        warn("[Modulorails] Error: #{e.message}")
+        nil
+      end
       # Get the gem's specifications to fetch the versions of critical gems
       loaded_specs = Gem.loaded_specs
 
@@ -124,5 +126,7 @@ module Modulorails
         }
       }
     end
+
   end
+
 end

@@ -17,11 +17,13 @@ require 'modulorails/services/services'
 # The entry point of the gem. It exposes the configurator, the gathered data and the method to
 # send those data to the intranet.
 module Modulorails
+
   # Author: Matthieu 'ciappa_m' Ciappara
   # The error class of the gem. Allow to identify all functional errors raised by the gem.
   class Error < StandardError; end
 
   class << self
+
     # Useful to update the configuration
     attr_writer :configuration
 
@@ -112,7 +114,7 @@ module Modulorails
     # Generate a CI/CD template unless it was already done.
     # The check is done using a 'keepfile'.
     def generate_ci_template
-      return if File.exists?(Rails.root.join('.modulorails-gitlab-ci'))
+      return if File.exist?(Rails.root.join('.modulorails-gitlab-ci'))
 
       Modulorails::GitlabciGenerator.new([], {}, {}).invoke_all
     end
@@ -138,7 +140,10 @@ module Modulorails
     # Check the last version of Modulorails available on rubygems and update if there was a
     # publication
     def self_update
-      Modulorails::SelfUpdateGenerator.new([], {}, {}).invoke_all unless configuration.no_auto_update
+      unless configuration.no_auto_update
+        Modulorails::SelfUpdateGenerator.new([], {},
+                                             {}).invoke_all
+      end
     rescue StandardError => e
       puts("[Modulorails] An error occured: #{e.class} - #{e.message}")
     end
@@ -148,7 +153,7 @@ module Modulorails
     # Generate a health_check configuration unless it was already done.
     # The check is done using a 'keepfile'.
     def generate_healthcheck_template
-      return if File.exists?(Rails.root.join('.modulorails-health_check'))
+      return if File.exist?(Rails.root.join('.modulorails-health_check'))
 
       Modulorails::HealthCheckGenerator.new([], {}, {}).invoke_all
     end
@@ -159,5 +164,7 @@ module Modulorails
     def generate_rubocop_template
       Modulorails::RubocopGenerator.new([], {}, {}).invoke_all
     end
+
   end
+
 end

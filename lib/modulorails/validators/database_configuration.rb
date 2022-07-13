@@ -1,8 +1,11 @@
 module Modulorails
+
   module Validators
+
     # Author: Matthieu 'ciappa_m' Ciappara
     # This holds the rules to configure the database by respecting Modulotech's norms.
     class DatabaseConfiguration
+
       def initialize
         # All rules are invalid by default
         @rules = {
@@ -43,7 +46,9 @@ module Modulorails
       private
 
       def get_invalid_rules
-        dev     = @rules[:development].select { |_k, v| v == false }.keys.map { |k| "development.#{k}" }
+        dev     = @rules[:development].select { |_k, v|
+                    v == false
+                  }.keys.map { |k| "development.#{k}" }
         test    = @rules[:test].select { |_k, v| v == false }.keys.map { |k| "test.#{k}" }
         general = @rules.select { |_k, v| v == false }.keys
 
@@ -94,6 +99,9 @@ module Modulorails
         # Use of `!!` to convert `nil` to `false` and `0` to `true`
         @rules[env][:"configurable_#{key}"] = !!valid_rule
       end
+
     end
+
   end
+
 end

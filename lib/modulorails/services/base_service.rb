@@ -2,6 +2,7 @@
 # The base class for services. Should be implemented by ApplicationService following the model of
 # ActiveRecord::Base and ApplicationRecord.
 class Modulorails::BaseService
+
   # Allow to instantiate the service and call the service in one go.
   if Modulorails::COMPARABLE_RUBY_VERSION < Gem::Version.new('3.0')
     def self.call(*args, &block)
@@ -28,7 +29,7 @@ class Modulorails::BaseService
   end
 
   # Shamelessly copied from text_helper
-  def self.pluralize(count, singular, plural_arg = nil, plural: plural_arg, locale: I18n.locale)
+  def self.pluralize(count, singular, plural_arg=nil, plural: plural_arg, locale: I18n.locale)
     word = if count == 1 || count =~ /^1(\.0+)?$/
              singular
            else
@@ -65,7 +66,9 @@ class Modulorails::BaseService
   rescue StandardError => e
     # Unknown error, log the error
     Rails.logger.error("#{self}: #{e.message}")
-    Rails.logger.error("Local variables: #{local_variables.map! { |v| { v => eval(v.to_s, binding) } }}")
+    Rails.logger.error("Local variables: #{local_variables.map! { |v|
+                                             { v => eval(v.to_s, binding) }
+                                           } }")
     Rails.logger.error(e.backtrace&.join("\n"))
 
     # Return the error
@@ -76,7 +79,7 @@ class Modulorails::BaseService
   # @param from [String,ActiveSupport::TimeWithZone] the minimum date
   # @param to [String,ActiveSupport::TimeWithZone] the maximum date
   # @return [[ActiveSupport::TimeWithZone, ActiveSupport::TimeWithZone]] The given dates casted.
-  def params_to_time(from, to = nil)
+  def params_to_time(from, to=nil)
     from = from.is_a?(String) && from.present? ? from.to_time_with_zone : from
     to   = if to.is_a?(String) && to.present?
              to = to.to_time_with_zone
@@ -92,7 +95,7 @@ class Modulorails::BaseService
   end
 
   # Shamelessly copied from text_helper
-  def pluralize(count, singular, plural_arg = nil, plural: plural_arg, locale: I18n.locale)
+  def pluralize(count, singular, plural_arg=nil, plural: plural_arg, locale: I18n.locale)
     self.class.pluralize(count, singular, plural_arg, plural: plural, locale: locale)
   end
 
@@ -141,7 +144,9 @@ class Modulorails::BaseService
     value = params.dig(*keys)
 
     if value.respond_to?(:each)
-      raise InvalidValueError.new(keys.join('/')) unless value.all? { |v| allowed_values.include?(v) }
+      raise InvalidValueError.new(keys.join('/')) unless value.all? { |v|
+                                                           allowed_values.include?(v)
+                                                         }
     else
       return nil if !value && allow_nil
 
@@ -200,4 +205,5 @@ class Modulorails::BaseService
 
     results
   end
+
 end
