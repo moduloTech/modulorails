@@ -13,13 +13,13 @@ class Modulorails::RubocopGenerator < Rails::Generators::Base
 
     template 'rubocop.yml', rubocop_config_path, force: true
 
-    unless File.read(gitlab_config_path).match?(/\s+extends:\s+.lint\s*$/)
-      append_file gitlab_config_path do
-        <<~YAML
-          rubocop:
-            extends: .lint
-        YAML
-      end
+    return if File.read(gitlab_config_path).match?(/\s+extends:\s+.lint\s*$/)
+
+    append_file gitlab_config_path do
+      <<~YAML
+        rubocop:
+          extends: .lint
+      YAML
     end
   end
 
