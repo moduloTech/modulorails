@@ -64,7 +64,7 @@ module Modulorails
 
       # The name defined for the Rails application; it can be completely different from the usual
       # name or can be the same
-      @rails_name = ::Rails.application.class.name.split('::').first
+      @rails_name = ::Rails.application.class.name&.split('::').first
 
       # The Ruby version used by the application
       @ruby_version = RUBY_VERSION
