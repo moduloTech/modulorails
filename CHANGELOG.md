@@ -2,6 +2,13 @@
 
 This file is used to list changes made in each version of the gem.
 
+# 1.1.0
+
+The second Rubocop release.
+
+- Add lot of Rubocop rules.
+- Fix rubocop offenses for the gem.
+
 # 1.0.2
 
 Fix error in with_transaction: `uninitialized constant Modulorails::BaseService::ErrorData`.
