@@ -10,6 +10,7 @@ RUN apk add --update --no-cache \
     tzdata \
     yarn \
     shared-mime-info \
+    gcompat \
     <%- adapter = Modulorails.data.adapter -%>
     <%- if adapter =~ /mysql/ -%>
     mysql-dev
