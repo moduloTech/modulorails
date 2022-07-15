@@ -14,6 +14,9 @@ class Modulorails::DockerGenerator < Rails::Generators::Base
     template 'docker-compose.prod.yml'
     template 'entrypoints/docker-entrypoint.sh'
     template 'config/database.yml'
+
+    # Useless unless project is using Webpacker
+    template 'entrypoints/webpack-entrypoint.sh' if Modulorails.data.webpacker_version.present?
   rescue StandardError => e
     warn("[Modulorails] Error: cannot generate Docker configuration: #{e.message}")
   end
