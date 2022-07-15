@@ -12,8 +12,9 @@ module Modulorails
     # All the data handled by this class
     ATTRIBUTE_KEYS = %i[
       name main_developer project_manager repository type rails_name ruby_version rails_version
-      bundler_version modulorails_version adapter db_version adapter_version production_url
-      staging_url review_base_url
+      bundler_version modulorails_version adapter db_version adapter_version webpacker_version
+      importmap_version jsbundling_version
+      production_url staging_url review_base_url
     ].freeze
 
     # Useful if the gem's user need to read one of the data
@@ -128,6 +129,15 @@ module Modulorails
 
       # The version of the ActiveRecord adapter
       @adapter_version = loaded_specs[@adapter]&.version&.version
+
+      # The version of the webpacker gem - might be nil
+      @webpacker_version = loaded_specs['webpacker']&.version&.version
+
+      # The version of the importmap-rails gem - might be nil
+      @importmap_version = loaded_specs['importmap-rails']&.version&.version
+
+      # The version of the jsbundling-rails gem - might be nil
+      @jsbundling_version = loaded_specs['jsbundling-rails']&.version&.version
     end
 
     def initialize_from_git
