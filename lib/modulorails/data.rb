@@ -102,7 +102,7 @@ module Modulorails
       # or return nil if the database does not exist
       db_connection = begin
         ActiveRecord::Base.connection
-      rescue ActiveRecord::NoDatabaseError => e
+      rescue ActiveRecord::NoDatabaseError, ActiveRecord::ConnectionNotEstablished => e
         warn("[Modulorails] Error: #{e.message}")
         nil
       end
