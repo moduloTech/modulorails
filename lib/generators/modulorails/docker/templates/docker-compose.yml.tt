@@ -20,6 +20,8 @@ services:
       <%= image_name.upcase %>_DATABASE_HOST: database
       <%= image_name.upcase %>_DATABASE_NAME: <%= image_name %>
     entrypoint: ./entrypoints/docker-entrypoint.sh
+    stdin_open: true
+    tty: true
 
   <%- adapter = Modulorails.data.adapter -%>
   <%- if adapter =~ /mysql/ -%>
