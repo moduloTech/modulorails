@@ -32,6 +32,8 @@ RUN bundle exec rake assets:precompile
 # FINAL IMAGE
 FROM ruby:<%= Modulorails.data.ruby_version %>-alpine
 
+ENV RAILS_ENV=development
+ENV EDITOR=vim
 WORKDIR /app
 
 RUN apk add --update --no-cache \
@@ -40,6 +42,7 @@ RUN apk add --update --no-cache \
     nodejs \
     tzdata \
     shared-mime-info \
+    vim \
     <%- adapter = Modulorails.data.adapter -%>
     <%- if adapter =~ /mysql/ -%>
     mysql-dev \
