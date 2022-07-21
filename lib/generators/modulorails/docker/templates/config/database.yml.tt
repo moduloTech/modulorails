@@ -13,7 +13,7 @@ development: &default
   port: <%%= ENV.fetch('<%= upper_image_name %>_DATABASE_PORT', 3306) %>
 <%- else -%>
 development: &default
-  adapter: pg
+  adapter: postgresql
   database: <%%= ENV.fetch('<%= upper_image_name %>_DATABASE_NAME', '<%= image_name %>') %>
   username: <%%= ENV.fetch('<%= upper_image_name %>_DATABASE_USERNAME', 'postgres') %>
   password: <%%= ENV.fetch('<%= upper_image_name %>_DATABASE_PASSWORD', 'postgres') %>

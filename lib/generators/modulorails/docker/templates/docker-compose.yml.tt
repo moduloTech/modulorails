@@ -20,6 +20,8 @@ services:
       <%= image_name.upcase %>_DATABASE_HOST: database
       <%= image_name.upcase %>_DATABASE_NAME: <%= image_name %>
     entrypoint: ./entrypoints/docker-entrypoint.sh
+    stdin_open: true
+    tty: true
 
   <%- adapter = Modulorails.data.adapter -%>
   <%- if adapter =~ /mysql/ -%>
@@ -52,7 +54,9 @@ services:
     ports:
       - 1080:80
 
- webpack:
+  <%- webpack_container_needed = Modulorails.data.webpacker_version.present? -%>
+  <%- if webpack_container_needed -%>
+  webpack:
    image: modulotechgroup/<%= image_name %>:dev
    build:
      context: .
@@ -66,6 +70,7 @@ services:
      NODE_ENV: development
      RAILS_ENV: development
      WEBPACKER_DEV_SERVER_HOST: 0.0.0.0
+  <%- end-%>
 
 volumes:
   db_data:

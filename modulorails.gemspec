@@ -7,7 +7,7 @@ Gem::Specification.new do |spec|
   spec.email         = ['ciappa_m@modulotech.fr']
 
   spec.summary       = 'Common base for Ruby on Rails projects at Modulotech'
-  spec.description   =<<~END_OF_TEXT
+  spec.description = <<~END_OF_TEXT
     Modulorails is the common base for the Ruby on Rails project at Modulotech
     (https://www.modulotech.fr/).
 
@@ -24,19 +24,20 @@ Gem::Specification.new do |spec|
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
-  spec.files         = Dir.chdir(File.expand_path('..', __FILE__)) do
+  spec.files = Dir.chdir(File.expand_path(__dir__)) do
     `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
   end
   spec.require_paths = ['lib']
 
-  spec.add_runtime_dependency 'railties', '>= 4.2.0'
   spec.add_runtime_dependency 'git', '~> 1.7', '>= 1.7.0'
-  spec.add_runtime_dependency 'httparty'
-  spec.add_runtime_dependency 'i18n'
   spec.add_runtime_dependency 'health_check', '~> 3.1'
-  spec.add_runtime_dependency 'rubocop', '= 1.25.1'
-  spec.add_runtime_dependency 'rubocop-rails', '= 2.13.2'
+  spec.add_runtime_dependency 'httparty', '>= 0.13.3'
+  spec.add_runtime_dependency 'i18n', '>= 0.9.5'
+  spec.add_runtime_dependency 'railties', '>= 4.2.0'
+  spec.add_runtime_dependency 'rubocop', '>= 1.28.2'
+  spec.add_runtime_dependency 'rubocop-rails', '>= 2.14.2'
 
   spec.add_development_dependency 'activerecord', '>= 4.2.0'
   spec.add_development_dependency 'appraisal'
+  spec.metadata['rubygems_mfa_required'] = 'true'
 end

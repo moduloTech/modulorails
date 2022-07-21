@@ -3,6 +3,7 @@
 require 'rails/generators'
 
 class Modulorails::HealthCheckGenerator < Rails::Generators::Base
+
   source_root File.expand_path('templates', __dir__)
   desc 'This generator creates a configuration for the health_check gem'
 
@@ -12,9 +13,10 @@ class Modulorails::HealthCheckGenerator < Rails::Generators::Base
 
     # Add the route
     unless File.read(Rails.root.join('config/routes.rb')).match?('health_check_routes')
-      inject_into_file 'config/routes.rb', after: "Rails.application.routes.draw do\n" do <<~'RUBY'
-        health_check_routes
-      RUBY
+      inject_into_file 'config/routes.rb', after: "Rails.application.routes.draw do\n" do
+        <<~'RUBY'
+          health_check_routes
+        RUBY
       end
     end
 
@@ -24,7 +26,7 @@ class Modulorails::HealthCheckGenerator < Rails::Generators::Base
     # Create file to avoid this generator on next modulorails launch
     create_keep_file
   rescue StandardError => e
-    $stderr.puts("[Modulorails] Error: cannot generate health_check configuration: #{e.message}")
+    warn("[Modulorails] Error: cannot generate health_check configuration: #{e.message}")
   end
 
   private
@@ -36,6 +38,7 @@ class Modulorails::HealthCheckGenerator < Rails::Generators::Base
     copy_file(file, file)
 
     say "Add #{file} to git"
-    %x(git add #{file})
+    `git add #{file}`
   end
+
 end

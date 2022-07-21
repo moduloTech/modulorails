@@ -1,7 +1,9 @@
 module Modulorails
+
   # Author: Matthieu 'ciappa_m' Ciappara
   # The configuration of the gem
   class Configuration
+
     # All the keys to configure the gem
     attr_accessor :_name, :_main_developer, :_project_manager, :_endpoint, :_api_key,
                   :_no_auto_update, :_production_url, :_staging_url, :_review_base_url
@@ -30,5 +32,7 @@ module Modulorails
         send("_#{field}=", value)
       end
     end
+
   end
+
 end

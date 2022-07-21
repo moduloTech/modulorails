@@ -3,6 +3,7 @@
 require 'rails/generators'
 
 class Modulorails::GitlabciGenerator < Rails::Generators::Base
+
   source_root File.expand_path('templates', __dir__)
   desc 'This generator creates a template for a .gitlab-ci.yml file at root'
 
@@ -17,7 +18,7 @@ class Modulorails::GitlabciGenerator < Rails::Generators::Base
     # Create file to avoid this generator on next modulorails launch
     create_keep_file
   rescue StandardError => e
-    $stderr.puts("[Modulorails] Error: cannot generate CI configuration: #{e.message}")
+    warn("[Modulorails] Error: cannot generate CI configuration: #{e.message}")
   end
 
   private
@@ -29,6 +30,7 @@ class Modulorails::GitlabciGenerator < Rails::Generators::Base
     copy_file(file, file)
 
     say "Add #{file} to git"
-    %x(git add #{file})
+    `git add #{file}`
   end
+
 end

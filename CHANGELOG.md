@@ -2,6 +2,25 @@
 
 This file is used to list changes made in each version of the gem.
 
+# 1.1.0
+
+The 'new project' release.
+
+- Add lot of Rubocop rules.
+- Fix rubocop offenses for the gem.
+- Ensure Modulorails will work with Moduloproject.
+- Add `webpacker`, `importmap` and `jsbundling` versions to `Modulorails::Data`.
+
+# 1.0.2
+
+Fix error in with_transaction: `uninitialized constant Modulorails::BaseService::ErrorData`.
+
+# 1.0.1
+
+First Rubocop rules.
+
+- Add Style/StringLiterals, Style/QuotedSymbols and Lint/SymbolConversion.
+
 # 1.0.0
 
 The Rubocop release.

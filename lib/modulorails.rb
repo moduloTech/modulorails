@@ -17,11 +17,13 @@ require 'modulorails/services/services'
 # The entry point of the gem. It exposes the configurator, the gathered data and the method to
 # send those data to the intranet.
 module Modulorails
+
   # Author: Matthieu 'ciappa_m' Ciappara
   # The error class of the gem. Allow to identify all functional errors raised by the gem.
   class Error < StandardError; end
 
   class << self
+
     # Useful to update the configuration
     attr_writer :configuration
 
@@ -73,37 +75,37 @@ module Modulorails
       # If no endpoint and/or no API key is configured, it is impossible to send the data to the
       # intranet and thus we raise an error: it is the only error we want to raise since it goes
       # against one of the main goals of the gem and the gem's user is responsible.
-      if configuration.endpoint && configuration.api_key
-        # Define the headers of the request ; sending JSON and API key to authenticate the gem on
-        # the intranet
-        headers = {
-          'Content-Type' => 'application/json', 'X-MODULORAILS-TOKEN' => configuration.api_key
-        }
-
-        # Define the JSON body of the request
-        body = data.to_params.to_json
-
-        # Prevent HTTParty to raise error and crash the server in dev
-        begin
-          # Post to the configured endpoint on the Intranet
-          response = HTTParty.post(configuration.endpoint, headers: headers, body: body)
-
-          # According to the API specification, on a "Bad request" response, the server explicits what
-          # went wrong with an `errors` field. We do not want to raise since the gem's user is not
-          # (necessarily) responsible for the error but we still need to display it somewhere to warn
-          # the user something went wrong.
-          puts("[Modulorails] Error: #{response['errors'].join(', ')}") if response.code == 400
-
-          # Return the response to allow users to do some more
-          response
-        rescue StandardError => e
-          # Still need to notify the user
-          puts("[Modulorails] Error: Could not post to #{configuration.endpoint}")
-          puts e.message
-          nil
-        end
-      else
+      unless configuration.endpoint && configuration.api_key
         raise Error.new('No endpoint or api key')
+      end
+
+      # Define the headers of the request ; sending JSON and API key to authenticate the gem on
+      # the intranet
+      headers = {
+        'Content-Type' => 'application/json', 'X-MODULORAILS-TOKEN' => configuration.api_key
+      }
+
+      # Define the JSON body of the request
+      body = data.to_params.to_json
+
+      # Prevent HTTParty to raise error and crash the server in dev
+      begin
+        # Post to the configured endpoint on the Intranet
+        response = HTTParty.post(configuration.endpoint, headers: headers, body: body)
+
+        # According to the API specification, on a "Bad request" response, the server explicits what
+        # went wrong with an `errors` field. We do not want to raise since the gem's user is not
+        # (necessarily) responsible for the error but we still need to display it somewhere to warn
+        # the user something went wrong.
+        puts("[Modulorails] Error: #{response['errors'].join(', ')}") if response.code == 400
+
+        # Return the response to allow users to do some more
+        response
+      rescue StandardError => e
+        # Still need to notify the user
+        puts("[Modulorails] Error: Could not post to #{configuration.endpoint}")
+        puts e.message
+        nil
       end
     end
 
@@ -112,7 +114,7 @@ module Modulorails
     # Generate a CI/CD template unless it was already done.
     # The check is done using a 'keepfile'.
     def generate_ci_template
-      return if File.exists?(Rails.root.join('.modulorails-gitlab-ci'))
+      return if File.exist?(Rails.root.join('.modulorails-gitlab-ci'))
 
       Modulorails::GitlabciGenerator.new([], {}, {}).invoke_all
     end
@@ -138,7 +140,10 @@ module Modulorails
     # Check the last version of Modulorails available on rubygems and update if there was a
     # publication
     def self_update
-      Modulorails::SelfUpdateGenerator.new([], {}, {}).invoke_all unless configuration.no_auto_update
+      unless configuration.no_auto_update
+        Modulorails::SelfUpdateGenerator.new([], {},
+                                             {}).invoke_all
+      end
     rescue StandardError => e
       puts("[Modulorails] An error occured: #{e.class} - #{e.message}")
     end
@@ -148,7 +153,7 @@ module Modulorails
     # Generate a health_check configuration unless it was already done.
     # The check is done using a 'keepfile'.
     def generate_healthcheck_template
-      return if File.exists?(Rails.root.join('.modulorails-health_check'))
+      return if File.exist?(Rails.root.join('.modulorails-health_check'))
 
       Modulorails::HealthCheckGenerator.new([], {}, {}).invoke_all
     end
@@ -159,5 +164,7 @@ module Modulorails
     def generate_rubocop_template
       Modulorails::RubocopGenerator.new([], {}, {}).invoke_all
     end
+
   end
+
 end

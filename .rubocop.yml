@@ -12,29 +12,33 @@
 # Enabling Rails-specific cops.
 require: rubocop-rails
 
+inherit_mode:
+  merge:
+    - Exclude
+    - Include
+
 AllCops:
-  # Disable all cops by default to ease the migration. This will probably be removed one day.
-  DisabledByDefault: true
   # No suggestions since the gem is the sole truth for rubocop configuration.
   SuggestExtensions: false
 
+  # Enable new cops by default
+  NewCops: enable
+
   # Excluding most directories with generated files and directories with configuration files.
   Exclude:
-    - 'vendor/**/*'
-    - 'db/**/*'
-    - 'tmp/**/*'
-    - 'bin/**/*'
-    - 'builds/**/*'
-    - 'Gemfile'
-    - 'config/environments/*'
-    - 'config/puma.rb'
-    - 'config/spring.rb'
-    - 'test/application_system_test_case.rb'
-    - 'test/test_helper.rb'
-    - 'config/initializers/*.rb'
-    - 'spec/spec_helper.rb'
-    - 'node_modules/**/*'
-    - 'spec/**/*'
+    - '/**/vendor/**/*'
+    - '/**/db/**/*'
+    - '/**/tmp/**/*'
+    - '/**/bin/**/*'
+    - '/**/builds/**/*'
+    - '/**/Gemfile'
+    - '/**/Guardfile'
+    - '/**/Capfile'
+    - '/**/Rakefile'
+    - '/**/config/**/*'
+    - '/**/test/**/*'
+    - '/**/node_modules/**/*'
+    - '/**/spec/**/*'
 
 # Instructing rubocop about all standard Modulotech environments.
 Rails/UnknownEnv:
@@ -43,3 +47,221 @@ Rails/UnknownEnv:
     - development
     - test
     - staging
+    - preprod
+
+# Checks if String literals are using single quotes when no interpolation is required
+Style/StringLiterals:
+  Enabled: true
+  EnforcedStyle: single_quotes
+  ConsistentQuotesInMultiline: false
+
+# Checks if the quotes used for quoted symbols are single quotes when no interpolation is required
+Style/QuotedSymbols:
+  Enabled: true
+  EnforcedStyle: same_as_string_literals
+
+# This cop checks for uses of literal strings converted to a symbol where a literal symbol could be used instead.
+Lint/SymbolConversion:
+  Enabled: true
+  EnforcedStyle: strict
+
+# Useless cop. It checks for unnecessary safe navigations.
+# Example:
+# obj&.a && obj.b
+# Triggers rubocop error: it requires to add safe navigation for "obj.b" call => "obj&.b".
+# but it is not necessary. obj&.a will return nil if obj is nil, and it will stop
+# execution of the operation because `&&` right part executes only when left part is truthy.
+Lint/SafeNavigationConsistency:
+  Enabled: false
+
+# Checks for places where keyword arguments can be used instead of boolean arguments when defining methods.
+# Disabled because moving from default arguments to keywords is not that easy.
+Style/OptionalBooleanParameter:
+  Enabled: false
+
+# Checks for use of the lambda.(args) syntax.
+# Disabled while the Ruby team has not voted on this.
+Style/LambdaCall:
+  Enabled: false
+  EnforcedStyle: braces
+
+# Checks for presence or absence of braces around hash literal as a last array item depending on configuration.
+# Disabled because it would break a lot of permitted_params definitions
+Style/HashAsLastArrayItem:
+  Enabled: false
+
+# Checks for grouping of accessors in class and module bodies.
+# Useless.
+Style/AccessorGrouping:
+  Enabled: false
+
+# Makes our lives happier: we don't need to disable it in each case/when method
+# with more than 5 "when"s.
+Metrics/CyclomaticComplexity:
+  Max: 10
+
+# Commonly used screens these days easily fit more than 80 characters.
+Layout/LineLength:
+  Max: 100
+
+# Too short methods lead to extraction of single-use methods, which can make
+# the code easier to read (by naming things), but can also clutter the class
+Metrics/MethodLength:
+  Max: 20
+
+# The guiding principle of classes is SRP, SRP can't be accurately measured by LoC
+Metrics/ClassLength:
+  Max: 1500
+
+# No space makes the method definition shorter and differentiates
+# from a regular assignment.
+Layout/SpaceAroundEqualsInParameterDefault:
+  EnforcedStyle: no_space
+
+# We do not need to support Ruby 1.9, so this is good to use.
+Style/SymbolArray:
+  Enabled: true
+
+# Most readable form.
+Layout/HashAlignment:
+  EnforcedHashRocketStyle: table
+  EnforcedColonStyle: table
+
+# Mixing the styles looks just silly.
+Style/HashSyntax:
+  EnforcedStyle: ruby19_no_mixed_keys
+
+# has_key? and has_value? are far more readable than key? and value?
+Style/PreferredHashMethods:
+  Enabled: false
+
+# String#% is by far the least verbose and only object oriented variant.
+Style/FormatString:
+  EnforcedStyle: percent
+
+# Annotated or template are too verbose and rarely needed.
+Style/FormatStringToken:
+  EnforcedStyle: unannotated
+
+Style/CollectionMethods:
+  Enabled: true
+  PreferredMethods:
+    # inject seems more common in the community.
+    reduce: "inject"
+
+# Either allow this style or don't. Marking it as safe with parenthesis
+# is silly. Let's try to live without them for now.
+Style/ParenthesesAroundCondition:
+  AllowSafeAssignment: false
+Lint/AssignmentInCondition:
+  AllowSafeAssignment: false
+
+# A specialized exception class will take one or more arguments and construct the message from it.
+# So both variants make sense.
+Style/RaiseArgs:
+  Enabled: false
+
+# Indenting the chained dots beneath each other is not supported by this cop,
+# see https://github.com/bbatsov/rubocop/issues/1633
+Layout/MultilineOperationIndentation:
+  Enabled: false
+
+# Fail is an alias of raise. Avoid aliases, it's more cognitive load for no gain.
+# The argument that fail should be used to abort the program is wrong too,
+# there's Kernel#abort for that.
+Style/SignalException:
+  EnforcedStyle: only_raise
+
+# Suppressing exceptions can be perfectly fine, and be it to avoid to
+# explicitly type nil into the rescue since that's what you want to return,
+# or suppressing LoadError for optional dependencies
+Lint/SuppressedException:
+  Enabled: false
+
+# { ... } for multi-line blocks is okay, follow Weirichs rule instead:
+# https://web.archive.org/web/20140221124509/http://onestepback.org/index.cgi/Tech/Ruby/BraceVsDoEnd.rdoc
+Style/BlockDelimiters:
+  Enabled: false
+
+# do / end blocks should be used for side effects,
+# methods that run a block for side effects and have
+# a useful return value are rare, assign the return
+# value to a local variable for those cases.
+Style/MethodCalledOnDoEndBlock:
+  Enabled: true
+
+# Enforcing the names of variables? To single letter ones? Just no.
+Style/SingleLineBlockParams:
+  Enabled: false
+
+# Shadowing outer local variables with block parameters is often useful
+# to not reinvent a new name for the same thing, it highlights the relation
+# between the outer variable and the parameter. The cases where it's actually
+# confusing are rare, and usually bad for other reasons already, for example
+# because the method is too long.
+Lint/ShadowingOuterLocalVariable:
+  Enabled: false
+
+# Check with yard instead.
+Style/Documentation:
+  Enabled: false
+
+# This is just silly. Calling the argument `other` in all cases makes no sense.
+Naming/BinaryOperatorParameterName:
+  Enabled: false
+
+# Disable frozen string
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+# Disable No ASCII char in comments
+Style/AsciiComments:
+  Enabled: false
+
+# Disable ordered Gems By ascii
+Bundler/OrderedGems:
+  Enabled: false
+
+# Change ABC max value
+Metrics/AbcSize:
+  Max: 35
+
+# Disable empty method in one line
+Style/EmptyMethod:
+  EnforcedStyle: expanded
+
+# Disable max height block
+Metrics/BlockLength:
+  Enabled: true
+  Exclude:
+    - '/**/app/admin/**/*'
+
+# Checks if empty lines around the bodies of classes match the configuration.
+Layout/EmptyLinesAroundClassBody:
+  EnforcedStyle: empty_lines
+# Checks if empty lines around the bodies of modules match the configuration.
+Layout/EmptyLinesAroundModuleBody:
+  EnforcedStyle: empty_lines
+
+# Enforces the consistent usage of %-literal delimiters.
+Style/PercentLiteralDelimiters:
+  PreferredDelimiters:
+    default: '()'
+    '%i': '[]'
+    '%I': '[]'
+    '%r': '{}'
+    '%w': '[]'
+    '%W': '[]'
+
+# Unnecessary cop. In what universe "A || B && C" or "A && B || C && D" is ambiguous? looks
+# like a cop for those who can't in boolean.
+Lint/AmbiguousOperatorPrecedence:
+  Enabled: false
+
+# Checks for simple usages of parallel assignment.
+Style/ParallelAssignment:
+  Enabled: false
+
+# Checks the style of children definitions at classes and modules.
+Style/ClassAndModuleChildren:
+  Enabled: false
