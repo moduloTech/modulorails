@@ -26,19 +26,18 @@ AllCops:
 
   # Excluding most directories with generated files and directories with configuration files.
   Exclude:
-    - '/**/vendor/**/*'
-    - '/**/db/**/*'
-    - '/**/tmp/**/*'
-    - '/**/bin/**/*'
-    - '/**/builds/**/*'
-    - '/**/Gemfile'
-    - '/**/Guardfile'
-    - '/**/Capfile'
-    - '/**/Rakefile'
-    - '/**/config/**/*'
-    - '/**/test/**/*'
-    - '/**/node_modules/**/*'
-    - '/**/spec/**/*'
+    - 'vendor/**/*'
+    - 'db/**/*'
+    - 'tmp/**/*'
+    - 'bin'
+    - '**/Gemfile'
+    - '**/Guardfile'
+    - '**/Capfile'
+    - '**/Rakefile'
+    - 'config/**/*'
+    - 'test/**/*'
+    - 'node_modules/**/*'
+    - 'spec/**/*'
 
 # Instructing rubocop about all standard Modulotech environments.
 Rails/UnknownEnv:
@@ -234,7 +233,7 @@ Style/EmptyMethod:
 Metrics/BlockLength:
   Enabled: true
   Exclude:
-    - '/**/app/admin/**/*'
+    - 'app/admin/**/*'
 
 # Checks if empty lines around the bodies of classes match the configuration.
 Layout/EmptyLinesAroundClassBody:
