@@ -1,9 +1,0 @@
-# Configuration file for bundler-audit: https://github.com/rubysec/bundler-audit.
-# Bundler-audit scans Gemfile.lock for Common Vulnerabilities and Exposures.
-# https://en.wikipedia.org/wiki/Common_Vulnerabilities_and_Exposures
-# https://www.cve.org/
-
-# ---
-# ignore:
-#  - CVE-YYYY-XXXX
-#  - ...

@@ -8,10 +8,7 @@ class Modulorails::BundlerauditGenerator < Rails::Generators::Base
   desc 'This generator creates a configuration for Bundler-Audit'
 
   def create_config_files
-    bundleraudit_config_path = Rails.root.join('.bundler-audit.yml')
     gitlab_config_path       = Rails.root.join('.gitlab-ci.yml')
-
-    template 'bundleraudit.yml', bundleraudit_config_path
 
     return if File.read(gitlab_config_path).match?(/\s+extends:\s+.bundleraudit\s*$/)
 
