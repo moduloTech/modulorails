@@ -36,6 +36,7 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'railties', '>= 4.2.0'
   spec.add_runtime_dependency 'rubocop', '>= 1.28.2'
   spec.add_runtime_dependency 'rubocop-rails', '>= 2.14.2'
+  spec.add_runtime_dependency 'bundler-audit', '~> 0.9.1'
 
   spec.add_development_dependency 'activerecord', '>= 4.2.0'
   spec.add_development_dependency 'appraisal'
