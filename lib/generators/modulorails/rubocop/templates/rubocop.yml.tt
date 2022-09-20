@@ -234,6 +234,7 @@ Metrics/BlockLength:
   Enabled: true
   Exclude:
     - 'app/admin/**/*'
+    - 'lib/tasks/**/*'
 
 # Checks if empty lines around the bodies of classes match the configuration.
 Layout/EmptyLinesAroundClassBody:
