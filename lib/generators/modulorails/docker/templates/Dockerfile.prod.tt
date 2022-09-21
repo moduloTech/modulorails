@@ -20,7 +20,8 @@ RUN apk add --update --no-cache \
 RUN gem install bundler -v <%= Modulorails.data.bundler_version %>
 
 COPY Gemfile Gemfile.lock ./
-RUN bundle check || bundle install --deployment --jobs=2 \
+RUN bundle config set --local deployment 'true'
+RUN bundle check || bundle install --jobs=2 \
     && rm -rf vendor/bundle/ruby/*/cache/*
 
 COPY package.json yarn.lock ./
