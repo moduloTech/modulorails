@@ -40,5 +40,4 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency 'activerecord', '>= 4.2.0'
   spec.add_development_dependency 'appraisal'
-  spec.metadata['rubygems_mfa_required'] = 'true'
 end
