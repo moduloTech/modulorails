@@ -264,3 +264,7 @@ Style/ParallelAssignment:
 # Checks the style of children definitions at classes and modules.
 Style/ClassAndModuleChildren:
   Enabled: false
+
+# Useful to display but it really is a bother to change it: hence the `info` severity.
+Rails/I18nLocaleTexts:
+  Severity: info
