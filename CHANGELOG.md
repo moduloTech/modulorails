@@ -2,6 +2,10 @@
 
 This file is used to list changes made in each version of the gem.
 
+# 1.2.1
+
+- Update rubocop configuration.
+
 # 1.2.0
 
 The 'audit' release.
