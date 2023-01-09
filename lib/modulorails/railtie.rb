@@ -51,6 +51,9 @@ module Modulorails
         # Add/update Rubocop config
         Modulorails.generate_rubocop_template
 
+        # Add/update Bundler-audit config
+        Modulorails.generate_bundleraudit_template
+
         # Gem's self-update if a new version was released
         Modulorails.self_update
       end

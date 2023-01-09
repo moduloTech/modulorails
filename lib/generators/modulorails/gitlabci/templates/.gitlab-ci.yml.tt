@@ -17,9 +17,16 @@ services:
 
 variables:
   IMAGE_NAME: <%= image_name %>
+  <%- if adapter =~ /mysql/ -%>
   MYSQL_DATABASE: <%= image_name %>_test
   MYSQL_ALLOW_EMPTY_PASSWORD: 'true'
   <%= image_name.upcase %>_DATABASE_HOST: mysql
+  <%- else -%>
+  POSTGRES_DB: <%= image_name %>_test
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: postgres
+  <%= image_name.upcase %>_DATABASE_HOST: postgres
+  <%- end -%>
 
 stages:
   - test

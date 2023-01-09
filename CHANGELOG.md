@@ -2,6 +2,19 @@
 
 This file is used to list changes made in each version of the gem.
 
+# 1.2.1
+
+- Update rubocop configuration.
+
+# 1.2.0
+
+The 'audit' release.
+
+- Add bundler-audit in CI.
+- Make the rubocop configuration work during CI.
+- Fix generation of .gitlab-ci.yml for PG databases.
+- Remove deprecated `--deployment` flag from Dockerfile.prod
+
 # 1.1.0
 
 The 'new project' release.

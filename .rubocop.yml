@@ -26,19 +26,18 @@ AllCops:
 
   # Excluding most directories with generated files and directories with configuration files.
   Exclude:
-    - '/**/vendor/**/*'
-    - '/**/db/**/*'
-    - '/**/tmp/**/*'
-    - '/**/bin/**/*'
-    - '/**/builds/**/*'
-    - '/**/Gemfile'
-    - '/**/Guardfile'
-    - '/**/Capfile'
-    - '/**/Rakefile'
-    - '/**/config/**/*'
-    - '/**/test/**/*'
-    - '/**/node_modules/**/*'
-    - '/**/spec/**/*'
+    - 'vendor/**/*'
+    - 'db/**/*'
+    - 'tmp/**/*'
+    - 'bin'
+    - '**/Gemfile'
+    - '**/Guardfile'
+    - '**/Capfile'
+    - '**/Rakefile'
+    - 'config/**/*'
+    - 'test/**/*'
+    - 'node_modules/**/*'
+    - 'spec/**/*'
 
 # Instructing rubocop about all standard Modulotech environments.
 Rails/UnknownEnv:
@@ -102,12 +101,12 @@ Metrics/CyclomaticComplexity:
 
 # Commonly used screens these days easily fit more than 80 characters.
 Layout/LineLength:
-  Max: 100
+  Max: 120
 
 # Too short methods lead to extraction of single-use methods, which can make
 # the code easier to read (by naming things), but can also clutter the class
 Metrics/MethodLength:
-  Max: 20
+  Max: 25
 
 # The guiding principle of classes is SRP, SRP can't be accurately measured by LoC
 Metrics/ClassLength:
@@ -234,7 +233,7 @@ Style/EmptyMethod:
 Metrics/BlockLength:
   Enabled: true
   Exclude:
-    - '/**/app/admin/**/*'
+    - 'app/admin/**/*'
 
 # Checks if empty lines around the bodies of classes match the configuration.
 Layout/EmptyLinesAroundClassBody:
@@ -265,3 +264,7 @@ Style/ParallelAssignment:
 # Checks the style of children definitions at classes and modules.
 Style/ClassAndModuleChildren:
   Enabled: false
+
+# Useful to display but it really is a bother to change it: hence the `info` severity.
+Rails/I18nLocaleTexts:
+  Severity: info
