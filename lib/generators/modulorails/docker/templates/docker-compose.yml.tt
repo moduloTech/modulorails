@@ -19,6 +19,7 @@ services:
       URL: http://localhost:3000
       <%= image_name.upcase %>_DATABASE_HOST: database
       <%= image_name.upcase %>_DATABASE_NAME: <%= image_name %>
+      REDIS_URL: redis://redis:6379/1
     entrypoint: ./entrypoints/docker-entrypoint.sh
     stdin_open: true
     tty: true

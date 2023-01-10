@@ -15,6 +15,7 @@ class Modulorails::DockerGenerator < Rails::Generators::Base
     template 'entrypoints/docker-entrypoint.sh'
     chmod 'entrypoints/docker-entrypoint.sh', 0755
     template 'config/database.yml'
+    template 'config/cable.yml'
 
     # Useless unless project is using Webpacker
     if Modulorails.data.webpacker_version.present?

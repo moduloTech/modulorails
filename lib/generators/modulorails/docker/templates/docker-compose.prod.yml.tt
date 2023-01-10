@@ -18,6 +18,7 @@ services:
       <%= image_name.upcase %>_DATABASE_HOST: database
       <%= image_name.upcase %>_DATABASE_NAME: <%= image_name %>
       RAILS_SERVE_STATIC_FILES: 'true'
+      REDIS_URL: redis://redis:6379/1
 
   <%- adapter = Modulorails.data.adapter -%>
   <%- if adapter =~ /mysql/ -%>
