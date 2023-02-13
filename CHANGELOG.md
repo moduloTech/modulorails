@@ -6,6 +6,7 @@ This file is used to list changes made in each version of the gem.
 
 - Update redis configuration in generators.
 - Update mailcatcher docker image for better compatibility with ARM64.
+- Remove possible suffix `Service` in service generator.
 
 # 1.2.1
 

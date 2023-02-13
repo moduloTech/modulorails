@@ -1,0 +1,14 @@
+Description:
+    Generates a new Modulorails service. Pass the service name, either
+    CamelCased or under_scored, and a list of parameters as arguments.
+
+    To create a service within a module, specify the service name as a
+    path like 'parent_module/service_name'.
+
+    This generates a service class in app/services.
+
+Example:
+    `bin/rails generate modulorails:service Missions::Search word page per`
+
+    Mission::Search service with positional parameters word, page and per.
+        Service: app/services/missions/search_service.rb
