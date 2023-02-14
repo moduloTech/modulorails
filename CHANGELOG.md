@@ -8,6 +8,7 @@ This file is used to list changes made in each version of the gem.
 - Update mailcatcher docker image for better compatibility with ARM64.
 - Remove possible suffix `Service` in service generator.
 - Update rubocop configuration in template.
+- Add a generator to add Sidekiq to a project.
 
 # 1.2.1
 
