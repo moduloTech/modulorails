@@ -13,11 +13,7 @@ class Modulorails::HealthCheckGenerator < Rails::Generators::Base
 
     # Add the route
     unless File.read(Rails.root.join('config/routes.rb')).match?('health_check_routes')
-      inject_into_file 'config/routes.rb', after: "Rails.application.routes.draw do\n" do
-        <<~'RUBY'
-          health_check_routes
-        RUBY
-      end
+      inject_into_file 'config/routes.rb', "  health_check_routes\n\n", after: "Rails.application.routes.draw do\n"
     end
 
     # Update the gem and the Gemfile.lock
