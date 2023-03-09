@@ -9,6 +9,7 @@ This file is used to list changes made in each version of the gem.
 - Remove possible suffix `Service` in service generator.
 - Update rubocop configuration in template.
 - Add a generator to add Sidekiq to a project.
+- Update docker generator to use valid names for environment variables.
 
 # 1.2.1
 

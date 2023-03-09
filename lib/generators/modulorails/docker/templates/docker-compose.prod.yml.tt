@@ -1,6 +1,7 @@
 version: '3.7'
 
 <%- image_name = Modulorails.data.name.parameterize -%>
+<%- environment_name = Modulorails.data.environment_name -%>
 services:
   app:
     image: modulotechgroup/<%= image_name %>
@@ -15,8 +16,8 @@ services:
     environment:
       RAILS_ENV: production
       URL: http://localhost:3000
-      <%= image_name.upcase %>_DATABASE_HOST: database
-      <%= image_name.upcase %>_DATABASE_NAME: <%= image_name %>
+      <%= environment_name %>_DATABASE_HOST: database
+      <%= environment_name %>_DATABASE_NAME: <%= image_name %>
       RAILS_SERVE_STATIC_FILES: 'true'
       REDIS_URL: redis://redis:6379/1
 

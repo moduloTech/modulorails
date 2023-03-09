@@ -1,4 +1,5 @@
 <%- image_name = Modulorails.data.name.parameterize -%>
+<%- environment_name = Modulorails.data.environment_name -%>
 include:
   - project: 'modulosource/modulotech/devops/gitlab-ci-templates'
     file:
@@ -20,12 +21,12 @@ variables:
   <%- if adapter =~ /mysql/ -%>
   MYSQL_DATABASE: <%= image_name %>_test
   MYSQL_ALLOW_EMPTY_PASSWORD: 'true'
-  <%= image_name.upcase %>_DATABASE_HOST: mysql
+  <%= environment_name %>_DATABASE_HOST: mysql
   <%- else -%>
   POSTGRES_DB: <%= image_name %>_test
   POSTGRES_USER: postgres
   POSTGRES_PASSWORD: postgres
-  <%= image_name.upcase %>_DATABASE_HOST: postgres
+  <%= environment_name %>_DATABASE_HOST: postgres
   <%- end -%>
 
 stages:

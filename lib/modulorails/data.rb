@@ -15,6 +15,7 @@ module Modulorails
       bundler_version modulorails_version adapter db_version adapter_version webpacker_version
       importmap_version jsbundling_version
       production_url staging_url review_base_url
+      environment_name
     ].freeze
 
     # Useful if the gem's user need to read one of the data
@@ -72,6 +73,9 @@ module Modulorails
       # The data written by the user in the configuration
       # The name is the usual name of the project, the one used in conversations at Modulotech
       @name = configuration.name
+
+      # A version of the name suitable to name environment variables
+      @environment_name = @name.parameterize.gsub('-', '_').gsub(/\b(\d)/, 'MT_\1').upcase
 
       # The main developer, the lead developer, in short the developer to call when something's
       # wrong with the application ;)
