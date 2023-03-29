@@ -1,7 +1,8 @@
 # BUILD IMAGE
 FROM ruby:<%= Modulorails.data.ruby_version %>-alpine as builder
 
-ENV RAILS_ENV=production
+ENV RAILS_ENV=production \
+    SECRET_KEY_BASE=1
 WORKDIR /app
 
 RUN apk add --update --no-cache \
@@ -24,8 +25,11 @@ RUN bundle config set --local deployment 'true'
 RUN bundle check || bundle install --jobs=2 \
     && rm -rf vendor/bundle/ruby/*/cache/*
 
+<%- webpack_container_needed = Modulorails.data.webpacker_version.present? -%>
+<%- if webpack_container_needed -%>
 COPY package.json yarn.lock ./
 RUN yarn install
+<%- end-%>
 
 COPY . .
 RUN bundle exec rake assets:precompile
