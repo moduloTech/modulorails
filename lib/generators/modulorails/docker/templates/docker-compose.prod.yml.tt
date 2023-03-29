@@ -33,7 +33,7 @@ services:
       MYSQL_ROOT_HOST: '%'
   <%- else -%>
   database:
-    image: postgres:13.5
+    image: postgres:15-alpine
     volumes:
       - db_data:/var/lib/postgresql/data
     environment:
@@ -45,7 +45,7 @@ services:
   <%- end -%>
 
   redis:
-    image: redis:6.2-alpine
+    image: redis:7-alpine
 
 # Define the volumes references in the services
 volumes:
