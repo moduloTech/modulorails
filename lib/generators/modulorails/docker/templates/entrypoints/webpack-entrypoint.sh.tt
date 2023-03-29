@@ -4,4 +4,4 @@
 set -e
 
 # Launch webpack
-./bin/webpack-dev-server
+exec ./bin/webpack-dev-server
