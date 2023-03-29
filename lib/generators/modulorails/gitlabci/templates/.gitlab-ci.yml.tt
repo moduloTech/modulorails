@@ -1,4 +1,3 @@
-<%- image_name = Modulorails.data.name.parameterize -%>
 <%- environment_name = Modulorails.data.environment_name -%>
 include:
   - project: 'modulosource/modulotech/devops/gitlab-ci-templates'
@@ -7,23 +6,14 @@ include:
       - '/templates/integration.gitlab-ci.yml'
       - '/templates/docker-buildx.gitlab-ci.yml'
 
-services:
-  <%- adapter = Modulorails.data.adapter -%>
-  <%- if adapter =~ /mysql/ -%>
-  - mysql:8.0
-  <%- else -%>
-  - postgres:13.5
-  <%- end -%>
-  - redis:6.2
-
 variables:
-  IMAGE_NAME: <%= image_name %>
+  IMAGE_NAME: <%= @image_name %>
   <%- if adapter =~ /mysql/ -%>
-  MYSQL_DATABASE: <%= image_name %>_test
+  MYSQL_DATABASE: <%= @image_name %>_test
   MYSQL_ALLOW_EMPTY_PASSWORD: 'true'
   <%= environment_name %>_DATABASE_HOST: mysql
   <%- else -%>
-  POSTGRES_DB: <%= image_name %>_test
+  POSTGRES_DB: <%= @image_name %>_test
   POSTGRES_USER: postgres
   POSTGRES_PASSWORD: postgres
   <%= environment_name %>_DATABASE_HOST: postgres
@@ -34,35 +24,45 @@ stages:
   - build
   - deploy
 
-test:
-  extends: .test
-  script:
-    - "bundle exec rake db:create RAILS_ENV=test"
-    - "RAILS_ENV=test bundle exec rake db:migrate:reset"
-    - RAILS_ENV=test bundle exec rspec --format progress --format RspecJunitFormatter --out rspec.xml
-
 build_integration_image:
   extends: .build_integration_image
+
+test:
+  extends: .test
+  services:
+    <%- adapter = Modulorails.data.adapter -%>
+    <%- if adapter =~ /mysql/ -%>
+    - mysql:8-alpine
+    <%- else -%>
+    - postgres:15-alpine
+    <%- end -%>
+    - redis:7-alpine
+  variables:
+    RAILS_ENV: test
+  script:
+    - bundle exec rake db:create
+    - bundle exec rake db:migrate:reset
+    - bundle exec rspec --format progress --format RspecJunitFormatter --out rspec.xml
 
 docker_build:
   extends: .docker_buildx_push
   only:
     - merge_requests
     - staging
+    - master
 
-<%- review_base_url = Modulorails.data.review_base_url -%>
-<%- if review_base_url.present? -%>
+<%- if @review_base_url.present? -%>
 deploy_review:
   extends: .deploy_helm
   variables:
-    NAMESPACE: <%= image_name %>-$CI_ENVIRONMENT_SLUG
-    NAME: <%= image_name %>
-    CHART_NAME: <%= image_name %>
-    CONFIG_FILE: config/deploy/kubernetes/review.yaml
-    EXTRA_VARS: --set image.tag=$CI_COMMIT_SHORT_SHA --set ingress.hosts[0].host=${CI_ENVIRONMENT_SLUG}.<%= review_base_url %> --set ingress.tls[0].hosts[0]=${CI_ENVIRONMENT_SLUG}.<%= review_base_url %> --set env.url=${CI_ENVIRONMENT_SLUG}.<%= review_base_url %> --set database.password=$DB_PASSWORD --set encryption.key=$ENCRYPTION_KEY
+    NAMESPACE: <%= @image_name %>-$CI_ENVIRONMENT_SLUG
+    NAME: <%= @image_name %>
+    CHART_NAME: <%= @image_name %>
+    CONFIG_FILE: config/deploy/review.yaml
+    EXTRA_VARS: --set image.tag=$CI_COMMIT_SHORT_SHA --set ingress.hosts[0].host=${CI_ENVIRONMENT_SLUG}.<%= @review_base_url %> --set ingress.tls[0].hosts[0]=${CI_ENVIRONMENT_SLUG}.<%= @review_base_url %> --set env.url=${CI_ENVIRONMENT_SLUG}.<%= @review_base_url %> --set database.url=$DATABASE_URL --set master_key.key=$MASTER_KEY
   environment:
     name: review/$CI_COMMIT_REF_SLUG
-    url: https://${CI_ENVIRONMENT_SLUG}.<%= review_base_url %>
+    url: https://${CI_ENVIRONMENT_SLUG}.<%= @review_base_url %>
     on_stop: stop_review
     auto_stop_in: 3 days
   only:
@@ -71,56 +71,40 @@ deploy_review:
 stop_review:
   extends: .stop_review
   variables:
-    NAMESPACE: <%= image_name %>-$CI_ENVIRONMENT_SLUG
-    NAME: <%= image_name %>
+    NAMESPACE: <%= @image_name %>-$CI_ENVIRONMENT_SLUG
+    NAME: <%= @image_name %>
   only:
     - merge_requests
 <%- end -%>
 
-<%- staging_url = Modulorails.data.staging_url -%>
-<%- if staging_url.present? -%>
+<%- if @staging_url.present? -%>
 deploy_staging:
   extends: .deploy_helm
   variables:
-    NAMESPACE: <%= image_name %>
-    NAME: <%= image_name %>
-    CHART_NAME: <%= image_name %>
-    CONFIG_FILE: config/deploy/kubernetes/staging.yaml
-    EXTRA_VARS: --set image.tag=$CI_COMMIT_SHORT_SHA --set database.password=$DB_PASSWORD
+    NAMESPACE: <%= @image_name %>
+    NAME: <%= @image_name %>
+    CHART_NAME: <%= @image_name %>
+    CONFIG_FILE: config/deploy/staging.yaml
+    EXTRA_VARS: --set image.tag=$CI_COMMIT_SHORT_SHA --set database.url=$DATABASE_URL --set master_key.key=$MASTER_KEY
   environment:
     name: staging
-    url: https://<%= staging_url %>
-  only:
-    - staging
-<%- else -%>
-deploy_staging:
-  extends: .deploy_capistrano
-  variables:
-    STAGE: staging
+    url: https://<%= @staging_url %>
   only:
     - staging
 <%- end -%>
 
-<%- production_url = Modulorails.data.production_url -%>
-<%- if production_url.present? -%>
+<%- if @production_url.present? -%>
 deploy_production:
   extends: .deploy_helm
   variables:
-    NAMESPACE: <%= image_name %>
-    NAME: <%= image_name %>
-    CHART_NAME: <%= image_name %>
-    CONFIG_FILE: config/deploy/kubernetes/production.yaml
-    EXTRA_VARS: --set image.tag=$CI_COMMIT_SHORT_SHA --set database.password=$DB_PASSWORD
+    NAMESPACE: <%= @image_name %>
+    NAME: <%= @image_name %>
+    CHART_NAME: <%= @image_name %>
+    CONFIG_FILE: config/deploy/production.yaml
+    EXTRA_VARS: --set image.tag=$CI_COMMIT_SHORT_SHA
   environment:
     name: production
-    url: https://<%= production_url %>
-  only:
-    - master
-<%- else -%>
-deploy_production:
-  extends: .deploy_capistrano
-  variables:
-    STAGE: production
+    url: https://<%= @production_url %>
   only:
     - master
 <%- end -%>
