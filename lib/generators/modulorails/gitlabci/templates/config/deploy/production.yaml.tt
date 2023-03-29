@@ -1,0 +1,43 @@
+imagePullSecrets:
+  - name: regcred
+
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: 'true'
+  hosts:
+    - host: <%= @production_url %>
+      paths:
+        - path: /
+  tls:
+    - secretName: <%= @image_name %>
+      hosts:
+        - <%= @production_url %>
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 512Mi
+  limits:
+    memory: 512Mi
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+
+database:
+  existingSecret: 'database-credential'
+
+master_key:
+  existingSecret: 'masterkey-credential'
+
+env:
+  RAILS_ENV: production
+  URL: https://<%= @production_url %>/
+
+redis:
+  enabled: false
+  existingSecret: 'redis-credential'

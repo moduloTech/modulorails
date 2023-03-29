@@ -2,6 +2,16 @@
 
 This file is used to list changes made in each version of the gem.
 
+# 1.3.1
+
+- Update templates according to new devops standards:
+  - Add exec commands in entrypoints.
+  - Upgrade PG and Redis version in docker-compose files.
+  - Upgrade PG and Redis version in test stage in CI.
+  - Add default SECRET_KEY_BASE and optional `yarn install` in `Dockerfile.prod` templates.
+  - Add templates for Kubernetes values files.
+  - Append sidekiq in Kubernetes values files in Sidekiq generator.
+
 # 1.3.0
 
 - Update redis configuration in generators.

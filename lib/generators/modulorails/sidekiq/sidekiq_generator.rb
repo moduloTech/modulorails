@@ -16,6 +16,12 @@ class Modulorails::SidekiqGenerator < Rails::Generators::Base
     add_to_docker_compose_yml_file(Rails.root.join('docker-compose.prod.yml'))
   end
 
+  def add_to_deploy_files
+    add_to_deploy_file(Rails.root.join('config/deploy/production.yaml'))
+    add_to_deploy_file(Rails.root.join('config/deploy/staging.yaml'))
+    add_to_deploy_file(Rails.root.join('config/deploy/review.yaml'))
+  end
+
   def add_to_gemfile
     gemfile_path = Rails.root.join('Gemfile')
 
@@ -141,6 +147,32 @@ class Modulorails::SidekiqGenerator < Rails::Generators::Base
   config.active_job.queue_adapter = :sidekiq
         RUBY
       end
+    end
+  end
+
+  def add_to_deploy_file(file_path)
+    # Do nothing if file does not exists or Sidekiq is already enabled
+    return if !File.exist?(file_path) || File.read(file_path).match?(/^ {2}sidekiq:$/)
+
+    # Add sidekiq to deploy file
+    insert_into_file file_path do
+      <<-YAML
+
+sidekiq:
+  enabled: true
+  resources:
+    requests:
+      cpu: 100m
+      memory: 512Mi
+    limits:
+      cpu: 100m
+      memory: 512Mi
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 80
+      YAML
     end
   end
 end

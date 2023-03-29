@@ -1,10 +1,8 @@
 version: '3.7'
 
-<%- image_name = Modulorails.data.name.parameterize -%>
-<%- environment_name = Modulorails.data.environment_name -%>
 services:
   app:
-    image: modulotechgroup/<%= image_name %>:dev
+    image: modulotechgroup/<%= @image_name %>:dev
     build:
       context: .
       dockerfile: Dockerfile
@@ -18,48 +16,46 @@ services:
     environment:
       RAILS_ENV: development
       URL: http://localhost:3000
-      <%= environment_name %>_DATABASE_HOST: database
-      <%= environment_name %>_DATABASE_NAME: <%= image_name %>
+      <%= @environment_name %>_DATABASE_HOST: database
+      <%= @environment_name %>_DATABASE_NAME: <%= @image_name %>
       REDIS_URL: redis://redis:6379/1
     entrypoint: ./entrypoints/docker-entrypoint.sh
     stdin_open: true
     tty: true
 
-  <%- adapter = Modulorails.data.adapter -%>
-  <%- if adapter =~ /mysql/ -%>
+  <%- if @adapter =~ /mysql/ -%>
   database:
     image: mysql/mysql-server:8.0
     volumes:
       - db_data:/var/lib/mysql
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: 'true'
-      MYSQL_DATABASE: <%= image_name %>
+      MYSQL_DATABASE: <%= @image_name %>
       MYSQL_ROOT_HOST: '%'
-  <%- else-%>
+  <%- else -%>
   database:
-    image: postgres:13.5
+    image: postgres:15-alpine
     volumes:
       - db_data:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: <%= image_name %>
+      POSTGRES_DB: <%= @image_name %>
       LC_COLLATE: 'en_US.UTF-8'
       LC_CTYPE: 'en_US.UTF-8'
-  <%- end-%>
+  <%- end -%>
 
   redis:
-    image: redis:6.2-alpine
+    image: redis:7-alpine
 
   mailcatcher:
     image: dockage/mailcatcher
     ports:
       - 1080:1080
 
-  <%- webpack_container_needed = Modulorails.data.webpacker_version.present? -%>
-  <%- if webpack_container_needed -%>
+  <%- if @webpack_container_needed -%>
   webpack:
-   image: modulotechgroup/<%= image_name %>:dev
+   image: modulotechgroup/<%= @image_name %>:dev
    build:
      context: .
      dockerfile: Dockerfile
@@ -72,7 +68,7 @@ services:
      NODE_ENV: development
      RAILS_ENV: development
      WEBPACKER_DEV_SERVER_HOST: 0.0.0.0
-  <%- end-%>
+  <%- end -%>
 
 volumes:
   db_data:

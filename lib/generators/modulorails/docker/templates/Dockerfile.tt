@@ -1,4 +1,4 @@
-FROM ruby:<%= Modulorails.data.ruby_version %>-alpine
+FROM ruby:<%= @data.ruby_version %>-alpine
 
 ENV RAILS_ENV=development
 ENV EDITOR=vim
@@ -11,13 +11,12 @@ RUN apk add --update --no-cache \
     tzdata \
     gcompat \
     vim \
-    <%- adapter = Modulorails.data.adapter -%>
-    <%- if adapter =~ /mysql/ -%>
+    <%- if @adapter =~ /mysql/ -%>
     mysql-dev
     <%- else -%>
     postgresql-dev
     <%- end -%>
-RUN gem install bundler -v <%= Modulorails.data.bundler_version %>
+RUN gem install bundler -v <%= @data.bundler_version %>
 
 COPY Gemfile Gemfile.lock ./
 RUN bundle install --jobs=2

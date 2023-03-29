@@ -1,29 +1,26 @@
-<%- image_name = Modulorails.data.name.parameterize -%>
-<%- environment_name = Modulorails.data.environment_name -%>
-<%- adapter = Modulorails.data.adapter -%>
-<%- if adapter =~ /mysql/ -%>
+<%- if @adapter =~ /mysql/ -%>
 development: &default
   adapter: mysql2
   encoding: utf8mb4
   collation: utf8mb4_unicode_ci
-  database: <%%= ENV.fetch('<%= environment_name %>_DATABASE_NAME', '<%= image_name %>') %>
-  username: <%%= ENV.fetch('<%= environment_name %>_DATABASE_USERNAME', 'root') %>
-  password: <%%= ENV.fetch('<%= environment_name %>_DATABASE_PASSWORD', '') %>
-  host: <%%= ENV.fetch('<%= environment_name %>_DATABASE_HOST', 'database') %>
-  port: <%%= ENV.fetch('<%= environment_name %>_DATABASE_PORT', 3306) %>
+  database: <%%= ENV.fetch('<%= @environment_name %>_DATABASE_NAME', '<%= @image_name %>') %>
+  username: <%%= ENV.fetch('<%= @environment_name %>_DATABASE_USERNAME', 'root') %>
+  password: <%%= ENV.fetch('<%= @environment_name %>_DATABASE_PASSWORD', '') %>
+  host: <%%= ENV.fetch('<%= @environment_name %>_DATABASE_HOST', 'database') %>
+  port: <%%= ENV.fetch('<%= @environment_name %>_DATABASE_PORT', 3306) %>
 <%- else -%>
 development: &default
   adapter: postgresql
-  database: <%%= ENV.fetch('<%= environment_name %>_DATABASE_NAME', '<%= image_name %>') %>
-  username: <%%= ENV.fetch('<%= environment_name %>_DATABASE_USERNAME', 'postgres') %>
-  password: <%%= ENV.fetch('<%= environment_name %>_DATABASE_PASSWORD', 'postgres') %>
-  host: <%%= ENV.fetch('<%= environment_name %>_DATABASE_HOST', 'database') %>
-  port: <%%= ENV.fetch('<%= environment_name %>_DATABASE_PORT', 5432) %>
+  database: <%%= ENV.fetch('<%= @environment_name %>_DATABASE_NAME', '<%= @image_name %>') %>
+  username: <%%= ENV.fetch('<%= @environment_name %>_DATABASE_USERNAME', 'postgres') %>
+  password: <%%= ENV.fetch('<%= @environment_name %>_DATABASE_PASSWORD', 'postgres') %>
+  host: <%%= ENV.fetch('<%= @environment_name %>_DATABASE_HOST', 'database') %>
+  port: <%%= ENV.fetch('<%= @environment_name %>_DATABASE_PORT', 5432) %>
 <%- end -%>
 
 test:
   <<: *default
-  database: <%%= ENV.fetch('<%= environment_name %>_TEST_DATABASE_NAME', '<%= image_name %>_test') %>
+  database: <%%= ENV.fetch('<%= @environment_name %>_TEST_DATABASE_NAME', '<%= @image_name %>_test') %>
 
 staging:
   <<: *default

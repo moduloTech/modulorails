@@ -1,7 +1,8 @@
 # BUILD IMAGE
-FROM ruby:<%= Modulorails.data.ruby_version %>-alpine as builder
+FROM ruby:<%= @data.ruby_version %>-alpine as builder
 
-ENV RAILS_ENV=production
+ENV RAILS_ENV=production \
+    SECRET_KEY_BASE=1
 WORKDIR /app
 
 RUN apk add --update --no-cache \
@@ -11,27 +12,28 @@ RUN apk add --update --no-cache \
     yarn \
     shared-mime-info \
     gcompat \
-    <%- adapter = Modulorails.data.adapter -%>
-    <%- if adapter =~ /mysql/ -%>
+    <%- if @adapter =~ /mysql/ -%>
     mysql-dev
     <%- else -%>
     postgresql-dev
     <%- end -%>
-RUN gem install bundler -v <%= Modulorails.data.bundler_version %>
+RUN gem install bundler -v <%= @data.bundler_version %>
 
 COPY Gemfile Gemfile.lock ./
 RUN bundle config set --local deployment 'true'
 RUN bundle check || bundle install --jobs=2 \
     && rm -rf vendor/bundle/ruby/*/cache/*
 
+<%- if @webpack_container_needed -%>
 COPY package.json yarn.lock ./
 RUN yarn install
+<%- end-%>
 
 COPY . .
 RUN bundle exec rake assets:precompile
 
 # FINAL IMAGE
-FROM ruby:<%= Modulorails.data.ruby_version %>-alpine
+FROM ruby:<%= @data.ruby_version %>-alpine
 
 ENV RAILS_ENV=development
 ENV EDITOR=vim
@@ -44,8 +46,7 @@ RUN apk add --update --no-cache \
     tzdata \
     shared-mime-info \
     vim \
-    <%- adapter = Modulorails.data.adapter -%>
-    <%- if adapter =~ /mysql/ -%>
+    <%- if @adapter =~ /mysql/ -%>
     mysql-dev \
     <%- else -%>
     postgresql-dev \

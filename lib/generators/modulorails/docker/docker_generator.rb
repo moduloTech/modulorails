@@ -8,6 +8,12 @@ class Modulorails::DockerGenerator < Rails::Generators::Base
   desc 'This generator creates Dockerfiles for an app'
 
   def create_config_file
+    @data = Modulorails.data
+    @adapter = data.adapter
+    @webpack_container_needed = data.webpacker_version.present?
+    @image_name = @data.name.parameterize
+    @environment_name = @data.environment_name
+
     template 'Dockerfile'
     template 'Dockerfile.prod'
     template 'docker-compose.yml'
@@ -18,7 +24,7 @@ class Modulorails::DockerGenerator < Rails::Generators::Base
     template 'config/cable.yml'
 
     # Useless unless project is using Webpacker
-    if Modulorails.data.webpacker_version.present?
+    if @webpack_container_needed
       template 'entrypoints/webpack-entrypoint.sh'
       chmod 'entrypoints/webpack-entrypoint.sh', 0755
     end

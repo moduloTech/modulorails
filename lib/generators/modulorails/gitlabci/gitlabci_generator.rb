@@ -8,8 +8,19 @@ class Modulorails::GitlabciGenerator < Rails::Generators::Base
   desc 'This generator creates a template for a .gitlab-ci.yml file at root'
 
   def create_config_file
+    @data = Modulorails.data
+    @image_name = @data.name.parameterize
+    @environment_name = @data.environment_name
+    @adapter = data.adapter
+    @review_base_url = @data.review_base_url
+    @staging_url = @data.staging_url
+    @production_url = @data.production_url
+
     # Update the gitlab-ci template
     template '.gitlab-ci.yml'
+    template 'config/deploy/production.yaml' if @production_url.present?
+    template 'config/deploy/staging.yaml' if @staging_url.present?
+    template 'config/deploy/review.yaml' if @review_base_url.present?
 
     # Remove the database-ci template if it exists.
     # It used to be referenced by the gitlab-ci template.

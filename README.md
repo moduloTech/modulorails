@@ -28,6 +28,9 @@ Modulorails.configure do |config|
   config.project_manager 'The email of the project manager of the application'
   config.endpoint 'The url to the intranet'
   config.api_key 'The API key'
+  config.review_base_url 'The base url for the review environments' # optional
+  config.staging_url 'The url for the staging environment'          # optional
+  config.production_url 'The url for the production environment'    # optional
 end
 ``` 
 
