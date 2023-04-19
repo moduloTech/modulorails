@@ -2,6 +2,10 @@
 
 This file is used to list changes made in each version of the gem.
 
+# 1.3.2
+
+- Fix missing symbol in docker and gitlabci generators.
+
 # 1.3.1
 
 - Update templates according to new devops standards:
