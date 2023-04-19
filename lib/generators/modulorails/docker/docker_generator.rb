@@ -9,8 +9,8 @@ class Modulorails::DockerGenerator < Rails::Generators::Base
 
   def create_config_file
     @data = Modulorails.data
-    @adapter = data.adapter
-    @webpack_container_needed = data.webpacker_version.present?
+    @adapter = @data.adapter
+    @webpack_container_needed = @data.webpacker_version.present?
     @image_name = @data.name.parameterize
     @environment_name = @data.environment_name
 

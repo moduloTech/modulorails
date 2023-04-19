@@ -11,7 +11,7 @@ class Modulorails::GitlabciGenerator < Rails::Generators::Base
     @data = Modulorails.data
     @image_name = @data.name.parameterize
     @environment_name = @data.environment_name
-    @adapter = data.adapter
+    @adapter = @data.adapter
     @review_base_url = @data.review_base_url
     @staging_url = @data.staging_url
     @production_url = @data.production_url
