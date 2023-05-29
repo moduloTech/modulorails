@@ -14,6 +14,35 @@ class Modulorails::BaseService
     end
   end
 
+  # @author RICHARD Peter <richar_p@modulotech.fr>
+  # Use the base service of Modulorails to not have anymore to manually init instance variable
+  #
+  # @example
+  # Before:
+  # class Awesome < Modulorails::BaseService
+  #   def initialize(data, id)
+  #     super()
+  #     @data = data
+  #     @id   = id
+  #   end
+  # end
+  #
+  # After:
+  # class Awesome < Modulorails::BaseService
+  #   def initialize(data, id) = super(data:, id:)
+  # end
+  def initialize(*args)
+    args.each do |arg|
+      # @example
+      # Modulorails::BaseService.new('test')                                              => NOK -> ArgumentError
+      # Modulorails::BaseService.new('test', awesome: 'test', 'you loose' => 'the game')  => NOK -> ArgumentError
+      # Modulorails::BaseService.new(data: 123, 'awesome' => 'feature')                   => OK
+      raise ArgumentError unless arg.is_a? Hash
+      
+      arg.each { |key, value| instance_variable_set("@#{key}", value) }
+    end
+  end
+    
   # @abstract The main method to implement for your service to do something
   def call
     raise NotImplementedError.new('Implement method call on sub-class')
