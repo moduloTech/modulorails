@@ -29,7 +29,10 @@ class Modulorails::BaseService
   #
   # After:
   # class Awesome < Modulorails::BaseService
-  #   def initialize(data, id) = init_instances_vars(data:, id:)
+  #   def initialize(data, id)
+  #     super()
+  #     init_instances_vars(data:, id:)
+  #   end
   # end
   def init_instances_vars(**kwargs)
     kwargs.each { |key, value| instance_variable_set("@#{key}", value) }
