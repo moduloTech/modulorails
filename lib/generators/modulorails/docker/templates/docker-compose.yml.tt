@@ -34,7 +34,7 @@ services:
       MYSQL_ROOT_HOST: '%'
   <%- else -%>
   database:
-    image: postgres:15-alpine
+    image: postgres:16-alpine
     volumes:
       - db_data:/var/lib/postgresql/data
     environment:
