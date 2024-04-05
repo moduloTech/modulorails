@@ -55,7 +55,7 @@ deploy_review:
   variables:
     NAMESPACE: <%= @image_name %>-$CI_ENVIRONMENT_SLUG
     NAME: <%= @image_name %>
-    CHART_NAME: <%= @image_name %>
+    CHART_NAME: ruby-on-rails
     CONFIG_FILE: config/deploy/review.yaml
     EXTRA_VARS: --set image.tag=$CI_COMMIT_SHORT_SHA --set ingress.hosts[0].host=${CI_ENVIRONMENT_SLUG}.<%= @review_base_url %> --set ingress.tls[0].hosts[0]=${CI_ENVIRONMENT_SLUG}.<%= @review_base_url %> --set env.url=${CI_ENVIRONMENT_SLUG}.<%= @review_base_url %> --set database.url=$DATABASE_URL --set master_key.key=$MASTER_KEY
   environment:
@@ -81,7 +81,7 @@ deploy_staging:
   variables:
     NAMESPACE: <%= @image_name %>
     NAME: <%= @image_name %>
-    CHART_NAME: <%= @image_name %>
+    CHART_NAME: ruby-on-rails
     CONFIG_FILE: config/deploy/staging.yaml
     EXTRA_VARS: --set image.tag=$CI_COMMIT_SHORT_SHA --set database.url=$DATABASE_URL --set master_key.key=$MASTER_KEY
   environment:
@@ -97,7 +97,7 @@ deploy_production:
   variables:
     NAMESPACE: <%= @image_name %>
     NAME: <%= @image_name %>
-    CHART_NAME: <%= @image_name %>
+    CHART_NAME: ruby-on-rails
     CONFIG_FILE: config/deploy/production.yaml
     EXTRA_VARS: --set image.tag=$CI_COMMIT_SHORT_SHA
   environment:
