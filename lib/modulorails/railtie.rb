@@ -8,10 +8,10 @@ module Modulorails
     # Update and add gems before we load the configuration
     config.before_configuration do
       # Currently, we limit everything to the development environment
-      if Rails.env.development?
-        # Check database configuration
-        Modulorails.generate_healthcheck_template
-      end
+      next unless Rails.env.development?
+
+      # Check database configuration
+      Modulorails.generate_healthcheck_template
     end
 
     # Require the gem before we read the health_check initializer
@@ -35,28 +35,28 @@ module Modulorails
     # all gems, constants and configurations we might need.
     config.after_initialize do
       # Currently, we limit everything to the development environment
-      if Rails.env.development?
-        # Load translations
-        I18n.load_path += [File.expand_path('../../config/locales/en.yml', __dir__)]
+      next unless Rails.env.development?
 
-        # Effectively send the data to the intranet
-        Modulorails.send_data
+      # Load translations
+      I18n.load_path += [File.expand_path('../../config/locales/en.yml', __dir__)]
 
-        # Generate a template for CI/CD
-        Modulorails.generate_ci_template
+      # Effectively send the data to the intranet
+      Modulorails.send_data
 
-        # Check database configuration
-        Modulorails.check_database_config
+      # Generate a template for CI/CD
+      Modulorails.generate_ci_template
 
-        # Add/update Rubocop config
-        Modulorails.generate_rubocop_template
+      # Check database configuration
+      Modulorails.check_database_config
 
-        # Add/update Bundler-audit config
-        Modulorails.generate_bundleraudit_template
+      # Add/update Rubocop config
+      Modulorails.generate_rubocop_template
 
-        # Gem's self-update if a new version was released
-        Modulorails.self_update
-      end
+      # Add/update Bundler-audit config
+      Modulorails.generate_bundleraudit_template
+
+      # Gem's self-update if a new version was released
+      Modulorails.self_update
     end
 
   end
