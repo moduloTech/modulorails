@@ -52,6 +52,7 @@ RUN apk add --update --no-cache \
     postgresql-dev \
     <%- end -%>
     && rm -rf .git/
+RUN gem install bundler -v <%= @data.bundler_version %>
 
 COPY --from=builder /app .
 
