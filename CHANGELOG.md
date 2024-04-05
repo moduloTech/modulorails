@@ -2,6 +2,10 @@
 
 This file is used to list changes made in each version of the gem.
 
+# Unreleased
+
+- Remove custom from standard health_check checks.
+
 # 1.3.2
 
 - Fix missing symbol in docker and gitlabci generators.
