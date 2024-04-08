@@ -1,7 +1,6 @@
 require 'modulorails/version'
 require 'modulorails/configuration'
 require 'modulorails/data'
-require 'modulorails/validators/database_configuration'
 require 'modulorails/railtie' if defined?(Rails::Railtie)
 require 'generators/modulorails/gitlabci/gitlabci_generator'
 require 'generators/modulorails/healthcheck/health_check_generator'
@@ -118,22 +117,6 @@ module Modulorails
       return if File.exist?(Rails.root.join('.modulorails-gitlab-ci'))
 
       Modulorails::GitlabciGenerator.new([], {}, {}).invoke_all
-    end
-
-    # @author Matthieu 'ciappa_m' Ciappara
-    #
-    # Check the database configuration respects Modulotech's norms
-    def check_database_config
-      invalid_rules = Modulorails::Validators::DatabaseConfiguration.call
-      return true if invalid_rules.empty?
-
-      puts('[Modulorails] The database configuration (config/database.yml) has warnings:')
-      invalid_rules.each do |rule|
-        t_rule = I18n.t(rule, scope: :modulorails, locale: :en)
-        puts("[Modulorails]    Invalid database configuration: #{t_rule}")
-      end
-
-      false
     end
 
     # @author Matthieu 'ciappa_m' Ciappara

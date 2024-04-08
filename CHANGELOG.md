@@ -8,6 +8,7 @@ This file is used to list changes made in each version of the gem.
 - Update Postgres version from 15 to 16 in templates.
 - Fix template of `Dockerfile.prod` to install valid version of `bundler`.
 - Check required Ruby version of next Modulorails version before auto-update.
+- Remove Modulorails::Validators::DatabaseConfiguration since, with Docker Compose, it is no more necessary.
 
 # 1.3.2
 
