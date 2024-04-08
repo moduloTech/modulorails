@@ -4,6 +4,8 @@ This file is used to list changes made in each version of the gem.
 
 # Unreleased
 
+# 1.4.0
+
 - Remove custom from standard health_check checks.
 - Update Postgres version from 15 to 16 in templates.
 - Fix template of `Dockerfile.prod` to install valid version of `bundler`.
