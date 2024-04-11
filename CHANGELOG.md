@@ -4,6 +4,10 @@ This file is used to list changes made in each version of the gem.
 
 # Unreleased
 
+# 1.4.0.1
+
+- Fix auto-update.
+
 # 1.4.0
 
 - Remove custom from standard health_check checks.

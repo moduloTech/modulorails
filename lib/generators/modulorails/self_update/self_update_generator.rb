@@ -46,8 +46,10 @@ class Modulorails::SelfUpdateGenerator < Rails::Generators::Base
     requirement = Gem::Requirement.new(requirement_string).requirements.first
     comparison_method, required_version = requirement
 
-    COMPARABLE_RUBY_VERSION.send(comparison_method, required_version)
-  rescue StandardError
+    Modulorails::COMPARABLE_RUBY_VERSION.send(comparison_method, required_version)
+  rescue StandardError => e
+    warn("[ruby_version_supported_by_next_gem_version?] An error occured: #{e.message}")
+
     # If we cannot be sure of Ruby compatibility, do nothing
     false
   end
