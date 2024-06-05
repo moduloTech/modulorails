@@ -41,7 +41,6 @@ WORKDIR /app
 RUN adduser -D user
 
 RUN apk add --update --no-cache \
-    # curl \
     git \
     nodejs \
     tzdata \
