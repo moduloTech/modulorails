@@ -4,6 +4,8 @@ This file is used to list changes made in each version of the gem.
 
 # Unreleased
 
+- Optimize layers and remove root privileges in Dockerfile.prod.
+
 # 1.4.0.1
 
 - Fix auto-update.
