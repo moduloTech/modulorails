@@ -20,7 +20,7 @@ RUN apk add --update --no-cache \
 RUN gem install bundler -v <%= @data.bundler_version %>
 
 COPY Gemfile Gemfile.lock ./
-RUN bundle config set --local deployment 'true'\
+RUN bundle config set --local deployment 'true' \
     && bundle check || bundle install --jobs=2 \
     && rm -rf vendor/bundle/ruby/*/cache/*
 
