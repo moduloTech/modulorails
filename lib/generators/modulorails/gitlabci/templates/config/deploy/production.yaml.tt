@@ -41,3 +41,18 @@ env:
 redis:
   enabled: false
   existingSecret: 'redis-credential'
+
+sidekiq:
+  enabled: false
+#  resources:
+#    requests:
+#      cpu: 100m
+#      memory: 512Mi
+#    limits:
+#      cpu: 100m
+#      memory: 512Mi
+#  autoscaling:
+#    enabled: true
+#    minReplicas: 1
+#    maxReplicas: 10
+#    targetCPUUtilizationPercentage: 80
