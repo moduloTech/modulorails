@@ -2,6 +2,7 @@ require 'modulorails/version'
 require 'modulorails/configuration'
 require 'modulorails/data'
 require 'modulorails/railtie' if defined?(Rails::Railtie)
+require 'generators/modulorails/docker/docker_generator'
 require 'generators/modulorails/gitlabci/gitlabci_generator'
 require 'generators/modulorails/healthcheck/health_check_generator'
 require 'generators/modulorails/self_update/self_update_generator'

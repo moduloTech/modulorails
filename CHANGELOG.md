@@ -4,6 +4,10 @@ This file is used to list changes made in each version of the gem.
 
 # Unreleased
 
+# 1.5.0.1
+
+- Fix missing require for DockerGenerator.
+
 # 1.5.0
 
 - Update templates according to new standards:
@@ -17,7 +21,7 @@ This file is used to list changes made in each version of the gem.
   - Add default configuration for production and staging environments.
   - Add default locale configuration to application.rb.
 
-# 1.5.0
+# 1.4.0.1
 
 - Fix auto-update.
 
