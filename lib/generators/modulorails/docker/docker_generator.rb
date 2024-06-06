@@ -4,6 +4,8 @@ require 'rails/generators'
 
 class Modulorails::DockerGenerator < Rails::Generators::Base
 
+  VERSION = '2'.freeze
+
   source_root File.expand_path('templates', __dir__)
   desc 'This generator creates Dockerfiles for an app'
 
@@ -29,8 +31,23 @@ class Modulorails::DockerGenerator < Rails::Generators::Base
 
     template 'entrypoints/webpack-entrypoint.sh'
     chmod 'entrypoints/webpack-entrypoint.sh', 0755
+
+    # Create file to avoid this generator on next modulorails launch
+    create_keep_file
   rescue StandardError => e
     warn("[Modulorails] Error: cannot generate Docker configuration: #{e.message}")
+  end
+
+  private
+
+  def create_keep_file
+    file = '.modulorails-docker'
+
+    # Create file to avoid this generator on next modulorails launch
+    template file
+
+    say "Add #{file} to git"
+    `git add #{file}`
   end
 
 end
