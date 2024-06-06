@@ -11,6 +11,8 @@ This file is used to list changes made in each version of the gem.
   - Configure Puma and Redis.
   - Remove docker-compose.prod.
 - Version Docker generator.
+- Add a generator for project initialization:
+  - Add default configuration for production and staging environments.
 
 # 1.4.0.1
 
