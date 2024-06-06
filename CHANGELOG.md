@@ -4,6 +4,8 @@ This file is used to list changes made in each version of the gem.
 
 # Unreleased
 
+# 1.5.0
+
 - Update templates according to new standards:
   - Optimize layers in Dockerfile.prod.
   - Remove root privileges in Dockerfile.prod.
@@ -15,7 +17,7 @@ This file is used to list changes made in each version of the gem.
   - Add default configuration for production and staging environments.
   - Add default locale configuration to application.rb.
 
-# 1.4.0.1
+# 1.5.0
 
 - Fix auto-update.
 
