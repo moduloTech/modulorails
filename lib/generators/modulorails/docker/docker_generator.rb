@@ -4,7 +4,7 @@ require 'rails/generators'
 
 class Modulorails::DockerGenerator < Rails::Generators::Base
 
-  VERSION = '2'.freeze
+  VERSION = 2.freeze
 
   source_root File.expand_path('templates', __dir__)
   desc 'This generator creates Dockerfiles for an app'

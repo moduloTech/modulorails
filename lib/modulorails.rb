@@ -111,6 +111,21 @@ module Modulorails
 
     # @author Matthieu 'ciappa_m' Ciappara
     #
+    # Generate a Docker config template unless it was already done.
+    # The check is done using a 'keepfile'.
+    def generate_docker_template
+      pathname = Rails.root.join('.modulorails-docker')
+
+      if pathname.exist? && pathname.readlines('.modulorails-docker').first
+                                    .match(/version: (\d+)/i)&.send(:[], 1).to_i >= DockerGenerator::VERSION
+        return
+      end
+
+      Modulorails::DockerGenerator.new([], {}, {}).invoke_all
+    end
+
+    # @author Matthieu 'ciappa_m' Ciappara
+    #
     # Generate a CI/CD template unless it was already done.
     # The check is done using a 'keepfile'.
     def generate_ci_template
