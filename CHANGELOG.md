@@ -13,6 +13,7 @@ This file is used to list changes made in each version of the gem.
 - Version Docker generator.
 - Add a generator for project initialization:
   - Add default configuration for production and staging environments.
+  - Add default locale configuration to application.rb.
 
 # 1.4.0.1
 
