@@ -4,7 +4,12 @@ This file is used to list changes made in each version of the gem.
 
 # Unreleased
 
-- Optimize layers and remove root privileges in Dockerfile.prod.
+- Update templates according to new standards:
+  - Optimize layers in Dockerfile.prod.
+  - Remove root privileges in Dockerfile.prod.
+  - Exec Docker `CMD` in entrypoints.
+  - Configure Puma and Redis.
+  - Remove docker-compose.prod.
 
 # 1.4.0.1
 

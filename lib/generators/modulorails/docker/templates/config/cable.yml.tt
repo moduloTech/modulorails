@@ -1,15 +1,15 @@
-redis_local: &redis_local
+redis_remote: &redis_remote
   adapter: redis
-  url: <%= ENV.fetch('REDIS_URL', 'redis://redis:6379') %>
+  url: <%= REDIS_URL %>
 
 development:
-  <<: *redis_local
+  <<: *redis_remote
 
 test:
-  <<: *redis_local
+  <<: *redis_remote
 
 staging:
-  <<: *redis_local
+  <<: *redis_remote
 
 production:
-  <<: *redis_local
+  <<: *redis_remote
