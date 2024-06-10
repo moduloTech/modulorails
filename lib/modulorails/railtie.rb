@@ -43,6 +43,9 @@ module Modulorails
       # Effectively send the data to the intranet
       Modulorails.send_data
 
+      # Generate a template for Docker configuration
+      Modulorails.generate_docker_template
+
       # Generate a template for CI/CD
       Modulorails.generate_ci_template
 

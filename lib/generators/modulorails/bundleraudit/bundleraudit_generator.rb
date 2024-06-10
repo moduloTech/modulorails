@@ -14,6 +14,7 @@ class Modulorails::BundlerauditGenerator < Rails::Generators::Base
 
     append_file gitlab_config_path do
       <<~YAML
+
         # Scan Gemfile.lock for Common Vulnerabilities and Exposures
         # https://en.wikipedia.org/wiki/Common_Vulnerabilities_and_Exposures
         # https://www.cve.org/

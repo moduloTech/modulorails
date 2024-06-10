@@ -2,6 +2,7 @@ require 'modulorails/version'
 require 'modulorails/configuration'
 require 'modulorails/data'
 require 'modulorails/railtie' if defined?(Rails::Railtie)
+require 'generators/modulorails/docker/docker_generator'
 require 'generators/modulorails/gitlabci/gitlabci_generator'
 require 'generators/modulorails/healthcheck/health_check_generator'
 require 'generators/modulorails/self_update/self_update_generator'
@@ -107,6 +108,21 @@ module Modulorails
         puts e.message
         nil
       end
+    end
+
+    # @author Matthieu 'ciappa_m' Ciappara
+    #
+    # Generate a Docker config template unless it was already done.
+    # The check is done using a 'keepfile'.
+    def generate_docker_template
+      pathname = Rails.root.join('.modulorails-docker')
+
+      if pathname.exist? && pathname.readlines('.modulorails-docker').first
+                                    .match(/version: (\d+)/i)&.send(:[], 1).to_i >= DockerGenerator::VERSION
+        return
+      end
+
+      Modulorails::DockerGenerator.new([], {}, {}).invoke_all
     end
 
     # @author Matthieu 'ciappa_m' Ciappara
