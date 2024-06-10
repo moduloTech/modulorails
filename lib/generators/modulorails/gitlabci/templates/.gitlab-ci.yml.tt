@@ -87,8 +87,20 @@ deploy_staging:
   environment:
     name: staging
     url: https://<%= @staging_url %>
+    on_stop: stop_staging
+    auto_stop_in: 7 days
   only:
     - staging
+
+stop_staging:
+  extends: .stop_staging
+  variables:
+    NAMESPACE: <%= @image_name %>
+    NAME: <%= @image_name %>
+  only:
+    - staging
+  needs:
+    - docker_build
 <%- end -%>
 
 <%- if @production_url.present? -%>
