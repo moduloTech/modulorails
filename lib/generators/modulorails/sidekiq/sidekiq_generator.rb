@@ -8,12 +8,12 @@ class Modulorails::SidekiqGenerator < Rails::Generators::Base
 
   desc 'This generator adds Sidekiq to the project'
 
-  def add_to_docker_compose
-    add_to_docker_compose_yml_file(Rails.root.join('docker-compose.yml'))
+  def add_to_compose
+    add_to_compose_yml_file(Rails.root.join('compose.yml'))
   end
 
-  def add_to_docker_compose_prod
-    add_to_docker_compose_yml_file(Rails.root.join('docker-compose.prod.yml'))
+  def add_to_compose_prod
+    add_to_compose_yml_file(Rails.root.join('compose.prod.yml'))
   end
 
   def add_to_deploy_files
@@ -99,10 +99,10 @@ class Modulorails::SidekiqGenerator < Rails::Generators::Base
 
   private
 
-  def add_to_docker_compose_yml_file(file_path)
+  def add_to_compose_yml_file(file_path)
     @image_name ||= Modulorails.data.name.parameterize
 
-    # Create docker-compose.yml unless present
+    # Create compose.yml unless present
     unless File.exist?(file_path)
       # Modulorails::GitlabciGenerator.new([], {}, {}).invoke_all
       invoke(Modulorails::DockerGenerator, [])
