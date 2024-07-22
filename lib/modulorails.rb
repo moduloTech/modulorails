@@ -1,8 +1,8 @@
 require 'modulorails/version'
 require 'modulorails/configuration'
 require 'modulorails/data'
-require 'modulorails/validators/database_configuration'
 require 'modulorails/railtie' if defined?(Rails::Railtie)
+require 'generators/modulorails/docker/docker_generator'
 require 'generators/modulorails/gitlabci/gitlabci_generator'
 require 'generators/modulorails/healthcheck/health_check_generator'
 require 'generators/modulorails/self_update/self_update_generator'
@@ -112,6 +112,21 @@ module Modulorails
 
     # @author Matthieu 'ciappa_m' Ciappara
     #
+    # Generate a Docker config template unless it was already done.
+    # The check is done using a 'keepfile'.
+    def generate_docker_template
+      pathname = Rails.root.join('.modulorails-docker')
+
+      if pathname.exist? && pathname.readlines('.modulorails-docker').first
+                                    .match(/version: (\d+)/i)&.send(:[], 1).to_i >= DockerGenerator::VERSION
+        return
+      end
+
+      Modulorails::DockerGenerator.new([], {}, {}).invoke_all
+    end
+
+    # @author Matthieu 'ciappa_m' Ciappara
+    #
     # Generate a CI/CD template unless it was already done.
     # The check is done using a 'keepfile'.
     def generate_ci_template
@@ -122,29 +137,12 @@ module Modulorails
 
     # @author Matthieu 'ciappa_m' Ciappara
     #
-    # Check the database configuration respects Modulotech's norms
-    def check_database_config
-      invalid_rules = Modulorails::Validators::DatabaseConfiguration.call
-      return true if invalid_rules.empty?
-
-      puts('[Modulorails] The database configuration (config/database.yml) has warnings:')
-      invalid_rules.each do |rule|
-        t_rule = I18n.t(rule, scope: :modulorails, locale: :en)
-        puts("[Modulorails]    Invalid database configuration: #{t_rule}")
-      end
-
-      false
-    end
-
-    # @author Matthieu 'ciappa_m' Ciappara
-    #
     # Check the last version of Modulorails available on rubygems and update if there was a
     # publication
     def self_update
-      unless configuration.no_auto_update
-        Modulorails::SelfUpdateGenerator.new([], {},
-                                             {}).invoke_all
-      end
+      return if configuration.no_auto_update
+
+      Modulorails::SelfUpdateGenerator.new([], {}, {}).invoke_all
     rescue StandardError => e
       puts("[Modulorails] An error occured: #{e.class} - #{e.message}")
     end

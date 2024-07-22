@@ -2,6 +2,45 @@
 
 This file is used to list changes made in each version of the gem.
 
+# Unreleased
+
+# 1.5.0.3
+
+- Fix broken templates cable.yml
+
+# 1.5.0.2
+
+- Fix broken templates for DockerGenerator.
+
+# 1.5.0.1
+
+- Fix missing require for DockerGenerator.
+
+# 1.5.0
+
+- Update templates according to new standards:
+  - Optimize layers in Dockerfile.prod.
+  - Remove root privileges in Dockerfile.prod.
+  - Exec Docker `CMD` in entrypoints.
+  - Configure Puma and Redis.
+  - Remove docker-compose.prod.
+- Version Docker generator.
+- Add a generator for project initialization:
+  - Add default configuration for production and staging environments.
+  - Add default locale configuration to application.rb.
+
+# 1.4.0.1
+
+- Fix auto-update.
+
+# 1.4.0
+
+- Remove custom from standard health_check checks.
+- Update Postgres version from 15 to 16 in templates.
+- Fix template of `Dockerfile.prod` to install valid version of `bundler`.
+- Check required Ruby version of next Modulorails version before auto-update.
+- Remove Modulorails::Validators::DatabaseConfiguration since, with Docker Compose, it is no more necessary.
+
 # 1.3.2
 
 - Fix missing symbol in docker and gitlabci generators.

@@ -32,7 +32,7 @@ test:
     <%- if @adapter =~ /mysql/ -%>
     - mysql:8-alpine
     <%- else -%>
-    - postgres:15-alpine
+    - postgres:16-alpine
     <%- end -%>
     - redis:7-alpine
   variables:

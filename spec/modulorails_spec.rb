@@ -41,7 +41,7 @@ RSpec.describe Modulorails do
   end
 
   it 'has a version number' do
-    expect(Modulorails::VERSION).to eq('1.3.2')
+    expect(Modulorails::VERSION).to eq('1.5.0.3')
   end
 
   describe 'send_data' do
@@ -147,62 +147,6 @@ RSpec.describe Modulorails do
         params  = Modulorails.data.to_params.to_json
         expect(HTTParty).to have_received(:post).with('endpoint', headers: headers, body: params)
       end
-    end
-  end
-
-  describe 'check_database_config' do
-    it 'returns true when the validator returns no errors' do
-      # Copy the test configuration
-      valid_configuration    = File.expand_path('../../spec/support/valid_database.yml', __FILE__)
-      expected_configuration = File.expand_path('../../config/database.yml', __FILE__)
-      FileUtils.cp(valid_configuration, expected_configuration)
-
-      # Returns true and log nothing
-      result = nil
-      expect { result = subject.check_database_config }.to(output('').to_stdout)
-      expect(result).to eq(true)
-    end
-
-    it 'returns false and display errors when the database configuration does not exists' do
-      # Ensure there is no database configuration from a previous test
-      expected_configuration = File.expand_path('../../config/database.yml', __FILE__)
-      FileUtils.rm(expected_configuration, force: true)
-
-      # Set up the I18n load path
-      I18n.load_path += [File.expand_path('../../config/locales/en.yml', __FILE__)]
-
-      # Returns false and log errors
-      errors = <<~EOS
-        [Modulorails] The database configuration (config/database.yml) has warnings:
-        [Modulorails]    Invalid database configuration: The database configuration file can not be found at config/database.yml
-      EOS
-      result = nil
-      expect { result = subject.check_database_config }.to(output(errors).to_stdout)
-      expect(result).to eq(false)
-    end
-
-    it 'returns false and display errors when the validator returns errors' do
-      # Copy the test configuration
-      invalid_configuration  = File.expand_path('../../spec/support/invalid_database.yml', __FILE__)
-      expected_configuration = File.expand_path('../../config/database.yml', __FILE__)
-      FileUtils.cp(invalid_configuration, expected_configuration)
-
-      # Set up the I18n load path
-      I18n.load_path += [File.expand_path('../../config/locales/en.yml', __FILE__)]
-
-      # Returns false and log errors
-      errors = <<~EOS
-        [Modulorails] The database configuration (config/database.yml) has warnings:
-        [Modulorails]    Invalid database configuration: Database name is not configurable for development environment
-        [Modulorails]    Invalid database configuration: Host is not configurable for development environment
-        [Modulorails]    Invalid database configuration: Port is not configurable for development environment
-        [Modulorails]    Invalid database configuration: Database name is not configurable for test environment
-        [Modulorails]    Invalid database configuration: Host is not configurable for test environment
-        [Modulorails]    Invalid database configuration: Port is not configurable for test environment
-      EOS
-      result = nil
-      expect { result = subject.check_database_config }.to(output(errors).to_stdout)
-      expect(result).to eq(false)
     end
   end
 end

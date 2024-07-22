@@ -19,7 +19,6 @@ services:
       <%= @environment_name %>_DATABASE_HOST: database
       <%= @environment_name %>_DATABASE_NAME: <%= @image_name %>
       REDIS_URL: redis://redis:6379/1
-    entrypoint: ./entrypoints/docker-entrypoint.sh
     stdin_open: true
     tty: true
 
@@ -28,15 +27,19 @@ services:
     image: mysql/mysql-server:8.0
     volumes:
       - db_data:/var/lib/mysql
+    ports:
+      - '3306:3306'
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: 'true'
       MYSQL_DATABASE: <%= @image_name %>
       MYSQL_ROOT_HOST: '%'
   <%- else -%>
   database:
-    image: postgres:15-alpine
+    image: postgres:16-alpine
     volumes:
       - db_data:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -51,7 +54,8 @@ services:
   mailcatcher:
     image: dockage/mailcatcher
     ports:
-      - 1080:1080
+      - '1080:1080'
+      - '1025:1025'
 
   <%- if @webpack_container_needed -%>
   webpack:

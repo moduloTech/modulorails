@@ -17,6 +17,7 @@ class Modulorails::RubocopGenerator < Rails::Generators::Base
 
     append_file gitlab_config_path do
       <<~YAML
+
         rubocop:
           extends: .lint
       YAML
