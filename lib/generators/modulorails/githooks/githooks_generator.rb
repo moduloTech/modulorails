@@ -1,10 +1,20 @@
-require 'rails/generators/base'
+# frozen_string_literal: true
+
+require 'modulorails/generators/base'
 
 module Modulorails
 
-  class GithooksGenerator < Rails::Generators::Base
+  class GithooksGenerator < Modulorails::Generators::Base
 
-    source_root File.expand_path('templates', __dir__)
+    protected
+
+    def create_config
+      create_refresh_generations_script
+      create_git_hooks
+      update_gitattributes
+    end
+
+    private
 
     def create_refresh_generations_script
       template 'refresh_generations.sh', 'bin/refresh_generations.sh'
@@ -33,14 +43,7 @@ module Modulorails
         db/schema.rb merge=ours
       CONTENT
 
-      create_file file, content, force: true
-    end
-
-    def create_keep_file
-      file = '.modulorails-githooks'
-
-      # Create file to avoid this generator on next modulorails launch
-      create_file file, 'Modulorails::GithooksGenerator', force: true
+      create_file '.gitattributes', content, force: true
     end
 
   end

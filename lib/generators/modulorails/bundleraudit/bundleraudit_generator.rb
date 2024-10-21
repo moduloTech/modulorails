@@ -1,18 +1,15 @@
 # frozen_string_literal: true
 
-require 'rails/generators'
+require 'modulorails/generators/base'
 
-class Modulorails::BundlerauditGenerator < Rails::Generators::Base
+class Modulorails::BundlerauditGenerator < Modulorails::Generators::Base
 
-  source_root File.expand_path('templates', __dir__)
   desc 'This generator creates a configuration for Bundler-Audit'
 
-  def create_config_files
-    gitlab_config_path = Rails.root.join('.gitlab-ci.yml')
+  protected
 
-    return if File.read(gitlab_config_path).match?(/\s+extends:\s+.bundleraudit\s*$/)
-
-    append_file gitlab_config_path do
+  def create_config
+    append_file @gitlab_config_path do
       <<~YAML
 
         # Scan Gemfile.lock for Common Vulnerabilities and Exposures
@@ -22,6 +19,13 @@ class Modulorails::BundlerauditGenerator < Rails::Generators::Base
           extends: .bundleraudit
       YAML
     end
+  end
+
+  def keep_file_present?
+    @gitlab_config_path = Rails.root.join('.gitlab-ci.yml')
+
+    !@gitlab_config_path.exist? ||
+      @gitlab_config_path.read.match?(/\s+extends:\s+.bundleraudit\s*$/)
   end
 
 end

@@ -1,15 +1,16 @@
 # frozen_string_literal: true
 
-require 'rails/generators'
+require 'modulorails/generators/base'
 
-class Modulorails::DockerGenerator < Rails::Generators::Base
+class Modulorails::DockerGenerator < Modulorails::Generators::Base
 
   VERSION = 2
 
-  source_root File.expand_path('templates', __dir__)
-  desc 'This generator creates Dockerfiles for an app'
+  desc 'This generator creates Docker configuration for an app'
 
-  def create_config_file
+  protected
+
+  def create_config
     @data = Modulorails.data
     @adapter = @data.adapter
     @webpack_container_needed = @data.webpacker_version.present?
@@ -27,27 +28,12 @@ class Modulorails::DockerGenerator < Rails::Generators::Base
     template 'config/puma.rb'
 
     # Useless unless project is using Webpacker
-    if @webpack_container_needed
-      template 'entrypoints/webpack-entrypoint.sh'
-      chmod 'entrypoints/webpack-entrypoint.sh', 0o755
-    end
+    return unless @webpack_container_needed
 
-    # Create file to avoid this generator on next modulorails launch
-    create_keep_file
+    template 'entrypoints/webpack-entrypoint.sh'
+    chmod 'entrypoints/webpack-entrypoint.sh', 0o755
   rescue StandardError => e
     warn("[Modulorails] Error: cannot generate Docker configuration: #{e.message}")
-  end
-
-  private
-
-  def create_keep_file
-    file = '.modulorails-docker'
-
-    # Create file to avoid this generator on next modulorails launch
-    template file
-
-    say "Add #{file} to git"
-    `git add #{file}`
   end
 
 end

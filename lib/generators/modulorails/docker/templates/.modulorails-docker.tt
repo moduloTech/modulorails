@@ -1,8 +1,0 @@
-Version: <%= Modulorails::DockerGenerator::VERSION %>
-
-This file ensures the modulorails gem will not try to override your current Dockerfile (and associates)
-file on Rails start.
-
-If you want to reset your CI configuration, you can either:
-- remove this file,
-- or run `rails g modulorails:docker`.

@@ -4,7 +4,7 @@ require 'modulorails/data'
 require 'modulorails/railtie' if defined?(Rails::Railtie)
 require 'generators/modulorails/docker/docker_generator'
 require 'generators/modulorails/gitlabci/gitlabci_generator'
-require 'generators/modulorails/healthcheck/health_check_generator'
+require 'generators/modulorails/health_check/health_check_generator'
 require 'generators/modulorails/self_update/self_update_generator'
 require 'generators/modulorails/rubocop/rubocop_generator'
 require 'generators/modulorails/bundleraudit/bundleraudit_generator'
@@ -114,13 +114,6 @@ module Modulorails
     # Generate a Docker config template unless it was already done.
     # The check is done using a 'keepfile'.
     def generate_docker_template
-      pathname = Rails.root.join('.modulorails-docker')
-
-      if pathname.exist? && pathname.readlines('.modulorails-docker').first
-                                    .match(/version: (\d+)/i)&.send(:[], 1).to_i >= DockerGenerator::VERSION
-        return
-      end
-
       Modulorails::DockerGenerator.new([], {}, {}).invoke_all
     end
 
@@ -129,8 +122,6 @@ module Modulorails
     # Generate a CI/CD template unless it was already done.
     # The check is done using a 'keepfile'.
     def generate_ci_template
-      return if Rails.root.join('.modulorails-gitlab-ci').exist?
-
       Modulorails::GitlabciGenerator.new([], {}, {}).invoke_all
     end
 
@@ -151,8 +142,6 @@ module Modulorails
     # Generate a health_check configuration unless it was already done.
     # The check is done using a 'keepfile'.
     def generate_healthcheck_template
-      return if Rails.root.join('.modulorails-health_check').exist?
-
       Modulorails::HealthCheckGenerator.new([], {}, {}).invoke_all
     end
 
@@ -172,10 +161,8 @@ module Modulorails
 
     # @author Matthieu 'ciappa_m' Ciappara
     #
-    # Generate a bundler-audit configuration.
+    # Generate git hooks.
     def generate_git_hooks_template
-      return if Rails.root.join('.modulorails-githooks').exist?
-
       Modulorails::GithooksGenerator.new([], {}, {}).invoke_all
     end
 

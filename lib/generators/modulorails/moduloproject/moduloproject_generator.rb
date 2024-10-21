@@ -2,12 +2,11 @@
 
 require 'rails/generators'
 
-class Modulorails::ModuloprojectGenerator < Rails::Generators::Base
+class Modulorails::ModuloprojectGenerator < Modulorails::Generators::Base
 
-  source_root File.expand_path('templates', __dir__)
   desc 'This generator creates templates for Moduloproject'
 
-  def create_config_file
+  def create_config
     template 'config/environments/production.rb'
     copy_file('config/environments/production.rb', 'config/environments/staging.rb')
     update_application_rb

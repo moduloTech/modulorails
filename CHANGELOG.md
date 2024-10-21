@@ -24,6 +24,7 @@ This file is used to list changes made in each version of the gem.
 - Update service template to use keyword arguments and add `attr_reader`s.
 - Add optional `data` argument to `with_transaction`.
 - Deprecate `Modulorails::BaseService#log` and `Modulorails::LogsForMethodService`.
+- Add a common base for all generators.
 
 # 1.4.0.1
 
