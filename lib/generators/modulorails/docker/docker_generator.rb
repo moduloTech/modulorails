@@ -27,10 +27,10 @@ class Modulorails::DockerGenerator < Rails::Generators::Base
     template 'config/puma.rb'
 
     # Useless unless project is using Webpacker
-    return unless @webpack_container_needed
-
+    if @webpack_container_needed
     template 'entrypoints/webpack-entrypoint.sh'
     chmod 'entrypoints/webpack-entrypoint.sh', 0755
+    end
 
     # Create file to avoid this generator on next modulorails launch
     create_keep_file
