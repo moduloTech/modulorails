@@ -14,8 +14,13 @@ services:
     environment:
       RAILS_ENV: development
       URL: http://localhost:3000
-      <%= @environment_name %>_DATABASE_HOST: database
-      <%= @environment_name %>_DATABASE_NAME: <%= @image_name %>
+      <%- if @adapter =~ /mysql/ -%>
+      DATABASE_URL: mysql2://root@database/<%= @image_name %>
+      DATABASE_TEST_URL: mysql2://root@database/<%= @image_name %>-test
+      <%- else -%>
+      DATABASE_URL: postgresql://postgres:postgres@database/<%= @image_name %>
+      DATABASE_TEST_URL: postgresql://postgres:postgres@database/<%= @image_name %>-test
+      <%- end -%>
       REDIS_URL: redis://redis:6379/1
     stdin_open: true
     tty: true
