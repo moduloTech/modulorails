@@ -14,6 +14,11 @@ class Modulorails::LogsForMethodService < Modulorails::BaseService
 
   # Write a formatted debug log using given initialization parameters
   def call
+    ActiveSupport::Deprecation.warn(<<~MESSAGE)
+      Modulorails::LogsForMethodService is deprecated and will be removed with version 2.0.
+      Use Rails.logger.debug directly with objects instead.
+    MESSAGE
+
     # Map the tags (either objects responding to #to_tag or strings) to prefix the log body
     tag_strings = @tags.map do |tag|
       tag.respond_to?(:to_tag) ? "[#{tag.to_tag}]" : "[#{tag}]"
