@@ -21,6 +21,7 @@ This file is used to list changes made in each version of the gem.
   - Add default configuration for production and staging environments.
   - Add default locale configuration to application.rb.
 - Add a generator for Git hooks.
+- Update service template to use keyword arguments and add `attr_reader`s.
 
 # 1.4.0.1
 

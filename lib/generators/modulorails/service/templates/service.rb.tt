@@ -1,17 +1,10 @@
 <% module_namespacing do -%>
-# @author <INSERT YOUR NAME HERE>
-# <DESCRIBE YOUR CLASS HERE>
-<%- if arguments.size >= 1 -%>
-#
-<%- arguments.each do |argument| -%>
-# @!attribute <%= argument %>
-#   @return <DESCRIBE YOUR ARGUMENT HERE>
-<%- end -%>
-<%- end -%>
-class <%= class_name %>Service < ::ApplicationService
+class <%= class_name %>Service < ApplicationService
   <%- if arguments.size >= 1 -%>
 
-  def initialize(<%= arguments.join(', ') %>)
+  attr_reader <%= arguments.map { |arg| ":#{arg}" }.join(', ') %>
+
+  def initialize(<%= arguments.map { |arg| "#{arg}:" }.join(', ') %>)
     super()
 
     <%- arguments.each do |argument| -%>
