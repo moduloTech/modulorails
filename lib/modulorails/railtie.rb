@@ -52,6 +52,9 @@ module Modulorails
       # Add/update Rubocop config
       Modulorails.generate_rubocop_template
 
+      # Add git hooks
+      Modulorails.generate_git_hooks_template
+
       # Add/update Bundler-audit config
       Modulorails.generate_bundleraudit_template
 

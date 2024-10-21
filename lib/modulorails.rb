@@ -8,6 +8,7 @@ require 'generators/modulorails/healthcheck/health_check_generator'
 require 'generators/modulorails/self_update/self_update_generator'
 require 'generators/modulorails/rubocop/rubocop_generator'
 require 'generators/modulorails/bundleraudit/bundleraudit_generator'
+require 'generators/modulorails/githooks/githooks_generator'
 require 'httparty'
 require 'modulorails/error_data'
 require 'modulorails/success_data'
@@ -169,6 +170,15 @@ module Modulorails
     # Generate a bundler-audit configuration.
     def generate_bundleraudit_template
       Modulorails::BundlerauditGenerator.new([], {}, {}).invoke_all
+    end
+
+    # @author Matthieu 'ciappa_m' Ciappara
+    #
+    # Generate a bundler-audit configuration.
+    def generate_git_hooks_template
+      return if File.exist?(Rails.root.join('.modulorails-githooks'))
+
+      Modulorails::GithooksGenerator.new([], {}, {}).invoke_all
     end
 
   end

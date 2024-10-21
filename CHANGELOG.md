@@ -16,6 +16,7 @@ This file is used to list changes made in each version of the gem.
 - Add a generator for project initialization:
   - Add default configuration for production and staging environments.
   - Add default locale configuration to application.rb.
+- Add a generator for Git hooks.
 
 # 1.4.0.1
 
