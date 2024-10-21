@@ -18,7 +18,7 @@ class Modulorails::DockerGenerator < Rails::Generators::Base
 
     template 'Dockerfile'
     template 'Dockerfile.prod'
-    template 'docker-compose.yml'
+    template 'compose.yml'
     template 'entrypoints/docker-entrypoint.sh'
     chmod 'entrypoints/docker-entrypoint.sh', 0755
     template 'config/database.yml'

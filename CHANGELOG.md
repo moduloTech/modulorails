@@ -12,6 +12,8 @@ This file is used to list changes made in each version of the gem.
   - Exec Docker `CMD` in entrypoints.
   - Configure Puma and Redis.
   - Remove docker-compose.prod.
+  - Rename docker-compose.yml to compose.yml.
+  - Remove version from compose.yml.
 - Version Docker generator.
 - Add a generator for project initialization:
   - Add default configuration for production and staging environments.
