@@ -35,7 +35,7 @@ class Modulorails::SelfUpdateGenerator < Rails::Generators::Base
               "gem 'modulorails', '= #{version}'"
 
     # Update the gem and the Gemfile.lock
-    system('bundle install')
+    run('bundle install -q')
   rescue StandardError => e
     warn("[Modulorails] Error: cannot generate health_check configuration: #{e.message}")
   end
