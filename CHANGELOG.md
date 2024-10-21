@@ -22,6 +22,7 @@ This file is used to list changes made in each version of the gem.
   - Add default locale configuration to application.rb.
 - Add a generator for Git hooks.
 - Update service template to use keyword arguments and add `attr_reader`s.
+- Add optional `data` argument to `with_transaction`.
 
 # 1.4.0.1
 

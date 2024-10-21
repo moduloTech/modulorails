@@ -48,15 +48,14 @@ class Modulorails::BaseService
     Modulorails::LogsForMethodService.call(method: method, message: message, tags: [self])
   end
 
+  # @param data [Object] The data to pass to the block
   # @yield Wrap the given block in an ActiveRecord transaction.
   # @yieldreturn [Object] Will be available as data of the `SuccessData` returned by the method
   # @return [SuccessData] If the transaction was not rollbacked; give access to the block's return.
   # @return [ErrorData] If the transaction was rollbacked; give access to the rollbacking exception.
-  def with_transaction
-    data = nil
-
-    ActiveRecord::Base.transaction do
-      data = yield
+  def with_transaction(data: nil)
+    data = ActiveRecord::Base.transaction do
+      yield(data)
     end
 
     ::Modulorails::SuccessData.new(data)
@@ -65,14 +64,20 @@ class Modulorails::BaseService
     ::Modulorails::ErrorData.new(e.message, exception: e)
   rescue StandardError => e
     # Unknown error, log the error
-    Rails.logger.error("#{self}: #{e.message}")
-    Rails.logger.error("Local variables: #{local_variables.map! { |v|
-      { v => binding.local_variable_get(v) }
-    } }")
-    Rails.logger.error(e.backtrace&.join("\n"))
+    log_exception(e, caller: self, method: __method__)
 
     # Return the error
     ::Modulorails::ErrorData.new(e.message, exception: e)
+  end
+
+  def log_exception(exception, user: nil, caller: self, method: __method__)
+    message = {
+      controller: caller.class.name, action: method,
+      error: { kind: exception.class.name, message: exception.message, stack: exception.backtrace },
+      time: Time.zone.now.iso8601, user: user
+    }
+
+    Rails.logger.error(message.to_json)
   end
 
   # Cast the date/datetime parameters to time with zones.
