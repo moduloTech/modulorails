@@ -4,18 +4,6 @@ This file is used to list changes made in each version of the gem.
 
 # Unreleased
 
-# 1.5.0.3
-
-- Fix broken templates cable.yml
-
-# 1.5.0.2
-
-- Fix broken templates for DockerGenerator.
-
-# 1.5.0.1
-
-- Fix missing require for DockerGenerator.
-
 # 1.5.0
 
 - Update templates according to new standards:
