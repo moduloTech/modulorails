@@ -61,6 +61,6 @@ RUN bundle config --local path vendor/bundle \
 
 EXPOSE 3000
 
-ENTRYPOINT ["./entrypoints/docker-entrypoint.sh"]
+ENTRYPOINT ["./bin/docker-entrypoint"]
 
 CMD ["./bin/rails", "server"]

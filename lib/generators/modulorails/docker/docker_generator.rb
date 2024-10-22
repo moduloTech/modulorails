@@ -20,8 +20,8 @@ class Modulorails::DockerGenerator < Modulorails::Generators::Base
     template 'Dockerfile'
     template 'Dockerfile.prod'
     template 'compose.yml'
-    template 'entrypoints/docker-entrypoint.sh'
-    chmod 'entrypoints/docker-entrypoint.sh', 0o755
+    template 'entrypoints/docker-entrypoint.sh', 'bin/docker-entrypoint'
+    chmod 'bin/docker-entrypoint', 0o755
     template 'config/database.yml'
     template 'config/cable.yml'
     template 'config/initializers/0_redis.rb'
@@ -30,8 +30,8 @@ class Modulorails::DockerGenerator < Modulorails::Generators::Base
     # Useless unless project is using Webpacker
     return unless @webpack_container_needed
 
-    template 'entrypoints/webpack-entrypoint.sh'
-    chmod 'entrypoints/webpack-entrypoint.sh', 0o755
+    template 'entrypoints/webpack-entrypoint.sh', 'bin/webpack-entrypoint'
+    chmod 'bin/webpack-entrypoint', 0o755
   rescue StandardError => e
     warn("[Modulorails] Error: cannot generate Docker configuration: #{e.message}")
   end

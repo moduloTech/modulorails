@@ -66,7 +66,7 @@ services:
    build:
      context: .
      dockerfile: Dockerfile
-   entrypoint: ./entrypoints/webpack-entrypoint.sh
+   entrypoint: ./bin/webpack-entrypoint
    volumes:
      - .:/app
    ports:

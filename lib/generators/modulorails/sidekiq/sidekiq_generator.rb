@@ -91,8 +91,8 @@ class Modulorails::SidekiqGenerator < Rails::Generators::Base
   end
 
   def add_entrypoint
-    template 'entrypoints/sidekiq-entrypoint.sh'
-    chmod 'entrypoints/sidekiq-entrypoint.sh', 0o755
+    template 'entrypoints/sidekiq-entrypoint.sh', 'bin/sidekiq-entrypoint'
+    chmod 'bin/sidekiq-entrypoint', 0o755
   end
 
   private
@@ -124,7 +124,7 @@ class Modulorails::SidekiqGenerator < Rails::Generators::Base
       #{@image_name.upcase}_DATABASE_HOST: database
       #{@image_name.upcase}_DATABASE_NAME: #{@image_name}
       REDIS_URL: redis://redis:6379/1
-    entrypoint: ./entrypoints/sidekiq-entrypoint.sh
+    entrypoint: ./bin/sidekiq-entrypoint
     stdin_open: true
     tty: true
       YAML
