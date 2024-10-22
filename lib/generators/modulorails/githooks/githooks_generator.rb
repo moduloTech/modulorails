@@ -9,6 +9,7 @@ module Modulorails
     protected
 
     def create_config
+      create_hook_executor
       create_refresh_generations_script
       create_git_hooks
       update_gitattributes
@@ -16,14 +17,19 @@ module Modulorails
 
     private
 
+    def create_hook_executor
+      template 'dockeruby.sh', 'bin/dockeruby'
+      chmod 'bin/dockeruby', 0o755
+    end
+
     def create_refresh_generations_script
-      template 'refresh_generations.sh', 'bin/refresh_generations.sh'
-      chmod 'bin/refresh_generations.sh', 0o755
+      template 'refresh_generations.sh', 'bin/refresh_generations'
+      chmod 'bin/refresh_generations', 0o755
     end
 
     def create_git_hooks
       %w[post-rewrite pre-merge-commit].each do |hook|
-        template 'git_hook.sh', ".git/hooks/#{hook}"
+        template "#{hook}.sh", ".git/hooks/#{hook}"
         chmod ".git/hooks/#{hook}", 0o755
       end
     end
