@@ -77,9 +77,7 @@ module Modulorails
       # If no endpoint and/or no API key is configured, it is impossible to send the data to the
       # intranet and thus we raise an error: it is the only error we want to raise since it goes
       # against one of the main goals of the gem and the gem's user is responsible.
-      unless configuration.endpoint && configuration.api_key
-        raise Error.new('No endpoint or api key')
-      end
+      raise Error.new('No endpoint or api key') unless configuration.endpoint && configuration.api_key
 
       # Define the headers of the request ; sending JSON and API key to authenticate the gem on
       # the intranet
@@ -99,14 +97,14 @@ module Modulorails
         # went wrong with an `errors` field. We do not want to raise since the gem's user is not
         # (necessarily) responsible for the error but we still need to display it somewhere to warn
         # the user something went wrong.
-        puts("[Modulorails] Error: #{response['errors'].join(', ')}") if response.code == 400
+        Rails.logger.debug { "[Modulorails] Error: #{response['errors'].join(', ')}" } if response.code == 400
 
         # Return the response to allow users to do some more
         response
       rescue StandardError => e
         # Still need to notify the user
-        puts("[Modulorails] Error: Could not post to #{configuration.endpoint}")
-        puts e.message
+        Rails.logger.debug { "[Modulorails] Error: Could not post to #{configuration.endpoint}" }
+        Rails.logger.debug e.message
         nil
       end
     end
@@ -131,7 +129,7 @@ module Modulorails
     # Generate a CI/CD template unless it was already done.
     # The check is done using a 'keepfile'.
     def generate_ci_template
-      return if File.exist?(Rails.root.join('.modulorails-gitlab-ci'))
+      return if Rails.root.join('.modulorails-gitlab-ci').exist?
 
       Modulorails::GitlabciGenerator.new([], {}, {}).invoke_all
     end
@@ -145,7 +143,7 @@ module Modulorails
 
       Modulorails::SelfUpdateGenerator.new([], {}, {}).invoke_all
     rescue StandardError => e
-      puts("[Modulorails] An error occured: #{e.class} - #{e.message}")
+      Rails.logger.debug { "[Modulorails] An error occured: #{e.class} - #{e.message}" }
     end
 
     # @author Matthieu 'ciappa_m' Ciappara
@@ -153,7 +151,7 @@ module Modulorails
     # Generate a health_check configuration unless it was already done.
     # The check is done using a 'keepfile'.
     def generate_healthcheck_template
-      return if File.exist?(Rails.root.join('.modulorails-health_check'))
+      return if Rails.root.join('.modulorails-health_check').exist?
 
       Modulorails::HealthCheckGenerator.new([], {}, {}).invoke_all
     end
@@ -176,7 +174,7 @@ module Modulorails
     #
     # Generate a bundler-audit configuration.
     def generate_git_hooks_template
-      return if File.exist?(Rails.root.join('.modulorails-githooks'))
+      return if Rails.root.join('.modulorails-githooks').exist?
 
       Modulorails::GithooksGenerator.new([], {}, {}).invoke_all
     end

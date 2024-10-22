@@ -9,9 +9,9 @@ class Modulorails::SidekiqGenerator < Rails::Generators::Base
   desc 'This generator adds Sidekiq to the project'
 
   def add_to_docker_compose
-    if File.exist?(Rails.root.join('compose.yml'))
+    if Rails.root.join('compose.yml').exist?
       add_to_docker_compose_yml_file(Rails.root.join('compose.yml'))
-    elsif File.exist?(Rails.root.join('docker-compose.yml'))
+    elsif Rails.root.join('docker-compose.yml').exist?
       add_to_docker_compose_yml_file(Rails.root.join('docker-compose.yml'))
     end
   end
@@ -26,18 +26,16 @@ class Modulorails::SidekiqGenerator < Rails::Generators::Base
     gemfile_path = Rails.root.join('Gemfile')
 
     # Add gem redis unless already present
-    unless File.read(gemfile_path).match?(/^\s*gem ['"]redis['"]/)
-      append_to_file(gemfile_path, "gem 'redis'\n")
-    end
+    append_to_file(gemfile_path, "gem 'redis'\n") unless File.read(gemfile_path).match?(/^\s*gem ['"]redis['"]/)
 
     # Add gem sidekiq unless already present
-    unless File.read(gemfile_path).match?(/^\s*gem ['"]sidekiq['"]/)
-      append_to_file(gemfile_path, "gem 'sidekiq'\n")
-    end
+    return if File.read(gemfile_path).match?(/^\s*gem ['"]sidekiq['"]/)
+
+    append_to_file(gemfile_path, "gem 'sidekiq'\n")
   end
 
   def add_to_config
-    Dir.glob(Rails.root.join('config/environments/*.rb')) do |file|
+    Rails.root.glob('config/environments/*.rb') do |file|
       add_to_config_file(file)
     end
   end
@@ -49,23 +47,24 @@ class Modulorails::SidekiqGenerator < Rails::Generators::Base
   def add_routes
     routes_path = Rails.root.join('config/routes.rb')
 
-    unless File.read(routes_path).match?(%r{require ['"]sidekiq/web["']})
-      inject_into_file routes_path, after: "Rails.application.routes.draw do\n" do
-        <<-RUBY
+    return if File.read(routes_path).match?(%r{require ['"]sidekiq/web["']})
+
+    inject_into_file routes_path, after: "Rails.application.routes.draw do\n" do
+      <<-RUBY
   require 'sidekiq/web'
   mount Sidekiq::Web => '/sidekiq'
 
-        RUBY
-      end
+      RUBY
     end
   end
 
   def add_health_check
     file_path = Rails.root.join('config/initializers/health_check.rb')
 
-    unless File.read(file_path).match?(%r{add_custom_check\s*\(?\s*['"]sidekiq-queues['"]\s*\)?})
-      inject_into_file file_path, after: /^HealthCheck.setup do \|config\|\n$/ do
-        <<-RUBY
+    return if File.read(file_path).match?(/add_custom_check\s*\(?\s*['"]sidekiq-queues['"]\s*\)?/)
+
+    inject_into_file file_path, after: /^HealthCheck.setup do \|config\|\n$/ do
+      <<-RUBY
 
   # Add one or more custom checks that return a blank string if ok, or an error message if there is an error
   config.add_custom_check('sidekiq-queues') do
@@ -87,14 +86,13 @@ class Modulorails::SidekiqGenerator < Rails::Generators::Base
     # Less than 200 jobs to retry, ok!
     retry_jobs_count < 200 ? '' : "\#{retry_jobs_count} are waiting for retry."
   end
-        RUBY
-      end
+      RUBY
     end
   end
 
   def add_entrypoint
     template 'entrypoints/sidekiq-entrypoint.sh'
-    chmod 'entrypoints/sidekiq-entrypoint.sh', 0755
+    chmod 'entrypoints/sidekiq-entrypoint.sh', 0o755
   end
 
   private
@@ -103,9 +101,7 @@ class Modulorails::SidekiqGenerator < Rails::Generators::Base
     @image_name ||= Modulorails.data.name.parameterize
 
     # Create docker-compose.yml unless present
-    unless File.exist?(file_path)
-      invoke(Modulorails::DockerGenerator, [])
-    end
+    invoke(Modulorails::DockerGenerator, []) unless File.exist?(file_path)
 
     return if File.read(file_path).match?(/^ {2}sidekiq:$/)
 
@@ -155,23 +151,24 @@ class Modulorails::SidekiqGenerator < Rails::Generators::Base
 
     # Add sidekiq to deploy file
     insert_into_file file_path do
-      <<-YAML
+      <<~YAML
 
-sidekiq:
-  enabled: true
-  resources:
-    requests:
-      cpu: 100m
-      memory: 512Mi
-    limits:
-      cpu: 100m
-      memory: 512Mi
-  autoscaling:
-    enabled: true
-    minReplicas: 1
-    maxReplicas: 10
-    targetCPUUtilizationPercentage: 80
+        sidekiq:
+          enabled: true
+          resources:
+            requests:
+              cpu: 100m
+              memory: 512Mi
+            limits:
+              cpu: 100m
+              memory: 512Mi
+          autoscaling:
+            enabled: true
+            minReplicas: 1
+            maxReplicas: 10
+            targetCPUUtilizationPercentage: 80
       YAML
     end
   end
+
 end

@@ -125,23 +125,27 @@ module Modulorails
       loaded_specs = Gem.loaded_specs
 
       # The Rails version used by the application
-      @rails_version = loaded_specs['rails'].version.version
+      @rails_version = gem_version(loaded_specs['rails'])
 
       # The bundler version used by the application (especially useful since Bundler 2 and
       # Bundler 1 are not compatible)
-      @bundler_version = loaded_specs['bundler'].version.version
+      @bundler_version = gem_version(loaded_specs['bundler'])
 
       # The version of the ActiveRecord adapter
-      @adapter_version = loaded_specs[@adapter]&.version&.version
+      @adapter_version = gem_version(loaded_specs[@adapter])
 
       # The version of the webpacker gem - might be nil
-      @webpacker_version = loaded_specs['webpacker']&.version&.version
+      @webpacker_version = gem_version(loaded_specs['webpacker'])
 
       # The version of the importmap-rails gem - might be nil
-      @importmap_version = loaded_specs['importmap-rails']&.version&.version
+      @importmap_version = gem_version(loaded_specs['importmap-rails'])
 
       # The version of the jsbundling-rails gem - might be nil
-      @jsbundling_version = loaded_specs['jsbundling-rails']&.version&.version
+      @jsbundling_version = gem_version(loaded_specs['jsbundling-rails'])
+    end
+
+    def gem_version(spec)
+      spec&.version&.version
     end
 
     def initialize_from_git

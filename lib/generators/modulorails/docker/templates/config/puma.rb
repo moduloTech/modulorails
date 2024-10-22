@@ -26,12 +26,12 @@ threads threads_count, threads_count
 # Specifies the worker count.
 if ENV['RAILS_ENV'] == 'production'
   require 'concurrent-ruby'
-  worker_count = Integer(ENV.fetch('WEB_CONCURRENCY') { 4 })
+  worker_count = Integer(ENV.fetch('WEB_CONCURRENCY', 4))
   workers worker_count if worker_count > 1
 end
 
 # Specifies the `port` that Puma will listen on to receive requests; default is 3000.
-bind "tcp://0.0.0.0:#{ENV.fetch('PORT') { 3000 }}"
+bind "tcp://0.0.0.0:#{ENV.fetch('PORT', 3000)}"
 
 # Allow puma to be restarted by `bin/rails restart` command.
 plugin :tmp_restart

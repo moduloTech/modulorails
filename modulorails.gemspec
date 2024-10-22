@@ -29,15 +29,14 @@ Gem::Specification.new do |spec|
   end
   spec.require_paths = ['lib']
 
-  spec.add_runtime_dependency 'git', '~> 1.7', '>= 1.7.0'
-  spec.add_runtime_dependency 'health_check', '~> 3.1'
-  spec.add_runtime_dependency 'httparty', '>= 0.13.3'
-  spec.add_runtime_dependency 'i18n', '>= 0.9.5'
-  spec.add_runtime_dependency 'railties', '>= 4.2.0'
-  spec.add_runtime_dependency 'rubocop', '>= 1.28.2'
-  spec.add_runtime_dependency 'rubocop-rails', '>= 2.14.2'
-  spec.add_runtime_dependency 'bundler-audit', '~> 0.9.1'
+  spec.add_dependency 'bundler-audit', '~> 0.9.1'
+  spec.add_dependency 'git', '~> 1.7', '>= 1.7.0'
+  spec.add_dependency 'health_check', '~> 3.1'
+  spec.add_dependency 'httparty', '>= 0.13.3'
+  spec.add_dependency 'i18n', '>= 0.9.5'
+  spec.add_dependency 'railties', '>= 4.2.0'
+  spec.add_dependency 'rubocop', '>= 1.28.2'
+  spec.add_dependency 'rubocop-rails', '>= 2.14.2'
 
-  spec.add_development_dependency 'activerecord', '>= 4.2.0'
-  spec.add_development_dependency 'appraisal'
+  spec.metadata['rubygems_mfa_required'] = 'true'
 end

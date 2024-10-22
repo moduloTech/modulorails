@@ -4,7 +4,7 @@
 class Modulorails::BaseService
 
   # Allow to instantiate the service and call the service in one go.
-  if Modulorails::COMPARABLE_RUBY_VERSION < Gem::Version.new('3.0')
+  if Gem::Version.new('3.0') > Modulorails::COMPARABLE_RUBY_VERSION
     def self.call(*args, &block)
       new(*args, &block).call
     end
@@ -90,7 +90,7 @@ class Modulorails::BaseService
   # @param to [String,ActiveSupport::TimeWithZone] the maximum date
   # @return [[ActiveSupport::TimeWithZone, ActiveSupport::TimeWithZone]] The given dates casted.
   def params_to_time(from, to=nil)
-    from = from.is_a?(String) && from.present? ? from.to_time_with_zone : from
+    from = from.to_time_with_zone if from.is_a?(String) && from.present?
     to   = if to.is_a?(String) && to.present?
              to = to.to_time_with_zone
 

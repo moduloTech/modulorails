@@ -12,7 +12,7 @@ class Modulorails::HealthCheckGenerator < Rails::Generators::Base
     template 'config/initializers/health_check.rb'
 
     # Add the route
-    unless File.read(Rails.root.join('config/routes.rb')).match?('health_check_routes')
+    unless Rails.root.join('config/routes.rb').read.match?('health_check_routes')
       inject_into_file 'config/routes.rb', "  health_check_routes\n\n", after: "Rails.application.routes.draw do\n"
     end
 
