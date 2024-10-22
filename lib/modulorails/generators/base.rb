@@ -55,7 +55,7 @@ module Modulorails
       def create_keep_file
         file = keep_file_name
 
-        remove_file(file) if File.exist?(file)
+        remove_file(file)
 
         content = <<~TEXT
           Version: #{version}

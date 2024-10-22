@@ -16,7 +16,8 @@ This file is used to list changes made in each version of the gem.
   - Remove version from compose.yml.
   - Auto-stop staging container after 7 days.
   - Use `rails` chart in Gitlab CI templates.
-  - Move entrypoints locations to `bin` to be rails-standard
+  - Move entrypoints locations to `bin` to be rails-standard.
+  - Rewrite Dockerfile.prod for Rails 7.2+ to be more rails-standard.
 - Version Docker generator.
 - Add a generator for project initialization:
   - Add default configuration for production and staging environments.
