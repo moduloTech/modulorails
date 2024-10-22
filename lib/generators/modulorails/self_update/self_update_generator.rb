@@ -13,7 +13,8 @@ class Modulorails::SelfUpdateGenerator < Rails::Generators::Base
 
   def create_config_file
     # Get the last published version
-    last_published_version = HTTParty.get(LATEST_VERSION_URL).parsed_response.first
+    versions = HTTParty.get(LATEST_VERSION_URL).parsed_response
+    last_published_version = versions&.reject { |version| Gem::Version.new(version['number']).prerelease? }&.first
 
     # Do nothing if we could not fetch the last published version (whatever the reason)
     return if last_published_version.nil?
