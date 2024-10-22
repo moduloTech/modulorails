@@ -50,7 +50,7 @@ Rails.application.configure do
   # config.action_cable.url = "wss://#{host}/cable"
   # config.action_cable.disable_request_forgery_protection = true
   # config.action_cable.allowed_request_origins = [
-  #  %r{(https|wss)://app.(2000-|benard-|3j-|pn-|reda-)?powerpanne.(com|fr)}
+  #  %r{(https|wss)://host}
   # ]
 
   # Assume all access to the app is happening through a SSL-terminating reverse proxy.
@@ -59,6 +59,9 @@ Rails.application.configure do
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
   config.force_ssl = false
+
+  # Skip http-to-https redirect for the default health check endpoint.
+  # config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
 
   # Log to STDOUT by default
   config.logger = ActiveSupport::Logger.new(STDOUT)
@@ -78,7 +81,7 @@ Rails.application.configure do
 
   # Use a real queuing backend for Active Job (and separate queues per environment).
   # config.active_job.queue_adapter = :sidekiq
-  # config.active_job.queue_name_prefix = "mayday_web_production"
+  # config.active_job.queue_name_prefix = "<%= Modulorails.data.rails_name.underscore %>_production"
 
   config.action_mailer.perform_caching = false
 
