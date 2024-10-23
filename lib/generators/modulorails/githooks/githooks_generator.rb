@@ -18,7 +18,7 @@ module Modulorails
     private
 
     def create_hook_executor
-      template 'dockeruby.sh', 'bin/dockeruby'
+      template 'dockeruby.rb', 'bin/dockeruby'
       chmod 'bin/dockeruby', 0o755
     end
 
