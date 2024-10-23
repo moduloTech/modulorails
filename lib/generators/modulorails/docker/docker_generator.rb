@@ -67,12 +67,28 @@ class Modulorails::DockerGenerator < Modulorails::Generators::Base
 
   def create_new_file(old_file, new_file, executable: true)
     if File.exist?(old_file)
-      copy_file old_file, new_file
+      copy_original_file old_file, new_file
       remove_file old_file
     else
       template old_file, new_file
     end
     chmod new_file, 0o755 if executable
+  end
+
+  def copy_original_file(source, *args, &block)
+    config = args.last.is_a?(Hash) ? args.pop : {}
+    destination = args.first || source
+    source = File.expand_path(source, destination_root)
+
+    create_file destination, nil, config do
+      content = File.binread(source)
+      content = yield(content) if block
+      content
+    end
+    if config[:mode] == :preserve
+      mode = File.stat(source).mode
+      chmod(destination, mode, config)
+    end
   end
 
 end
