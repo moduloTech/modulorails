@@ -3,6 +3,7 @@ set -e
 
 # shellcheck disable=SC2016
 VALID_LAST_INSTRUCTION='exec "${@}"'
+VALID_LAST_INSTRUCTION2='exec "$@"'
 
 # Check if the Dockerfile exists
 check_dockerfile() {
@@ -39,7 +40,7 @@ check_entrypoint() {
 
   last_line=$(tail -n 1 "$el" | xargs)
 
-  if [ "$last_line" != "$VALID_LAST_INSTRUCTION" ]; then
+  if [ "$last_line" != "$VALID_LAST_INSTRUCTION" ] && [ "$last_line" != "$VALID_LAST_INSTRUCTION2" ]; then
     echo "Invalid entrypoint: Last instruction should be '$VALID_LAST_INSTRUCTION' instead of '$last_line'"
     return 1
   fi
