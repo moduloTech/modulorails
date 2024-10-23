@@ -8,7 +8,7 @@ development: &default
 
 test:
   <<: *default
-  database: <%%= ENV['DTABASE_TEST_URL'] %>
+  database: <%%= ENV['DATABASE_TEST_URL'] %>
 
 staging:
   <<: *default

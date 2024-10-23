@@ -4,6 +4,8 @@ This file is used to list changes made in each version of the gem.
 
 # Unreleased
 
+- Fix typo in `database.yml` template for test database
+
 # 1.5.1
 
 - Update templates according to new standards:
