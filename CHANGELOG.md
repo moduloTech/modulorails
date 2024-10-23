@@ -4,7 +4,7 @@ This file is used to list changes made in each version of the gem.
 
 # Unreleased
 
-# 1.5.0
+# 1.5.1
 
 - Update templates according to new standards:
   - Optimize layers in Dockerfile.prod.
@@ -27,6 +27,10 @@ This file is used to list changes made in each version of the gem.
 - Add optional `data` argument to `with_transaction`.
 - Deprecate `Modulorails::BaseService#log` and `Modulorails::LogsForMethodService`.
 - Add a common base for all generators.
+
+# 1.5.0
+
+- Released then 
 
 # 1.4.0.1
 

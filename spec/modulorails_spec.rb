@@ -41,7 +41,7 @@ RSpec.describe Modulorails do
   end
 
   it 'has a version number' do
-    expect(Modulorails::VERSION).to eq('1.5.0.pre3')
+    expect(Modulorails::VERSION).to eq('1.5.1')
   end
 
   describe 'send_data' do
