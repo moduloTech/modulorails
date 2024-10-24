@@ -4,7 +4,8 @@ This file is used to list changes made in each version of the gem.
 
 # Unreleased
 
-- Fix typo in `database.yml` template for test database
+- Fix typo in `database.yml` template for test database.
+- Fix removal of rails' server's pidfile in docker entrypoint.
 
 # 1.5.1
 
