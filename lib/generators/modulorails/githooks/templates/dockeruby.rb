@@ -35,7 +35,7 @@ def entrypoint_location
   md[1]
 end
 
-VALID_LAST_INSTRUCTION = /exec "\$\{?@}?"/
+VALID_LAST_INSTRUCTION = /exec "\$\{?@}?"/.freeze
 
 def check_entrypoint(verbose: false)
   el = entrypoint_location
@@ -70,7 +70,7 @@ def executer_docker_run(docker_args, verbose: false)
 
   # Build the command string
   # rubocop:disable Layout/LineLength
-  command = %(docker run --rm #{modulogem_gems_option} #{modulogem_option} -v '#{pwd}:/app/#{working_directory}' #{tty_option} -w '/app/#{working_directory}' ezveus/ruby:latest #{docker_args})
+  command = %(docker run --pull=always --rm #{modulogem_gems_option} #{modulogem_option} -v '#{pwd}:/app/#{working_directory}' #{tty_option} -w '/app/#{working_directory}' ruby:latest #{docker_args})
   # rubocop:enable Layout/LineLength
 
   puts(command) if verbose
@@ -97,20 +97,18 @@ def executer_compose_run(docker_args, verbose: false)
   exec(command)
 end
 
+def contains_command(escaped_args)
+  escaped_args.each_with_index.any? do |arg, index|
+    !arg.start_with?('-') && (index.zero? || !escaped_args[index - 1].start_with?('-'))
+  end
+end
+
 def main(args, verbose: false)
   # Escape each argument individually
   escaped_args = args.map { |arg| Shellwords.escape(arg) }
 
-  # Check if the arguments contain a Ruby command or only options
-  contains_command = false
-  escaped_args.each_with_index do |arg, index|
-    if !arg.start_with?('-') && (index.zero? || !escaped_args[index - 1].start_with?('-'))
-      contains_command = true
-      break
-    end
-  end
-
-  docker_args = if contains_command
+  # Prefix the arguments with a `ruby` command if there is not already one
+  docker_args = if contains_command(escaped_args)
                   escaped_args.join(' ')
                 else
                   "ruby #{escaped_args.join(' ')}"
