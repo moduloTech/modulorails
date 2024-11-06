@@ -12,6 +12,7 @@ This file is used to list changes made in each version of the gem.
 - Merge all keepfiles in one.
 - Wrap health_check initializer in a reloader.to_prepare block.
 - Always use latest ruby in dockeruby.
+- Add Modulorails.deprecator for compatibility with Rails 7.2.
 
 # 1.5.1
 

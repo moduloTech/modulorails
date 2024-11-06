@@ -166,6 +166,10 @@ module Modulorails
       Modulorails::GithooksGenerator.new([], {}, {}).invoke_all
     end
 
+    def deprecator
+      @deprecator ||= ActiveSupport::Deprecation.new('2.0', 'Modulorails')
+    end
+
   end
 
 end

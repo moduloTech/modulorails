@@ -45,7 +45,7 @@ class Modulorails::BaseService
   # @param method [#to_s] The method calling `#log`
   # @param message [Hash,#to_s] The message to log; Hash will be logged after a #to_json call
   def log(method, message)
-    ActiveSupport::Deprecation.warn(<<~MESSAGE)
+    Modulorails.deprecator.warn(<<~MESSAGE)
       Modulorails::BaseService#log is deprecated and will be removed with version 2.0.
       Use Rails.logger.debug directly with objects instead.
     MESSAGE

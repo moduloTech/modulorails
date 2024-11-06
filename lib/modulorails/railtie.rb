@@ -31,6 +31,10 @@ module Modulorails
       end
     end
 
+    initializer "modulorails.deprecator" do |app|
+      app.deprecators[:modulorails] = Modulorails.deprecator
+    end
+
     # Sending data after the initialization ensures we can access
     # all gems, constants and configurations we might need.
     config.after_initialize do

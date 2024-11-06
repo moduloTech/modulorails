@@ -14,7 +14,7 @@ class Modulorails::LogsForMethodService < Modulorails::BaseService
 
   # Write a formatted debug log using given initialization parameters
   def call
-    ActiveSupport::Deprecation.warn(<<~MESSAGE)
+    Modulorails.deprecator.warn(<<~MESSAGE)
       Modulorails::LogsForMethodService is deprecated and will be removed with version 2.0.
       Use Rails.logger.debug directly with objects instead.
     MESSAGE
