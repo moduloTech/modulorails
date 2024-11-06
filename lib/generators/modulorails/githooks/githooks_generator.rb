@@ -6,9 +6,12 @@ module Modulorails
 
   class GithooksGenerator < Modulorails::Generators::Base
 
+    VERSION = 1
+
     protected
 
     def create_config
+      remove_old_keepfile('.modulorails-githooks')
       create_hook_executor
       create_refresh_generations_script
       create_git_hooks

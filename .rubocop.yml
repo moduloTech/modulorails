@@ -38,6 +38,7 @@ AllCops:
     - 'test/**/*'
     - 'node_modules/**/*'
     - 'spec/**/*'
+    - '**/templates/**/*'
 
 # Instructing rubocop about all standard Modulotech environments.
 Rails/UnknownEnv:

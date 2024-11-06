@@ -4,11 +4,16 @@ require 'modulorails/generators/base'
 
 class Modulorails::GitlabciGenerator < Modulorails::Generators::Base
 
+  VERSION = 1
+
   desc 'This generator creates a template for a .gitlab-ci.yml file at root'
 
   protected
 
   def create_config
+    remove_old_keepfile('.modulorails-gitlab-ci')
+    remove_old_keepfile('.modulorails-gitlabci')
+
     @data = Modulorails.data
     @image_name = @data.name.parameterize
     @environment_name = @data.environment_name

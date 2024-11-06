@@ -6,6 +6,8 @@ This file is used to list changes made in each version of the gem.
 
 - Fix typo in `database.yml` template for test database.
 - Fix removal of rails' server's pidfile in docker entrypoint.
+- Split DockerGenerator in multiple sub-generators to version each one individually.
+- Merge all keepfiles in one.
 
 # 1.5.1
 

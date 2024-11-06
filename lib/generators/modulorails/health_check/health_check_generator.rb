@@ -11,6 +11,8 @@ class Modulorails::HealthCheckGenerator < Modulorails::Generators::Base
   protected
 
   def create_config
+    remove_old_keepfile('.modulorails-health_check')
+
     # Update the template
     template 'config/initializers/health_check.rb'
 
@@ -20,10 +22,6 @@ class Modulorails::HealthCheckGenerator < Modulorails::Generators::Base
     inject_into_file 'config/routes.rb', "  health_check_routes\n\n", after: "Rails.application.routes.draw do\n"
   rescue StandardError => e
     warn("[Modulorails] Error: cannot generate health_check configuration: #{e.message}")
-  end
-
-  def keep_file_name
-    '.modulorails-health_check'
   end
 
 end

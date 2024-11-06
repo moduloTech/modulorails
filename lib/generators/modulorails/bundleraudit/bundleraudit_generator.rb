@@ -4,6 +4,8 @@ require 'modulorails/generators/base'
 
 class Modulorails::BundlerauditGenerator < Modulorails::Generators::Base
 
+  VERSION = 1
+
   desc 'This generator creates a configuration for Bundler-Audit'
 
   protected

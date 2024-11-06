@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'rails/generators'
+require 'yaml'
 
 module Modulorails
 
@@ -31,38 +32,47 @@ module Modulorails
       def version
         self.class.const_get('VERSION')
       rescue NameError
-        1
+        false
       end
 
       def generator_name
-        self.class.name.split('::').last.gsub('Generator', '').parameterize
+        @generator_name ||= self.class.generator_name
       end
 
       def keep_file_name
-        ".modulorails-#{generator_name}"
+        '.modulorails.yml'
+      end
+
+      def keep_file_version
+        return @keep_file_version if @keep_file_version
+
+        pathname = Rails.root.join(keep_file_name)
+        keep_file_exist = pathname.exist?
+        @keep_file_version = if keep_file_exist
+                               YAML.load_file(pathname).dig(generator_name, 'version').to_i
+                             else
+                               0
+                             end
       end
 
       def keep_file_present?
-        pathname = Rails.root.join(keep_file_name)
+        v = version
+        return false unless v
 
-        res = pathname.exist?
-        return res if version < 2
-
-        res && pathname.readlines(keep_file_name).first
-                       .match(/version: (\d+)/i)&.send(:[], 1).to_i >= version
+        Rails.root.join(keep_file_name).exist? && keep_file_version >= v
       end
 
       def create_keep_file
+        v = version
+        return unless v
+
         file = keep_file_name
+        config = File.exist?(file) ? YAML.load_file(file) : {}
+        config[generator_name] = {
+          'version' => v
+        }
 
-        remove_file(file)
-
-        content = <<~TEXT
-          Version: #{version}
-
-          If you want to reset your configuration, you can run `rails g modulorails:#{generator_name} --force`.
-        TEXT
-        create_file(file, content)
+        create_file(file, config.to_yaml)
 
         say "Add #{file} to git"
         git add: file
@@ -70,6 +80,36 @@ module Modulorails
 
       def create_config
         raise NotImplementedError
+      end
+
+      def create_new_file(old_file, new_file, executable: true)
+        if File.exist?(old_file)
+          copy_original_file old_file, new_file
+          remove_file old_file
+        else
+          template old_file, new_file
+        end
+        chmod new_file, 0o755 if executable
+      end
+
+      def copy_original_file(source, *args, &block)
+        config = args.last.is_a?(Hash) ? args.pop : {}
+        destination = args.first || source
+        source = File.expand_path(source, destination_root)
+
+        create_file destination, nil, config do
+          content = File.binread(source)
+          content = yield(content) if block
+          content
+        end
+        return unless config[:mode] == :preserve
+
+        mode = File.stat(source).mode
+        chmod(destination, mode, config)
+      end
+
+      def remove_old_keepfile(filename)
+        FileUtils.rm_f(filename)
       end
 
     end
