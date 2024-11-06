@@ -8,6 +8,7 @@ This file is used to list changes made in each version of the gem.
 - Fix removal of rails' server's pidfile in docker entrypoint.
 - Split DockerGenerator in multiple sub-generators to version each one individually.
 - Merge all keepfiles in one.
+- Wrap health_check initializer in a reloader.to_prepare block.
 
 # 1.5.1
 
