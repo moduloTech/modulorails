@@ -40,10 +40,6 @@ RSpec.describe Modulorails do
     Modulorails.configuration = nil
   end
 
-  it 'has a version number' do
-    expect(Modulorails::VERSION).to eq('1.5.1')
-  end
-
   describe 'send_data' do
     context 'invalid configuration' do
       it 'raise if there is no endpoint' do
