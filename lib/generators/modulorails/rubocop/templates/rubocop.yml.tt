@@ -235,6 +235,10 @@ Metrics/BlockLength:
   Exclude:
     - 'app/admin/**/*'
     - 'lib/tasks/**/*'
+  # Allow big blocks for Concerns
+  AllowedMethods:
+    - class_methods
+    - included
 
 # Checks if empty lines around the bodies of classes match the configuration.
 Layout/EmptyLinesAroundClassBody:

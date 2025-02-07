@@ -14,6 +14,7 @@ This file is used to list changes made in each version of the gem.
 - Always use latest ruby in dockeruby.
 - Add Modulorails.deprecator for compatibility with Rails 7.2.
 - Check if generated files have to be regenerated in `refresh_generations.sh` to speed-up hook.
+- Allow `class_methods` and `included` blocks in Concerns to break the `Metrics/BlockLength` Rubocop rule.
 
 # 1.5.1
 
