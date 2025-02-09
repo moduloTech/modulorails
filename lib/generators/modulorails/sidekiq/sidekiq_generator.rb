@@ -73,10 +73,10 @@ class Modulorails::SidekiqGenerator < Rails::Generators::Base
     # No queues, means no jobs, ok!
     next '' if queues.empty?
 
-    enqueued_jobs_count = queues.each.map { |queue| queue.count }.sum
+    global_latency = queues.each.map { |queue| queue.latency }.sum
 
-    # Less than 200 enqueued jobs, ok!
-    enqueued_jobs_count < 200 ? '' : "\#{enqueued_jobs_count} are currently enqueued."
+    # Global latency is less than 5 minutes, ok!
+    global_latency < 5.minutes ? '' : "Global latency (#{global_latency}) is too high."
   end
 
   # Add one or more custom checks that return a blank string if ok, or an error message if there is an error
@@ -146,7 +146,7 @@ class Modulorails::SidekiqGenerator < Rails::Generators::Base
   end
 
   def add_to_deploy_file(file_path)
-    # Do nothing if file does not exists or Sidekiq is already enabled
+    # Do nothing if file does not exist or Sidekiq is already enabled
     return if !File.exist?(file_path) || File.read(file_path).match?(/^ {2}sidekiq:$/)
 
     # Add sidekiq to deploy file

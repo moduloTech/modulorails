@@ -5,6 +5,7 @@ require 'generators/modulorails/docker/entrypoint/entrypoint_generator'
 require 'generators/modulorails/docker/dockerfile/dockerfile_generator'
 require 'generators/modulorails/docker/compose/compose_generator'
 require 'generators/modulorails/docker/config/config_generator'
+require 'generators/modulorails/docker/devcontainer/devcontainer_generator'
 
 module Modulorails
 
@@ -24,6 +25,7 @@ module Modulorails
       Modulorails::Docker::DockerfileGenerator.new([], {}, {}).invoke_all
       Modulorails::Docker::ComposeGenerator.new([], {}, {}).invoke_all
       Modulorails::Docker::ConfigGenerator.new([], {}, {}).invoke_all
+      Modulorails::Docker::DevcontainerGenerator.new([], {}, {}).invoke_all
     rescue StandardError => e
       warn("[Modulorails] Error: cannot generate Docker configuration: #{e.message}")
     end

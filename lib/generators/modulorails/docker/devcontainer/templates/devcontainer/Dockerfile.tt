@@ -7,15 +7,19 @@ WORKDIR /app
 RUN apk add --update --no-cache \
     alpine-sdk \
     nodejs \
+<%- if @webpack_container_needed -%>
     yarn \
+<%- end -%>
     tzdata \
     gcompat \
     vim \
-    <%- if @adapter =~ /mysql/ -%>
+    bash \
+    openssh \
+<%- if @adapter =~ /mysql/ -%>
     mysql-dev
-    <%- else -%>
+<%- else -%>
     postgresql-dev
-    <%- end -%>
+<%- end -%>
 RUN gem install bundler -v <%= @data.bundler_version %>
 
 COPY Gemfile Gemfile.lock ./
@@ -23,8 +27,10 @@ RUN bundle install --jobs=2
 
 COPY . .
 
+RUN sed -i 's:/bin/ash:/bin/bash:g' /etc/passwd
+
 EXPOSE 3000
 
 ENTRYPOINT ["./bin/docker-entrypoint"]
 
-CMD ["./bin/rails", "server"]
+CMD ["sleep", "infinity"]

@@ -13,7 +13,7 @@ class Modulorails::ModuloprojectGenerator < Modulorails::Generators::Base
     template 'config/environments/production.rb'
     copy_file('config/environments/production.rb', 'config/environments/staging.rb')
     update_application_rb
-    create_file('config/locales/fr.yml', "--\nfr: {}\n")
+    create_file('config/locales/fr.yml', "fr: {}\n")
   rescue StandardError => e
     warn("[Modulorails] Error: cannot generate Moduloproject configuration: #{e.message}")
   end

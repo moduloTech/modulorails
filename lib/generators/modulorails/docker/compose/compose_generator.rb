@@ -8,19 +8,15 @@ module Modulorails
 
     class ComposeGenerator < ::Modulorails::Generators::DockerBase
 
-      VERSION = 1
+      VERSION = 2
 
       desc 'This generator creates Docker Compose configuration'
 
       protected
 
       def create_config
-        @data = Modulorails.data
-        @adapter = @data.adapter
-        @webpack_container_needed = @data.webpacker_version.present?
-        @image_name = @data.name.parameterize
-
-        create_new_file('docker-compose.yml', 'compose.yml', executable: false)
+        remove_file('docker-compose.yml')
+        remove_file('compose.yml')
       rescue StandardError => e
         warn("[Modulorails] Error: cannot generate Docker Compose configuration: #{e.message}")
       end

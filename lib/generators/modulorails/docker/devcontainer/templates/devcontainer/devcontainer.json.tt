@@ -1,0 +1,80 @@
+// For format details, see https://containers.dev/implementors/json_reference/.
+// For config options, see the README at: https://github.com/devcontainers/templates/tree/main/src/ruby
+{
+	"name": "<%= @image_name %>",
+	"dockerComposeFile": "./compose.yml",
+	"service": "app",
+	"workspaceFolder": "/app",
+	"shutdownAction": "stopCompose",
+
+	// Features to add to the dev container. More info: https://containers.dev/features.
+	"features": {
+		"ghcr.io/cirolosapio/devcontainers-features/alpine-docker-outside-of-docker:0": {}
+	},
+
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+<%- if @adapter =~ /mysql/ -%>
+	"forwardPorts": [3000, "database:3306", "mailcatcher:1080"],
+<%- else -%>
+	"forwardPorts": [3000, "database:5432", "mailcatcher:1080"],
+<%- end -%>
+
+	// Configure tool-specific properties.
+	"customizations": {
+		"vscode": {
+			"yard.spacers.beforeDescription": false,
+			"yard.spacers.afterDescription": false,
+			"yard.spacers.beforeTags": false,
+			"yard.spacers.separateTags": false,
+			"yard.spacers.afterTags": false,
+			"yard.spacers.beforeSingleTag": false,
+			"yard.spacers.afterSingleTag": false,
+			"yard.tags.paramNameBeforeType": true,
+			"extensions": [
+				"ecmel.vscode-html-css",
+				"Shopify.ruby-lsp",
+				"ms-vscode-remote.remote-containers",
+				"KoichiSasada.vscode-rdbg",
+				"pavlitsky.yard",
+				"eamodio.gitlens",
+				"GrapeCity.gc-excelviewer",
+				"smoore.yaml-path"
+			],
+			"settings": {
+				"terminal.integrated.profiles.linux": {
+					"JavaScript Debug Terminal": null,
+					"Rails console": {
+						"path": "rails",
+						"env": {
+							"DEV_LOG_LEVEL": "error",
+							"USE_CACHE": "YES"
+						},
+						"args": [
+							"c"
+						],
+						"icon": "ruby",
+						"color": "terminal.ansiRed"
+					},
+					"Rails server": {
+						"path": "rails",
+						"env": {
+							"DEV_LOG_LEVEL": "error",
+							"USE_CACHE": "YES"
+						},
+						"args": [
+							"s"
+						],
+						"icon": "ruby",
+						"color": "terminal.ansiRed"
+					}
+				}
+			}
+		}
+	},
+
+	// Uncomment to connect as root instead. More info: https://containers.dev/implementors/json_reference/#remoteUser.
+	// "remoteUser": "root",
+
+	// Use 'postCreateCommand' to run commands after the container is created.
+	"postCreateCommand": "bin/setup --skip-server"
+}
