@@ -1,18 +1,18 @@
 development: &default
 <%- if @adapter =~ /mysql/ -%>
   adapter: mysql2
-  url: ENV.fetch('DATABASE_URL', 'mysql2://root@database/<%= @image_name %>')
+  url: <%%= ENV.fetch('DATABASE_URL', 'mysql2://root@database/<%= @image_name %>') %>
 <%- else -%>
   adapter: postgresql
-  url: ENV.fetch('DATABASE_URL', 'postgresql://postgres:postgres@database/<%= @image_name %>')
+  url: <%%= ENV.fetch('DATABASE_URL', 'postgresql://postgres:postgres@database/<%= @image_name %>') %>
 <%- end -%>
 
 test:
   <<: *default
 <%- if @adapter =~ /mysql/ -%>
-  url: ENV.fetch('DATABASE_TEST_URL', 'mysql2://root@database/<%= @image_name %>-test')
+  url: <%%= ENV.fetch('DATABASE_TEST_URL', 'mysql2://root@database/<%= @image_name %>-test') %>
 <%- else -%>
-  url: ENV.fetch('DATABASE_TEST_URL', 'postgresql://postgres:postgres@database/<%= @image_name %>-test')
+  url: <%%= ENV.fetch('DATABASE_TEST_URL', 'postgresql://postgres:postgres@database/<%= @image_name %>-test') %>
 <%- end -%>
 
 staging:

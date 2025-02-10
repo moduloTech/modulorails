@@ -17,11 +17,12 @@ module Modulorails
       def create_config
         @data = Modulorails.data
         @adapter = @data.adapter
+        @image_name = @data.name.parameterize
 
-        template 'config/database.yml'
-        template 'config/cable.yml'
-        template 'config/initializers/0_redis.rb'
-        template 'config/puma.rb'
+        template 'config/database.yml', force: true
+        template 'config/cable.yml', force: true
+        template 'config/initializers/0_redis.rb', force: true
+        template 'config/puma.rb', force: true
       rescue StandardError => e
         warn("[Modulorails] Error: cannot generate application configuration: #{e.message}")
       end

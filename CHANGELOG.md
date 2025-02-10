@@ -17,6 +17,7 @@ This file is used to list changes made in each version of the gem.
 - Allow `class_methods` and `included` blocks in Concerns to break the `Metrics/BlockLength` Rubocop rule.
 - Add devcontainer support and update Docker-related structure.
 - Force overwrite of keep_file.
+- Force overwrite of config files.
 
 # 1.5.1
 
