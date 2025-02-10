@@ -72,7 +72,7 @@ module Modulorails
           'version' => v
         }
 
-        create_file(file, config.to_yaml)
+        create_file(file, config.to_yaml, force: true)
 
         say "Add #{file} to git"
         git add: file

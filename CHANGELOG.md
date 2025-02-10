@@ -16,6 +16,7 @@ This file is used to list changes made in each version of the gem.
 - Check if generated files have to be regenerated in `refresh_generations.sh` to speed-up hook.
 - Allow `class_methods` and `included` blocks in Concerns to break the `Metrics/BlockLength` Rubocop rule.
 - Add devcontainer support and update Docker-related structure.
+- Force overwrite of keep_file.
 
 # 1.5.1
 
