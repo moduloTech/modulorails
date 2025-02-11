@@ -4,13 +4,13 @@ require 'rails/generators'
 
 class Modulorails::ModuloprojectGenerator < Modulorails::Generators::Base
 
-  VERSION = 1
+  VERSION = 2
 
   desc 'This generator creates templates for Moduloproject'
 
   def create_config
     remove_old_keepfile(".modulorails-#{generator_name}")
-    template 'config/environments/production.rb'
+    template 'config/environments/production.rb', force: true
     copy_file('config/environments/production.rb', 'config/environments/staging.rb')
     update_application_rb
     create_file('config/locales/fr.yml', "fr: {}\n")

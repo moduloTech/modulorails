@@ -19,6 +19,7 @@ This file is used to list changes made in each version of the gem.
 - Force overwrite of keep_file.
 - Force overwrite of config files.
 - Replace old Modulotech Dockerfile.prod with Rails one.
+- Update production.rb from ModuloprojectGenerator to fit Rails 8.
 
 # 1.5.1
 
