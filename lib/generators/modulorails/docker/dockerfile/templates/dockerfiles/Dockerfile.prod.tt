@@ -17,11 +17,11 @@ RUN apk add --update --no-cache \
     vim \
     jemalloc \
     vips \
-    <%- if @adapter =~ /mysql/ -%>
+  <%- if @adapter =~ /mysql/ -%>
     mysql-client
-    <%- else -%>
+  <%- else -%>
     postgresql-client
-    <%- end -%>
+  <%- end -%>
 
 # Set production environment
 ENV RAILS_ENV="production" \
@@ -37,14 +37,16 @@ RUN apk add --update --no-cache \
     alpine-sdk \
     nodejs \
     tzdata \
+  <%- if @webpack_container_needed -%>
     yarn \
+  <% end %>
     shared-mime-info \
     gcompat \
-    <%- if @adapter =~ /mysql/ -%>
+  <%- if @adapter =~ /mysql/ -%>
     mysql-dev
-    <%- else -%>
+  <%- else -%>
     postgresql-dev
-    <%- end -%>
+  <%- end -%>
 
 # Install application gems
 RUN gem install bundler -v <%= @data.bundler_version %>
@@ -66,7 +68,11 @@ COPY . .
 RUN bundle exec bootsnap precompile app/ lib/
 
 # Precompiling assets for production without requiring secret RAILS_MASTER_KEY
+<%- if @rails_72_and_more -%>
 RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
+<%- else -%>
+RUN SECRET_KEY_BASE=1 ./bin/rails assets:precompile
+<%- end -%>
 
 # Final stage for app image
 FROM base

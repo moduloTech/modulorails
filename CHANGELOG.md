@@ -18,6 +18,7 @@ This file is used to list changes made in each version of the gem.
 - Add devcontainer support and update Docker-related structure.
 - Force overwrite of keep_file.
 - Force overwrite of config files.
+- Replace old Modulotech Dockerfile.prod with Rails one.
 
 # 1.5.1
 
