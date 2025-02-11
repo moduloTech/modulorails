@@ -21,8 +21,8 @@ module Modulorails
     private
 
     def create_hook_executor
-      template 'dockeruby.rb', 'bin/dockeruby'
-      chmod 'bin/dockeruby', 0o755
+      template 'dc.rb', 'bin/dc'
+      chmod 'bin/dc', 0o755
     end
 
     def create_refresh_generations_script

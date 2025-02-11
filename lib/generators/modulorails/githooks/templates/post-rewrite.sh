@@ -1,5 +1,5 @@
 #!/bin/sh
 if [ "$1" = "rebase" ]
 then
-  exec ./bin/dockeruby ./bin/refresh_generations
+  exec ./bin/dc ./bin/refresh_generations
 fi

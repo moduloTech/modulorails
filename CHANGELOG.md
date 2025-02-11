@@ -20,6 +20,7 @@ This file is used to list changes made in each version of the gem.
 - Force overwrite of config files.
 - Replace old Modulotech Dockerfile.prod with Rails one.
 - Update production.rb from ModuloprojectGenerator to fit Rails 8.
+- Adapt dockeruby.rb for devcontainers and rename it to dc.
 
 # 1.5.1
 
