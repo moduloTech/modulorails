@@ -32,7 +32,7 @@ module Modulorails
     end
 
     initializer "modulorails.deprecator" do |app|
-      app.deprecators[:modulorails] = Modulorails.deprecator
+      app.deprecators[:modulorails] = Modulorails.deprecator if app.respond_to?(:deprecators)
     end
 
     # Sending data after the initialization ensures we can access

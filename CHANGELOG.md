@@ -12,7 +12,7 @@ This file is used to list changes made in each version of the gem.
 - Merge all keepfiles in one.
 - Wrap health_check initializer in a reloader.to_prepare block.
 - Always use latest ruby in dockeruby.
-- Add Modulorails.deprecator for compatibility with Rails 7.2.
+- Add `Modulorails.deprecator` for better compatibility with Rails 7.2.
 - Check if generated files have to be regenerated in `refresh_generations.sh` to speed-up hook.
 - Allow `class_methods` and `included` blocks in Concerns to break the `Metrics/BlockLength` Rubocop rule.
 - Add devcontainer support and update Docker-related structure.
