@@ -30,7 +30,9 @@ module Modulorails
 
       def create_dockerfile_prod
         @rails_72_and_more = Gem::Version.new(@data.rails_version) >= Gem::Version.new('7.2')
-        template 'dockerfiles/Dockerfile.prod', 'Dockerfile'
+
+        remove_file 'Dockerfile.prod'
+        template 'dockerfiles/Dockerfile.prod', 'Dockerfile', force: true
       end
 
       def create_dockerignore

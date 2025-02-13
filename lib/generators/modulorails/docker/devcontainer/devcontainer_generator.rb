@@ -25,7 +25,6 @@ module Modulorails
       private
 
       def remove_old_dockerfiles
-        remove_file 'Dockerfile'
         remove_file 'compose.yml'
         remove_file 'docker-compose.yml'
       end
