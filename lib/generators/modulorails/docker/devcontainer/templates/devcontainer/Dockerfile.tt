@@ -22,6 +22,11 @@ RUN apk add --update --no-cache \
 <%- end -%>
 RUN gem install bundler -v <%= @data.bundler_version %>
 
+<%- if @webpack_container_needed -%>
+COPY package.json yarn.lock ./
+RUN yarn install
+<%- end -%>
+
 COPY Gemfile Gemfile.lock ./
 RUN bundle install --jobs=2
 
