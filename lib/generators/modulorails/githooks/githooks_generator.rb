@@ -21,8 +21,10 @@ module Modulorails
     private
 
     def create_hook_executor
-      template 'dc.rb', 'bin/dc'
+      template 'dc.sh', 'bin/dc'
       chmod 'bin/dc', 0o755
+      template 'dcr.sh', 'bin/dcr'
+      chmod 'bin/dcr', 0o755
     end
 
     def create_refresh_generations_script
