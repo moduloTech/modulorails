@@ -2,7 +2,7 @@ FROM ruby:<%= @data.ruby_version %>-alpine
 
 ENV RAILS_ENV=development
 ENV EDITOR=vim
-WORKDIR /app
+WORKDIR /rails
 
 RUN apk add --update --no-cache \
     alpine-sdk \
