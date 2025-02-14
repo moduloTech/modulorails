@@ -57,17 +57,17 @@ services:
 
 <%- if @webpack_container_needed -%>
   webpack:
-   image: modulotechgroup/<%= @image_name %>:dev
+    image: modulotechgroup/<%= @image_name %>:dev
     build:
       context: ..
       dockerfile: .devcontainer/Dockerfile
-   entrypoint: ./bin/webpack-entrypoint
-   volumes:
-     - ..:/app
-   environment:
-     NODE_ENV: development
-     RAILS_ENV: development
-     WEBPACKER_DEV_SERVER_HOST: 0.0.0.0
+    entrypoint: ./bin/webpack-entrypoint
+    volumes:
+      - ..:/app
+    environment:
+      NODE_ENV: development
+      RAILS_ENV: development
+      WEBPACKER_DEV_SERVER_HOST: 0.0.0.0
 <%- end -%>
 
 volumes:
