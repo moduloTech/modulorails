@@ -39,7 +39,7 @@ RUN apk add --update --no-cache \
     tzdata \
   <%- if @webpack_container_needed -%>
     yarn \
-  <% end %>
+  <%- end -%>
     shared-mime-info \
     gcompat \
   <%- if @adapter =~ /mysql/ -%>
