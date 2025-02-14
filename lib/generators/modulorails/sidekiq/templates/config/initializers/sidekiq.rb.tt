@@ -1,9 +1,9 @@
-redis_url = Rails.application.config_for('cable')['url']
-
 Sidekiq.configure_server do |config|
-  config.redis = { url: redis_url }
+  config.redis = { url: REDIS_URL }
+  config.logger.formatter = Sidekiq::Logger::Formatters::Datadog.new
+  config.error_handlers << Sidekiq::Datadog::Error::Tracking
 end
 
 Sidekiq.configure_client do |config|
-  config.redis = { url: redis_url }
+  config.redis = { url: REDIS_URL }
 end

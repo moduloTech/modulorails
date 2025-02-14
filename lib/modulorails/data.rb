@@ -48,6 +48,10 @@ module Modulorails
       }
     end
 
+    def authentication_type
+      @authentication_type ||= authentication_data
+    end
+
     private
 
     def initialize_from_constants
@@ -180,6 +184,17 @@ module Modulorails
         'staging'     => @staging_url,
         'review_base' => @review_base_url
       }
+    end
+
+    def authentication_data
+      # The version of the devise gem - might be nil
+      devise_version = gem_version(loaded_specs['devise'])
+
+      if devise_version
+        :devise
+      elsif File.exists?(Rails.root.join('app/controllers/concerns/authentication.rb'))
+        :rails
+      end
     end
 
   end

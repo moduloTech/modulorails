@@ -9,11 +9,7 @@ class Modulorails::SidekiqGenerator < Rails::Generators::Base
   desc 'This generator adds Sidekiq to the project'
 
   def add_to_docker_compose
-    if Rails.root.join('compose.yml').exist?
-      add_to_docker_compose_yml_file(Rails.root.join('compose.yml'))
-    elsif Rails.root.join('docker-compose.yml').exist?
-      add_to_docker_compose_yml_file(Rails.root.join('docker-compose.yml'))
-    end
+    add_to_docker_compose_yml_file(Rails.root.join('.devcontainer/compose.yml'))
   end
 
   def add_to_deploy_files
@@ -29,9 +25,12 @@ class Modulorails::SidekiqGenerator < Rails::Generators::Base
     append_to_file(gemfile_path, "gem 'redis'\n") unless File.read(gemfile_path).match?(/^\s*gem ['"]redis['"]/)
 
     # Add gem sidekiq unless already present
-    return if File.read(gemfile_path).match?(/^\s*gem ['"]sidekiq['"]/)
+    append_to_file(gemfile_path, "gem 'sidekiq'\n") unless File.read(gemfile_path).match?(/^\s*gem ['"]sidekiq['"]/)
 
-    append_to_file(gemfile_path, "gem 'sidekiq'\n")
+    # Add gem sidekiq-datadog-error-tracking unless already present
+    return if File.read(gemfile_path).match?(/^\s*gem ['"]sidekiq-datadog-error-tracking['"]/)
+
+    append_to_file(gemfile_path, "gem 'sidekiq-datadog-error-tracking'\n")
   end
 
   def add_to_config
@@ -46,20 +45,19 @@ class Modulorails::SidekiqGenerator < Rails::Generators::Base
 
   def add_routes
     routes_path = Rails.root.join('config/routes.rb')
-
     return if File.read(routes_path).match?(%r{require ['"]sidekiq/web["']})
 
-    inject_into_file routes_path, after: "Rails.application.routes.draw do\n" do
-      <<-RUBY
-  require 'sidekiq/web'
-  mount Sidekiq::Web => '/sidekiq'
-
-      RUBY
+    authentication_type = Modulorails.data.authentication_type
+    if respond_to?("add_#{authentication_type}_authenticated_route")
+      send("add_#{authentication_type}_authenticated_route", routes_path)
+    else
+      add_unauthenticated_route(routes_path)
     end
   end
 
   def add_health_check
     file_path = Rails.root.join('config/initializers/health_check.rb')
+    return unless File.exist?(file_path)
 
     return if File.read(file_path).match?(/add_custom_check\s*\(?\s*['"]sidekiq-queues['"]\s*\)?/)
 
@@ -76,7 +74,7 @@ class Modulorails::SidekiqGenerator < Rails::Generators::Base
     global_latency = queues.each.map { |queue| queue.latency }.sum
 
     # Global latency is less than 5 minutes, ok!
-    global_latency < 5.minutes ? '' : "Global latency (#{global_latency}) is too high."
+    global_latency < 5.minutes ? '' : "Global latency (\#{global_latency}) is too high."
   end
 
   # Add one or more custom checks that return a blank string if ok, or an error message if there is an error
@@ -100,30 +98,35 @@ class Modulorails::SidekiqGenerator < Rails::Generators::Base
   def add_to_docker_compose_yml_file(file_path)
     @image_name ||= Modulorails.data.name.parameterize
 
-    # Create docker-compose.yml unless present
-    invoke(Modulorails::DockerGenerator, []) unless File.exist?(file_path)
-
-    return if File.read(file_path).match?(/^ {2}sidekiq:$/)
+    unless File.exist?(file_path)
+      puts("Compose file not found at #{file_path}. Ignoring.")
+      return
+    end
+    if File.read(file_path).match?(/^ {2}sidekiq:$/)
+      puts("Compose file at #{file_path} already has a sidekiq service. Ignoring.")
+      return
+    end
 
     insert_into_file file_path, after: /^services:/ do
+      # Using `<<-` Heredoc syntax to preserve YAML indentation
       <<-YAML
 
   sidekiq:
     image: modulotechgroup/#{@image_name}:dev
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
     depends_on:
       - database
       - redis
     volumes:
-      - .:/app
+      - .:/rails
     environment:
       RAILS_ENV: development
       URL: http://app:3000
-      #{@image_name.upcase}_DATABASE_HOST: database
-      #{@image_name.upcase}_DATABASE_NAME: #{@image_name}
-      REDIS_URL: redis://redis:6379/1
+    env_file:
+      - path: .env
+        required: false
     entrypoint: ./bin/sidekiq-entrypoint
     stdin_open: true
     tty: true
@@ -147,7 +150,8 @@ class Modulorails::SidekiqGenerator < Rails::Generators::Base
 
   def add_to_deploy_file(file_path)
     # Do nothing if file does not exist or Sidekiq is already enabled
-    return if !File.exist?(file_path) || File.read(file_path).match?(/^ {2}sidekiq:$/)
+    return unless File.exist?(file_path)
+    return if File.read(file_path).match?(/^sidekiq:\n {2}enabled: true$/m)
 
     # Add sidekiq to deploy file
     insert_into_file file_path do
@@ -164,11 +168,51 @@ class Modulorails::SidekiqGenerator < Rails::Generators::Base
               memory: 512Mi
           autoscaling:
             enabled: true
-            minReplicas: 1
-            maxReplicas: 10
+            minReplicas: #{file_path.to_s.match?('production.y') ? 2 : 1}
+            maxReplicas: #{file_path.to_s.match?('production.y') ? 10 : 2}
             targetCPUUtilizationPercentage: 80
+            command: ["./bin/sidekiq-entrypoint"]
       YAML
     end
+  end
+
+  RAILS_AUTHENTICATION_TEMPLATE = <<~RUBY.freeze
+    require 'sidekiq/web'
+    constraints lambda { |request| Session.find_by(id: request.cookie_jar.signed[:session_id])&.user&.role == 'admin' } do
+      mount Sidekiq::Web => '/admin/sidekiq'
+    end
+
+
+  RUBY
+
+  def add_devise_authenticated_route(routes_path)
+    template = <<~RUBY
+      require 'sidekiq/web'
+      authenticate :user, lambda { |u| u.respond_to?('role') && u.role == 'admin' } do
+        mount Sidekiq::Web => '/admin/sidekiq'
+      end
+
+    RUBY
+    puts("Injecting #{template} into #{routes_path}: update the authentication block.")
+    inject_into_file routes_path, template, after: "Rails.application.routes.draw do\n"
+  end
+
+  def add_rails_authenticated_route(routes_path)
+    template = RAILS_AUTHENTICATION_TEMPLATE
+    puts("Injecting #{template} into #{routes_path}: update the authentication block.")
+    inject_into_file routes_path, template, after: "Rails.application.routes.draw do\n"
+  end
+
+  def add_unauthenticated_route(routes_path)
+    template = <<~RUBY
+      require 'sidekiq/web'
+      mount Sidekiq::Web => '/admin/sidekiq'
+
+    RUBY
+    puts("Injecting #{template} into #{routes_path}: you should add authentication to the route.")
+    puts("If you do not have authentication, execute `rails generate authentication` and replace \
+          the route by #{RAILS_AUTHENTICATION_TEMPLATE}.")
+    inject_into_file routes_path, template, after: "Rails.application.routes.draw do\n"
   end
 
 end
