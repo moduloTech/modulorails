@@ -17,7 +17,7 @@ module Modulorails
       def create_config
         @data = Modulorails.data
         @adapter = @data.adapter
-        @webpack_container_needed = @data.webpacker_version.present?
+        @js_engine = @data.js_engine
 
         EntrypointGenerator.new([], {}, {}).invoke_all unless File.exist?('bin/docker-entrypoint')
         create_dockerfile_prod

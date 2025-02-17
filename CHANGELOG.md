@@ -18,10 +18,11 @@ This file is used to list changes made in each version of the gem.
 - Add devcontainer support and update Docker-related structure.
 - Force overwrite of keep_file.
 - Force overwrite of config files.
-- Replace old Modulotech Dockerfile.prod with Rails one.
+- Replace old Modulotech `Dockerfile.prod` with Rails one.
 - Update production.rb from ModuloprojectGenerator to fit Rails 8.
 - Rewrite dockeruby.rb to dcr.sh for devcontainers and add dc.sh.
 - Update Sidekiq generator to fit devcontainers.
+- Add support for `Bun` JS engine.
 
 # 1.5.1
 

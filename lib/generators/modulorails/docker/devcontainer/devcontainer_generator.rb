@@ -33,7 +33,7 @@ module Modulorails
         @data = Modulorails.data
         @adapter = @data.adapter
         @image_name = @data.name.parameterize
-        @webpack_container_needed = @data.webpacker_version.present?
+        @js_engine = @data.js_engine
 
         template 'devcontainer/devcontainer.json', '.devcontainer/devcontainer.json'
         template 'devcontainer/compose.yml', '.devcontainer/compose.yml'

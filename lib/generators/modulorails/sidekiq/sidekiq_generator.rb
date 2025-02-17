@@ -88,9 +88,9 @@ class Modulorails::SidekiqGenerator < Rails::Generators::Base
     end
   end
 
-  def add_entrypoint
-    template 'entrypoints/sidekiq-entrypoint.sh', 'bin/sidekiq-entrypoint'
-    chmod 'bin/sidekiq-entrypoint', 0o755
+  def remove_entrypoint
+    remove_file 'entrypoints/sidekiq-entrypoint.sh'
+    remove_file 'bin/sidekiq-entrypoint'
   end
 
   private
@@ -102,11 +102,18 @@ class Modulorails::SidekiqGenerator < Rails::Generators::Base
       puts("Compose file not found at #{file_path}. Ignoring.")
       return
     end
+
+    # Update existing Sidekiq service
     if File.read(file_path).match?(/^ {2}sidekiq:$/)
-      puts("Compose file at #{file_path} already has a sidekiq service. Ignoring.")
+      pattern = /^(\s*)entrypoint:(\s*).\/(bin\/sidekiq-entrypoint|entrypoints\/sidekiq-entrypoint\.sh)/
+      gsub_file file_path, pattern, '\1command:\2./bin/bundle exec sidekiq'
       return
     end
 
+    add_sidekiq_service(file_path)
+  end
+
+  def add_sidekiq_service(file_path)
     insert_into_file file_path, after: /^services:/ do
       # Using `<<-` Heredoc syntax to preserve YAML indentation
       <<-YAML
@@ -127,7 +134,7 @@ class Modulorails::SidekiqGenerator < Rails::Generators::Base
     env_file:
       - path: .env
         required: false
-    entrypoint: ./bin/sidekiq-entrypoint
+    command: ./bin/bundle exec sidekiq
     stdin_open: true
     tty: true
       YAML
@@ -171,7 +178,7 @@ class Modulorails::SidekiqGenerator < Rails::Generators::Base
             minReplicas: #{file_path.to_s.match?('production.y') ? 2 : 1}
             maxReplicas: #{file_path.to_s.match?('production.y') ? 10 : 2}
             targetCPUUtilizationPercentage: 80
-            command: ["./bin/sidekiq-entrypoint"]
+            command: ["./bin/bundle", "exec", "sidekiq"]
       YAML
     end
   end

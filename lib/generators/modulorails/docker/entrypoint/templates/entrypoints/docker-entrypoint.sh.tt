@@ -1,5 +1,10 @@
 #!/bin/sh -e
 
+# For non-rails command (webpack, bun, yarn, etc.), we skip all rails-related processes and checks.
+if ! echo "${@}" | grep -qE '\b(rails|bin/rails)\b'; then
+  exec "${@}"
+fi
+
 # Enable jemalloc for reduced memory usage and latency.
 jemalloc_lib=$(find /usr/lib/ -name "libjemalloc.so.2" 2>/dev/null | head -n 1)
 

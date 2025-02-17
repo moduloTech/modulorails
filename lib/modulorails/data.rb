@@ -13,7 +13,7 @@ module Modulorails
     ATTRIBUTE_KEYS = %i[
       name main_developer project_manager repository type rails_name ruby_version rails_version
       bundler_version modulorails_version adapter db_version adapter_version webpacker_version
-      importmap_version jsbundling_version
+      importmap_version js_engine
       production_url staging_url review_base_url
       environment_name
     ].freeze
@@ -138,14 +138,28 @@ module Modulorails
       # The version of the ActiveRecord adapter
       @adapter_version = gem_version(loaded_specs[@adapter])
 
+      initialize_from_js_specs
+    end
+
+    def initialize_from_js_specs
       # The version of the webpacker gem - might be nil
       @webpacker_version = gem_version(loaded_specs['webpacker'])
 
       # The version of the importmap-rails gem - might be nil
       @importmap_version = gem_version(loaded_specs['importmap-rails'])
 
-      # The version of the jsbundling-rails gem - might be nil
-      @jsbundling_version = gem_version(loaded_specs['jsbundling-rails'])
+      @js_engine =
+        if @webpacker_version
+          :webpacker
+        elsif @importmap_version
+          :importmap
+        else
+          find_js_engine
+        end
+    end
+
+    def find_js_engine
+      File.exists?(Rails.root.join('bun.config.js')) ? :bun : :unknown
     end
 
     def gem_version(spec)

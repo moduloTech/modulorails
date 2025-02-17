@@ -55,19 +55,30 @@ services:
       - '1080'
       - '1025'
 
-<%- if @webpack_container_needed -%>
+<%- case @js_engine -%>
+<%- when :webpacker -%>
   webpack:
     image: modulotechgroup/<%= @image_name %>:dev
     build:
       context: ..
       dockerfile: .devcontainer/Dockerfile
-    entrypoint: ./bin/webpack-entrypoint
+    command: ./bin/webpack-dev-server
     volumes:
       - ..:/rails
     environment:
       NODE_ENV: development
       RAILS_ENV: development
-      WEBPACKER_DEV_SERVER_HOST: 0.0.0.0
+<%- when :bun -%>
+  bun:
+    image: modulotechgroup/<%= @image_name %>:dev
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+    command: bun run build --watch
+    volumes:
+      - ..:/rails
+    environment:
+      NODE_ENV: development
 <%- end -%>
 
 volumes:

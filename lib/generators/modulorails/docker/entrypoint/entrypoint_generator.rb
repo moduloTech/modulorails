@@ -17,10 +17,10 @@ module Modulorails
 
       def create_config
         create_docker_entrypoint
-        create_webpack_entrypoint if Modulorails.data.webpacker_version.present?
+        remove_webpack_entrypoint
 
         if File.exist?('entrypoints/sidekiq-entrypoint.sh') || File.exist?('bin/sidekiq-entrypoint')
-          SidekiqGenerator.new([], {}, {}).invoke('add_entrypoint')
+          SidekiqGenerator.new([], {}, {}).invoke('remove_entrypoint')
         end
       rescue StandardError => e
         warn("[Modulorails] Error: cannot generate Docker entrypoints: #{e.message}")
@@ -28,8 +28,9 @@ module Modulorails
 
       private
 
-      def create_webpack_entrypoint
-        create_new_file('entrypoints/webpack-entrypoint.sh', 'bin/webpack-entrypoint')
+      def remove_webpack_entrypoint
+        remove_file('entrypoints/webpack-entrypoint.sh')
+        remove_file('bin/webpack-entrypoint')
       end
 
       def create_docker_entrypoint
