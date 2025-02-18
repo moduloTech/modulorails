@@ -12,6 +12,7 @@ RUN apk add --update --no-cache \
     vim \
     bash \
     openssh \
+    yaml-dev \
 <%- if @adapter =~ /mysql/ -%>
     mysql-dev
 <%- else -%>

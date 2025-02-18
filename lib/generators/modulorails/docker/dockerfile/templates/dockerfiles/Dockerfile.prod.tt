@@ -39,6 +39,7 @@ RUN apk add --update --no-cache \
     tzdata \
     shared-mime-info \
     gcompat \
+    yaml-dev \
   <%- if @adapter =~ /mysql/ -%>
     mysql-dev
   <%- else -%>
