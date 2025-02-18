@@ -138,10 +138,10 @@ module Modulorails
       # The version of the ActiveRecord adapter
       @adapter_version = gem_version(loaded_specs[@adapter])
 
-      initialize_from_js_specs
+      initialize_from_js_specs(loaded_specs)
     end
 
-    def initialize_from_js_specs
+    def initialize_from_js_specs(loaded_specs)
       # The version of the webpacker gem - might be nil
       @webpacker_version = gem_version(loaded_specs['webpacker'])
 
