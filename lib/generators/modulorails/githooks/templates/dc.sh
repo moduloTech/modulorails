@@ -5,7 +5,7 @@ run_command() {
     local docker_args="$1"
 
     # Build the docker command
-    local command="docker compose --project-name \"\$(basename \$(pwd))_devcontainer\" -f .devcontainer/compose.yml run"
+    local command="docker compose --project-name \"\$(basename \$(pwd))_devcontainer\" -f .devcontainer/compose.yml"
 
     # Execute the command with additional arguments
     eval "$command $docker_args"
