@@ -8,7 +8,7 @@ module Modulorails
 
     class ConfigGenerator < Modulorails::Generators::DockerBase
 
-      VERSION = 1
+      VERSION = 2
 
       desc 'This generator creates application configuration'
 

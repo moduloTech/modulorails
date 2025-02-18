@@ -6,7 +6,7 @@ module Modulorails
 
   class GithooksGenerator < Modulorails::Generators::Base
 
-    VERSION = 1
+    VERSION = 2
 
     protected
 

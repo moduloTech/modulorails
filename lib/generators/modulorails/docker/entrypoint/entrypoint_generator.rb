@@ -9,7 +9,7 @@ module Modulorails
 
     class EntrypointGenerator < Modulorails::Generators::DockerBase
 
-      VERSION = 1
+      VERSION = 2
 
       desc 'This generator creates Docker entrypoints'
 
