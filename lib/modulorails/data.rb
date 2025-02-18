@@ -159,7 +159,7 @@ module Modulorails
     end
 
     def find_js_engine
-      File.exists?(Rails.root.join('bun.config.js')) ? :bun : :unknown
+      File.exist?(Rails.root.join('bun.config.js')) ? :bun : :unknown
     end
 
     def gem_version(spec)
