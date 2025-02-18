@@ -10,7 +10,8 @@
 # See https://docs.rubocop.org/rubocop/configuration
 
 # Enabling Rails-specific cops.
-require: rubocop-rails
+plugins:
+  - rubocop-rails
 
 inherit_mode:
   merge:
