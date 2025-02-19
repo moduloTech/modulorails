@@ -69,12 +69,23 @@ services:
       NODE_ENV: development
       RAILS_ENV: development
 <%- when :bun -%>
-  bun:
+  js:
     image: modulotechgroup/<%= @image_name %>:dev
     build:
       context: ..
       dockerfile: .devcontainer/Dockerfile
     command: bun run build --watch
+    volumes:
+      - ..:/rails
+    environment:
+      NODE_ENV: development
+
+  css:
+    image: modulotechgroup/<%= @image_name %>:dev
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+    command: bun run watch:css
     volumes:
       - ..:/rails
     environment:
