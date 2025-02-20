@@ -127,7 +127,7 @@ class Modulorails::SidekiqGenerator < Rails::Generators::Base
       - database
       - redis
     volumes:
-      - .:/rails
+      - ..:/rails
     environment:
       RAILS_ENV: development
       URL: http://app:3000
