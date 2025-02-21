@@ -208,7 +208,7 @@ module Modulorails
 
       if devise_version
         :devise
-      elsif File.exists?(Rails.root.join('app/controllers/concerns/authentication.rb'))
+      elsif File.exist?(Rails.root.join('app/controllers/concerns/authentication.rb'))
         :rails
       end
     end
