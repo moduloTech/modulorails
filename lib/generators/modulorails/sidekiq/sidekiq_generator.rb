@@ -22,15 +22,15 @@ class Modulorails::SidekiqGenerator < Rails::Generators::Base
     gemfile_path = Rails.root.join('Gemfile')
 
     # Add gem redis unless already present
-    append_to_file(gemfile_path, "gem 'redis'\n") unless File.read(gemfile_path).match?(/^\s*gem ['"]redis['"]/)
+    append_to_file(gemfile_path, "\ngem 'redis'\n") unless File.read(gemfile_path).match?(/^\s*gem ['"]redis['"]/)
 
     # Add gem sidekiq unless already present
-    append_to_file(gemfile_path, "gem 'sidekiq'\n") unless File.read(gemfile_path).match?(/^\s*gem ['"]sidekiq['"]/)
+    append_to_file(gemfile_path, "\ngem 'sidekiq'\n") unless File.read(gemfile_path).match?(/^\s*gem ['"]sidekiq['"]/)
 
     # Add gem sidekiq-datadog-error-tracking unless already present
     return if File.read(gemfile_path).match?(/^\s*gem ['"]sidekiq-datadog-error-tracking['"]/)
 
-    append_to_file(gemfile_path, "gem 'sidekiq-datadog-error-tracking'\n")
+    append_to_file(gemfile_path, "\ngem 'sidekiq-datadog-error-tracking'\n")
   end
 
   def add_to_config
