@@ -201,6 +201,8 @@ module Modulorails
     end
 
     def authentication_data
+      loaded_specs = Gem.loaded_specs
+
       # The version of the devise gem - might be nil
       devise_version = gem_version(loaded_specs['devise'])
 
