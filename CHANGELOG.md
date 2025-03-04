@@ -23,6 +23,7 @@ This file is used to list changes made in each version of the gem.
 - Rewrite dockeruby.rb to dcr.sh for devcontainers and add dc.sh.
 - Update Sidekiq generator to fit devcontainers.
 - Add support for `Bun` JS engine.
+- Update Gitlab CI generator to fit devcontainers.
 
 # 1.5.1
 

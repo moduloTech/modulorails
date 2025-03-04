@@ -4,7 +4,7 @@ require 'modulorails/generators/base'
 
 class Modulorails::GitlabciGenerator < Modulorails::Generators::Base
 
-  VERSION = 1
+  VERSION = 2
 
   desc 'This generator creates a template for a .gitlab-ci.yml file at root'
 

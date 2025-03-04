@@ -44,6 +44,8 @@ test:
 
 docker_build:
   extends: .docker_buildx_push
+  variables:
+    DOCKERFILE: Dockerfile
   only:
     - merge_requests
     - staging
