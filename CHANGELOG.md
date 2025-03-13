@@ -11,7 +11,6 @@ This file is used to list changes made in each version of the gem.
 - Split DockerGenerator in multiple sub-generators to version each one individually.
 - Merge all keepfiles in one.
 - Wrap health_check initializer in a reloader.to_prepare block.
-- Always use latest ruby in dockeruby.
 - Add `Modulorails.deprecator` for better compatibility with Rails 7.2.
 - Check if generated files have to be regenerated in `refresh_generations.sh` to speed-up hook.
 - Allow `class_methods` and `included` blocks in Concerns to break the `Metrics/BlockLength` Rubocop rule.
@@ -20,7 +19,7 @@ This file is used to list changes made in each version of the gem.
 - Force overwrite of config files.
 - Replace old Modulotech `Dockerfile.prod` with Rails one.
 - Update production.rb from ModuloprojectGenerator to fit Rails 8.
-- Rewrite dockeruby.rb to dcr.sh for devcontainers and add dc.sh.
+- Replace `dockeruby.rb` with two bash scripts: `dc` to wrap `docker compose` and `dcr` for `docker compose run`.
 - Update Sidekiq generator to fit devcontainers.
 - Add support for `Bun` JS engine.
 - Update Gitlab CI generator to fit devcontainers.

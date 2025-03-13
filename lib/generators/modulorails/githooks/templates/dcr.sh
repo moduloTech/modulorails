@@ -29,8 +29,8 @@ run_command() {
 }
 
 main() {
-    # Check for specific environment variables to determine whether to wrap the command
-    if [ -z "$REMOTE_CONTAINERS" ] && [ -z "$DEVCONTAINER_CONFIG_PATH" ]; then
+    # Check for apk command to determine if we're in an Alpine Linux container
+    if ! command -v apk >/dev/null 2>&1; then
         # Escape arguments and pass them to the docker command
         local escaped_args=()
         for arg in "$@"; do
