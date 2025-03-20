@@ -178,7 +178,7 @@ class Modulorails::SidekiqGenerator < Rails::Generators::Base
             minReplicas: #{file_path.to_s.match?('production.y') ? 2 : 1}
             maxReplicas: #{file_path.to_s.match?('production.y') ? 10 : 2}
             targetCPUUtilizationPercentage: 80
-            command: ["./bin/bundle", "exec", "sidekiq"]
+          command: ["./bin/bundle", "exec", "sidekiq"]
       YAML
     end
   end
