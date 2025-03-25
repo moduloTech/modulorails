@@ -15,6 +15,8 @@ stages:
 
 build_integration_image:
   extends: .build_integration_image
+  variables:
+    DOCKERFILE: .devcontainer/Dockerfile
 
 test:
   extends: .test
