@@ -10,12 +10,12 @@ variables:
   <%- if @adapter =~ /mysql/ -%>
   MYSQL_DATABASE: <%= @image_name %>_test
   MYSQL_ALLOW_EMPTY_PASSWORD: 'true'
-  <%= @environment_name %>_DATABASE_HOST: mysql
+  DATABASE_URL: mysql://root@mysql/<%= @image_name %>_test
   <%- else -%>
   POSTGRES_DB: <%= @image_name %>_test
   POSTGRES_USER: postgres
   POSTGRES_PASSWORD: postgres
-  <%= @environment_name %>_DATABASE_HOST: postgres
+  DATABASE_URL: postgresql://postgres:postgres@postgres/<%= @image_name %>_test
   <%- end -%>
 
 stages:
