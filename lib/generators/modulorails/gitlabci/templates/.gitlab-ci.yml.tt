@@ -15,7 +15,7 @@ variables:
   POSTGRES_DB: <%= @image_name %>_test
   POSTGRES_USER: postgres
   POSTGRES_PASSWORD: postgres
-  DATABASE_URL: postgresql://postgres:postgres@postgres/<%= @image_name %>_test
+  DATABASE_TEST_URL: postgresql://postgres:postgres@postgres/<%= @image_name %>_test
   <%- end -%>
 
 stages:
