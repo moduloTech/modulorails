@@ -7,16 +7,6 @@ include:
 
 variables:
   IMAGE_NAME: <%= @image_name %>
-  <%- if @adapter =~ /mysql/ -%>
-  MYSQL_DATABASE: <%= @image_name %>_test
-  MYSQL_ALLOW_EMPTY_PASSWORD: 'true'
-  <%= @environment_name %>_DATABASE_HOST: mysql
-  <%- else -%>
-  POSTGRES_DB: <%= @image_name %>_test
-  POSTGRES_USER: postgres
-  POSTGRES_PASSWORD: postgres
-  <%= @environment_name %>_DATABASE_HOST: postgres
-  <%- end -%>
 
 stages:
   - test
@@ -37,6 +27,16 @@ test:
     - redis:7-alpine
   variables:
     RAILS_ENV: test
+    <%- if @adapter =~ /mysql/ -%>
+    MYSQL_DATABASE: <%= @image_name %>-test
+    MYSQL_ALLOW_EMPTY_PASSWORD: 'true'
+    DATABASE_TEST_URL: 'mysql2://root@mysql/<%= @image_name %>-test'
+    <%- else -%>
+    POSTGRES_DB: <%= @image_name %>-test
+    POSTGRES_USER: postgres
+    POSTGRES_PASSWORD: postgres
+    DATABASE_TEST_URL: 'postgresql://postgres:postgres@postgres/<%= @image_name %>-test'
+    <%- end -%>
   script:
     - bin/test
 
