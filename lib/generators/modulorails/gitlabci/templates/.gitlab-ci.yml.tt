@@ -38,9 +38,7 @@ test:
   variables:
     RAILS_ENV: test
   script:
-    - bundle exec rake db:create
-    - bundle exec rake db:migrate:reset
-    - bundle exec rspec --format progress --format RspecJunitFormatter --out rspec.xml
+    - bin/test
 
 docker_build:
   extends: .docker_buildx_push

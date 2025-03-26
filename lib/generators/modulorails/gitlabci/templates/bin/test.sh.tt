@@ -1,0 +1,36 @@
+#!/usr/bin/env sh
+
+export RAILS_ENV=test
+
+if ! grep -q rspec Gemfile
+then
+  echo 'Install RSpec and add some tests:'
+  echo '  bundle add rspec-rails rspec_junit_formatter'
+  echo '  bundle exec rails generate rspec:install'
+  exit 0
+end
+
+if [ -z "$1" ]
+then
+  bundle exec rake db:drop db:create db:schema:load db:migrate
+  <%- case @js_engine -%>
+  <%- when :webpacker -%>
+  bundle exec yarn install
+  bundle exec rails webpacker:compile
+  <%- when :bun -%>
+  bun install
+  bun run build
+  bun run build:css
+  <%- end -%>
+fi
+
+if [ -z "$CI" ]
+then
+  # For dev environment, we use the options specified in `.rspec` file
+  bundle exec rspec --profile "$@"
+elif grep -q rspec_junit_formatter Gemfile
+then
+  bundle exec rspec --format progress --format RspecJunitFormatter --out rspec.xml --profile "$@"
+else
+  bundle exec rspec --format progress --profile "$@"
+fi

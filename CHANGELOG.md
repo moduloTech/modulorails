@@ -23,6 +23,7 @@ This file is used to list changes made in each version of the gem.
 - Update Sidekiq generator to fit devcontainers.
 - Add support for `Bun` JS engine.
 - Update Gitlab CI generator to fit devcontainers.
+- Update Gitlab CI generator for better test environment.
 
 # 1.5.1
 

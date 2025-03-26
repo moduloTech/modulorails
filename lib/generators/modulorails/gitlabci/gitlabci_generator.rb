@@ -24,6 +24,7 @@ class Modulorails::GitlabciGenerator < Modulorails::Generators::Base
 
     # Update the gitlab-ci template
     template '.gitlab-ci.yml'
+    template 'bin/test.sh', 'bin/test'
     template 'config/deploy/production.yaml' if @production_url.present?
     template 'config/deploy/staging.yaml' if @staging_url.present?
     template 'config/deploy/review.yaml' if @review_base_url.present?
