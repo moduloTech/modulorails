@@ -24,6 +24,7 @@ This file is used to list changes made in each version of the gem.
 - Add support for `Bun` JS engine.
 - Update Gitlab CI generator to fit devcontainers.
 - Update Gitlab CI generator for better test environment.
+- Allow commented lines to break the `Layout/LineLength` Rubocop rule.
 
 # 1.5.1
 
