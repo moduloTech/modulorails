@@ -9,6 +9,7 @@ require 'generators/modulorails/self_update/self_update_generator'
 require 'generators/modulorails/rubocop/rubocop_generator'
 require 'generators/modulorails/bundleraudit/bundleraudit_generator'
 require 'generators/modulorails/githooks/githooks_generator'
+require 'generators/modulorails/claude_code/claude_code_generator'
 require 'httparty'
 require 'modulorails/error_data'
 require 'modulorails/success_data'
@@ -164,6 +165,14 @@ module Modulorails
     # Generate git hooks.
     def generate_git_hooks_template
       Modulorails::GithooksGenerator.new([], {}, {}).invoke_all
+    end
+
+    # @author Matthieu 'ciappa_m' Ciappara
+    #
+    # Configure devcontainer for Claude code unless it was already done.
+    # The check is done using a 'keepfile'.
+    def configure_claude_code
+      Modulorails::ClaudeCodeGenerator.new([], {}, {}).invoke_all
     end
 
     def deprecator

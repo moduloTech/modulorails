@@ -25,6 +25,7 @@ This file is used to list changes made in each version of the gem.
 - Update Gitlab CI generator to fit devcontainers.
 - Update Gitlab CI generator for better test environment.
 - Allow commented lines to break the `Layout/LineLength` Rubocop rule.
+- Add a generator to install Claude Code in devcontainer.
 
 # 1.5.1
 
@@ -148,7 +149,7 @@ Fixes, updates and health_check release.
 Docker release.
 
 - Add generator for Docker.
-- Use templates for Gitlabci generator. 
+- Use templates for Gitlabci generator.
 
 # 0.2.3
 

@@ -62,6 +62,9 @@ module Modulorails
       # Add/update Bundler-audit config
       Modulorails.generate_bundleraudit_template
 
+      # Add/update Claude Code config
+      Modulorails.configure_claude_code
+
       # Gem's self-update if a new version was released
       Modulorails.self_update
     end
