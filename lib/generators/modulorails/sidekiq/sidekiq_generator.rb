@@ -158,10 +158,9 @@ class Modulorails::SidekiqGenerator < Rails::Generators::Base
           resources:
             requests:
               cpu: 100m
-              memory: 512Mi
+              memory: 1024Mi
             limits:
-              cpu: 100m
-              memory: 512Mi
+              memory: 1024Mi
           autoscaling:
             enabled: true
             minReplicas: 1
