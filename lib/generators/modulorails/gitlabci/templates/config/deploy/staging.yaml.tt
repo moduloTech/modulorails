@@ -18,9 +18,9 @@ ingress:
 resources:
   requests:
     cpu: 100m
-    memory: 512Mi
+    memory: 1024Mi
   limits:
-    memory: 512Mi
+    memory: 1024Mi
 
 autoscaling:
   enabled: true
@@ -46,10 +46,10 @@ sidekiq:
 #  resources:
 #    requests:
 #      cpu: 100m
-#      memory: 512Mi
+#      memory: 1024Mi
 #    limits:
 #      cpu: 100m
-#      memory: 512Mi
+#      memory: 1024Mi
 #  autoscaling:
 #    enabled: true
 #    minReplicas: 1
