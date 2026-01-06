@@ -108,20 +108,16 @@ module Modulorails
 
     def initialize_from_database
       # Get the database connection to identify the database used by the application
-      # or return nil if the database does not exist
-      db_connection = begin
-        ActiveRecord::Base.connection
-      rescue ActiveRecord::NoDatabaseError, ActiveRecord::ConnectionNotEstablished => e
-        warn("[Modulorails] Error: #{e.message}")
-        nil
-      end
+      db_connection = ActiveRecord::Base.connection || return
 
       # The name of the ActiveRecord adapter; it gives the name of the database system too
-      @adapter = db_connection&.adapter_name&.downcase
+      @adapter = db_connection.adapter_name.downcase
 
       # The version of the database engine; this request works only on MySQL and PostgreSQL
       # It should not be a problem since those are the sole database engines used at Modulotech
-      @db_version = db_connection&.select_value('SELECT version()')
+      @db_version = db_connection.select_value('SELECT version()')
+    rescue ActiveRecord::NoDatabaseError, ActiveRecord::ConnectionNotEstablished => e
+      warn("[Modulorails] Error: #{e.message}")
     end
 
     def initialize_from_gem_specs
