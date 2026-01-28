@@ -1,23 +1,25 @@
 // For format details, see https://containers.dev/implementors/json_reference/.
 // For config options, see the README at: https://github.com/devcontainers/templates/tree/main/src/ruby
 {
-	"name": "<%= @image_name %>",
+	"name": "${localEnv:COMPOSE_PROJECT_NAME:<%= @image_name %>}",
 	"dockerComposeFile": "./compose.yml",
 	"service": "app",
 	"workspaceFolder": "/rails",
 	"shutdownAction": "stopCompose",
+	"overrideCommand": true,
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	"features": {
-		"ghcr.io/cirolosapio/devcontainers-features/alpine-docker-outside-of-docker:0": {}
+		"ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
 	},
 
-	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-<%- if @adapter =~ /mysql/ -%>
-	"forwardPorts": [3000, "database:3306", "mailcatcher:1080"],
-<%- else -%>
-	"forwardPorts": [3000, "database:5432", "mailcatcher:1080"],
-<%- end -%>
+	// Traefik handles port routing, no need for local port forwarding
+	"forwardPorts": [],
+
+	// Environment variables for the container
+	"remoteEnv": {
+		"COMPOSE_PROJECT_NAME": "${localEnv:COMPOSE_PROJECT_NAME:<%= @image_name %>}"
+	},
 
 	// Configure tool-specific properties.
 	"customizations": {

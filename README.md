@@ -34,6 +34,59 @@ Modulorails.configure do |config|
 end
 ``` 
 
+## Traefik Integration
+
+Modulorails now supports Traefik as a reverse proxy, allowing multiple Rails projects to run simultaneously without port conflicts.
+
+### Quick Setup
+
+1. Install the Traefik infrastructure:
+   ```bash
+   rails generate modulorails:traefik
+   ```
+
+2. Configure dnsmasq for `.localhost` domains (macOS):
+   ```bash
+   brew install dnsmasq
+   echo 'address=/.localhost/127.0.0.1' > $(brew --prefix)/etc/dnsmasq.conf
+   sudo brew services start dnsmasq
+   sudo mkdir -p /etc/resolver
+   echo "nameserver 127.0.0.1" | sudo tee /etc/resolver/localhost
+   ```
+
+3. Start Traefik:
+   ```bash
+   cd ~/traefik && docker compose up -d
+   ```
+
+### Using Traefik
+
+```bash
+# Start a project
+cd my-project
+rails-dev
+
+# Access the application
+open http://my-project.localhost
+
+# Access Mailcatcher
+open http://mail.my-project.localhost
+
+# List active projects
+rails-list
+
+# Stop a project
+rails-stop
+```
+
+### Migrating Existing Projects
+
+```bash
+./bin/migrate_to_traefik /path/to/existing/project
+```
+
+For detailed documentation, see [docs/TRAEFIK.md](docs/TRAEFIK.md).
+
 ## Development
 
 There are tests in `spec`. To run tests:

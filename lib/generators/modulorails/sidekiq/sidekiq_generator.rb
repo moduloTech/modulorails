@@ -130,13 +130,16 @@ class Modulorails::SidekiqGenerator < Rails::Generators::Base
       - ..:/rails
     environment:
       RAILS_ENV: development
-      URL: http://app:3000
+      URL: http://${COMPOSE_PROJECT_NAME:-#{@image_name}}.localhost
     env_file:
       - path: .env
         required: false
     command: ./bin/bundle exec sidekiq
     stdin_open: true
     tty: true
+    networks:
+      - default
+      - development
       YAML
     end
   end

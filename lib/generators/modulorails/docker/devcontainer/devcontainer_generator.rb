@@ -9,15 +9,16 @@ module Modulorails
 
     class DevcontainerGenerator < Modulorails::Generators::DockerBase
 
-      VERSION = 1
+      VERSION = 2
 
-      desc 'This generator creates devcontainer configuration'
+      desc 'This generator creates devcontainer configuration with Traefik integration'
 
       protected
 
       def create_config
         remove_old_dockerfiles
         create_template_files
+        create_env_file
       rescue StandardError => e
         warn("[Modulorails] Error: cannot generate devcontainer configuration: #{e.message}")
       end
@@ -38,6 +39,15 @@ module Modulorails
         template 'devcontainer/devcontainer.json', '.devcontainer/devcontainer.json'
         template 'devcontainer/compose.yml', '.devcontainer/compose.yml'
         template 'devcontainer/Dockerfile', '.devcontainer/Dockerfile'
+      end
+
+      def create_env_file
+        env_file_path = '.devcontainer/.env'
+
+        # Only create if the file doesn't exist
+        return if File.exist?(Rails.root.join(env_file_path))
+
+        create_file env_file_path, "COMPOSE_PROJECT_NAME=#{@image_name}\n"
       end
 
     end
