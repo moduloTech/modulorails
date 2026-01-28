@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-# Script de migration vers Traefik pour les projets Rails existants
-# Usage: ./migrate_to_traefik [chemin_projet]
+# Migration script to Traefik for existing Rails projects
+# Usage: ./migrate_to_traefik [project_path]
 
 set -e
 
@@ -9,7 +9,7 @@ PROJECT_DIR="${1:-.}"
 PROJECT_DIR=$(cd "$PROJECT_DIR" && pwd)
 PROJECT_NAME=$(basename "$PROJECT_DIR")
 
-echo "🔄 Migration de $PROJECT_NAME vers Traefik..."
+echo "🔄 Migrating $PROJECT_NAME to Traefik..."
 echo ""
 
 # Validation
@@ -21,20 +21,20 @@ elif [ -f "$PROJECT_DIR/docker-compose.yml" ]; then
     COMPOSE_FILE="$PROJECT_DIR/docker-compose.yml"
     CONFIG_TYPE="compose"
 else
-    echo "❌ Aucun fichier compose trouvé dans $PROJECT_DIR"
-    echo "   Fichiers attendus: .devcontainer/compose.yml ou docker-compose.yml"
+    echo "❌ No compose file found in $PROJECT_DIR"
+    echo "   Expected files: .devcontainer/compose.yml or docker-compose.yml"
     exit 1
 fi
 
-echo "📁 Type de configuration détecté: $CONFIG_TYPE"
-echo "📄 Fichier compose: $COMPOSE_FILE"
+echo "📁 Configuration type detected: $CONFIG_TYPE"
+echo "📄 Compose file: $COMPOSE_FILE"
 echo ""
 
 # Backup
 BACKUP_DIR="$PROJECT_DIR/.traefik-migration-backup-$(date +%Y%m%d-%H%M%S)"
 mkdir -p "$BACKUP_DIR"
 
-echo "📦 Création du backup dans $BACKUP_DIR..."
+echo "📦 Creating backup in $BACKUP_DIR..."
 
 if [ "$CONFIG_TYPE" = "devcontainer" ]; then
     cp "$PROJECT_DIR/.devcontainer/compose.yml" "$BACKUP_DIR/"
@@ -46,10 +46,10 @@ fi
 
 [ -f "$PROJECT_DIR/.env" ] && cp "$PROJECT_DIR/.env" "$BACKUP_DIR/"
 
-echo "✅ Backup créé"
+echo "✅ Backup created"
 echo ""
 
-# Créer le fichier .env
+# Create .env file
 ENV_FILE=""
 if [ "$CONFIG_TYPE" = "devcontainer" ]; then
     ENV_FILE="$PROJECT_DIR/.devcontainer/.env"
@@ -58,44 +58,40 @@ else
 fi
 
 if [ ! -f "$ENV_FILE" ]; then
-    echo "📝 Création de $ENV_FILE..."
+    echo "📝 Creating $ENV_FILE..."
     echo "COMPOSE_PROJECT_NAME=$PROJECT_NAME" > "$ENV_FILE"
 elif ! grep -q "COMPOSE_PROJECT_NAME" "$ENV_FILE"; then
-    echo "📝 Ajout de COMPOSE_PROJECT_NAME à $ENV_FILE..."
+    echo "📝 Adding COMPOSE_PROJECT_NAME to $ENV_FILE..."
     echo "" >> "$ENV_FILE"
     echo "COMPOSE_PROJECT_NAME=$PROJECT_NAME" >> "$ENV_FILE"
 else
-    echo "✅ COMPOSE_PROJECT_NAME déjà présent dans $ENV_FILE"
+    echo "✅ COMPOSE_PROJECT_NAME already present in $ENV_FILE"
 fi
 
 echo ""
 echo "═══════════════════════════════════════════════════════════════"
-echo "⚠️  MODIFICATIONS MANUELLES REQUISES"
+echo "⚠️  MANUAL CHANGES REQUIRED"
 echo "═══════════════════════════════════════════════════════════════"
 echo ""
-echo "Éditez le fichier: $COMPOSE_FILE"
+echo "Edit the file: $COMPOSE_FILE"
 echo ""
-echo "1. AJOUTER les réseaux en fin de fichier:"
+echo "1. ADD networks at the end of file:"
 echo "   ─────────────────────────────────────"
 cat << 'EOF'
 networks:
-  development:
-    external: true
-    name: development
   traefik-proxy:
     external: true
     name: traefik-proxy
   default:
 EOF
 echo ""
-echo "2. MODIFIER le service 'app':"
+echo "2. MODIFY the 'app' service:"
 echo "   ─────────────────────────"
-echo "   - Supprimer les 'ports:' exposés"
-echo "   - Ajouter:"
+echo "   - Remove exposed 'ports:'"
+echo "   - Add:"
 cat << EOF
     networks:
       - default
-      - development
       - traefik-proxy
     labels:
       - "traefik.enable=true"
@@ -104,28 +100,28 @@ cat << EOF
       - "traefik.http.services.\${COMPOSE_PROJECT_NAME:-$PROJECT_NAME}-app.loadbalancer.server.port=3000"
 EOF
 echo ""
-echo "3. MODIFIER le service 'database':"
+echo "3. MODIFY the 'database' service:"
 echo "   ──────────────────────────────"
-echo "   - Supprimer 'expose:' ou 'ports:'"
-echo "   - Ajouter:"
+echo "   - Remove 'expose:' or 'ports:'"
+echo "   - Add:"
 cat << 'EOF'
     networks:
       - default
 EOF
 echo ""
-echo "4. MODIFIER le service 'redis':"
+echo "4. MODIFY the 'redis' service:"
 echo "   ───────────────────────────"
-echo "   - Supprimer 'expose:' ou 'ports:'"
-echo "   - Ajouter:"
+echo "   - Remove 'expose:' or 'ports:'"
+echo "   - Add:"
 cat << 'EOF'
     networks:
       - default
 EOF
 echo ""
-echo "5. MODIFIER le service 'mailcatcher' (si présent):"
+echo "5. MODIFY the 'mailcatcher' service (if present):"
 echo "   ───────────────────────────────────────────────"
-echo "   - Supprimer 'expose:' ou 'ports:'"
-echo "   - Ajouter:"
+echo "   - Remove 'expose:' or 'ports:'"
+echo "   - Add:"
 cat << EOF
     networks:
       - default
@@ -139,13 +135,13 @@ EOF
 echo ""
 
 if [ "$CONFIG_TYPE" = "devcontainer" ]; then
-    echo "6. MODIFIER devcontainer.json:"
+    echo "6. MODIFY devcontainer.json:"
     echo "   ────────────────────────────"
-    echo "   - Changer \"name\" en:"
+    echo "   - Change \"name\" to:"
     echo "     \"name\": \"\${localEnv:COMPOSE_PROJECT_NAME:$PROJECT_NAME}\","
-    echo "   - Vider \"forwardPorts\":"
+    echo "   - Empty \"forwardPorts\":"
     echo "     \"forwardPorts\": [],"
-    echo "   - Ajouter \"remoteEnv\":"
+    echo "   - Add \"remoteEnv\":"
     cat << EOF
     "remoteEnv": {
       "COMPOSE_PROJECT_NAME": "\${localEnv:COMPOSE_PROJECT_NAME:$PROJECT_NAME}"
@@ -156,20 +152,19 @@ fi
 
 echo "═══════════════════════════════════════════════════════════════"
 echo ""
-echo "📋 Après les modifications:"
-echo "   1. Assurez-vous que Traefik est démarré:"
+echo "📋 After making the changes:"
+echo "   1. Ensure Traefik is running:"
 echo "      cd ~/traefik && docker compose up -d"
 echo ""
-echo "   2. Créez les réseaux Docker si nécessaire:"
+echo "   2. Create Docker networks if needed:"
 echo "      docker network create traefik-proxy 2>/dev/null || true"
-echo "      docker network create development 2>/dev/null || true"
 echo ""
-echo "   3. Testez le projet:"
-echo "      cd $PROJECT_DIR && rails-dev"
+echo "   3. Test the project:"
+echo "      cd $PROJECT_DIR && docker compose up -d"
 echo ""
-echo "   4. Accédez à l'application:"
+echo "   4. Access the application:"
 echo "      http://$PROJECT_NAME.localhost"
 echo ""
-echo "📦 En cas de problème, restaurez depuis:"
+echo "📦 In case of issues, restore from:"
 echo "   $BACKUP_DIR"
 echo ""

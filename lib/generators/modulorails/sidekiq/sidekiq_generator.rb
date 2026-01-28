@@ -139,7 +139,6 @@ class Modulorails::SidekiqGenerator < Rails::Generators::Base
     tty: true
     networks:
       - default
-      - development
       YAML
     end
   end

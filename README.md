@@ -40,12 +40,7 @@ Modulorails now supports Traefik as a reverse proxy, allowing multiple Rails pro
 
 ### Quick Setup
 
-1. Install the Traefik infrastructure:
-   ```bash
-   rails generate modulorails:traefik
-   ```
-
-2. Configure dnsmasq for `.localhost` domains (macOS):
+1. Configure dnsmasq for `.localhost` domains (macOS):
    ```bash
    brew install dnsmasq
    echo 'address=/.localhost/127.0.0.1' > $(brew --prefix)/etc/dnsmasq.conf
@@ -54,7 +49,12 @@ Modulorails now supports Traefik as a reverse proxy, allowing multiple Rails pro
    echo "nameserver 127.0.0.1" | sudo tee /etc/resolver/localhost
    ```
 
-3. Start Traefik:
+2. Create Docker network:
+   ```bash
+   docker network create traefik-proxy
+   ```
+
+3. Start Traefik (see [docs/TRAEFIK.md](docs/TRAEFIK.md) for the docker-compose.yml):
    ```bash
    cd ~/traefik && docker compose up -d
    ```
@@ -64,19 +64,13 @@ Modulorails now supports Traefik as a reverse proxy, allowing multiple Rails pro
 ```bash
 # Start a project
 cd my-project
-rails-dev
+docker compose -f .devcontainer/compose.yml up -d
 
 # Access the application
 open http://my-project.localhost
 
 # Access Mailcatcher
 open http://mail.my-project.localhost
-
-# List active projects
-rails-list
-
-# Stop a project
-rails-stop
 ```
 
 ### Migrating Existing Projects

@@ -8,10 +8,8 @@ This file is used to list changes made in each version of the gem.
   - Update `compose.yml` template with Traefik labels and networks.
   - Update `devcontainer.json` template with `COMPOSE_PROJECT_NAME` support.
   - Add `.env` file generation with `COMPOSE_PROJECT_NAME`.
-  - Create `Modulorails::TraefikGenerator` for global infrastructure setup.
   - Update `Modulorails::SidekiqGenerator` for Traefik compatibility.
   - Add migration script (`bin/migrate_to_traefik`) for existing projects.
-  - Add utility scripts (`rails-dev`, `rails-stop`, `rails-list`).
   - Add comprehensive documentation in `docs/TRAEFIK.md`.
   - Bump `DevcontainerGenerator` version to 2 (breaking change for existing projects).
 

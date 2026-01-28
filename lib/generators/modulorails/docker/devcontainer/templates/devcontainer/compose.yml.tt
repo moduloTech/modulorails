@@ -19,7 +19,6 @@ services:
     tty: true
     networks:
       - default
-      - development
       - traefik-proxy
     labels:
       - "traefik.enable=true"
@@ -119,9 +118,6 @@ volumes:
   redis_data:
 
 networks:
-  development:
-    external: true
-    name: development
   traefik-proxy:
     external: true
     name: traefik-proxy
