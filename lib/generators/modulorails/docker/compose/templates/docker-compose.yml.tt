@@ -7,58 +7,72 @@ services:
     depends_on:
       - database
       - redis
-    ports:
-      - '3000:3000'
     volumes:
       - .:/app
     environment:
       RAILS_ENV: development
-      URL: http://localhost:3000
+      URL: http://${COMPOSE_PROJECT_NAME:-<%= @image_name %>}.localhost
       <%- if @adapter =~ /mysql/ -%>
-      DATABASE_URL: mysql2://root@database/<%= @image_name %>
-      DATABASE_TEST_URL: mysql2://root@database/<%= @image_name %>-test
+      DATABASE_URL: mysql2://root@database/${COMPOSE_PROJECT_NAME:-<%= @image_name %>}
+      DATABASE_TEST_URL: mysql2://root@database/${COMPOSE_PROJECT_NAME:-<%= @image_name %>}-test
       <%- else -%>
-      DATABASE_URL: postgresql://postgres:postgres@database/<%= @image_name %>
-      DATABASE_TEST_URL: postgresql://postgres:postgres@database/<%= @image_name %>-test
+      DATABASE_URL: postgresql://postgres:postgres@database/${COMPOSE_PROJECT_NAME:-<%= @image_name %>}
+      DATABASE_TEST_URL: postgresql://postgres:postgres@database/${COMPOSE_PROJECT_NAME:-<%= @image_name %>}-test
       <%- end -%>
       REDIS_URL: redis://redis:6379/1
     stdin_open: true
     tty: true
+    networks:
+      - default
+      - development
+      - traefik-proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME:-<%= @image_name %>}-app.rule=Host(`${COMPOSE_PROJECT_NAME:-<%= @image_name %>}.localhost`)"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME:-<%= @image_name %>}-app.entrypoints=web"
+      - "traefik.http.services.${COMPOSE_PROJECT_NAME:-<%= @image_name %>}-app.loadbalancer.server.port=3000"
 
   <%- if @adapter =~ /mysql/ -%>
   database:
     image: mysql/mysql-server:8.0
     volumes:
       - db_data:/var/lib/mysql
-    ports:
-      - '3306:3306'
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: 'true'
-      MYSQL_DATABASE: <%= @image_name %>
+      MYSQL_DATABASE: ${COMPOSE_PROJECT_NAME:-<%= @image_name %>}
       MYSQL_ROOT_HOST: '%'
+    networks:
+      - default
   <%- else -%>
   database:
     image: postgres:16-alpine
     volumes:
       - db_data:/var/lib/postgresql/data
-    ports:
-      - '5432:5432'
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: <%= @image_name %>
+      POSTGRES_DB: ${COMPOSE_PROJECT_NAME:-<%= @image_name %>}
       LC_COLLATE: 'en_US.UTF-8'
       LC_CTYPE: 'en_US.UTF-8'
+    networks:
+      - default
   <%- end -%>
 
   redis:
     image: redis:7-alpine
+    networks:
+      - default
 
   mailcatcher:
     image: dockage/mailcatcher
-    ports:
-      - '1080:1080'
-      - '1025:1025'
+    networks:
+      - default
+      - traefik-proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME:-<%= @image_name %>}-mail.rule=Host(`mail.${COMPOSE_PROJECT_NAME:-<%= @image_name %>}.localhost`)"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME:-<%= @image_name %>}-mail.entrypoints=web"
+      - "traefik.http.services.${COMPOSE_PROJECT_NAME:-<%= @image_name %>}-mail.loadbalancer.server.port=1080"
 
   <%- if @webpack_container_needed -%>
   webpack:
@@ -69,13 +83,22 @@ services:
    entrypoint: ./bin/webpack-entrypoint
    volumes:
      - .:/app
-   ports:
-     - '3035:3035'
    environment:
      NODE_ENV: development
      RAILS_ENV: development
      WEBPACKER_DEV_SERVER_HOST: 0.0.0.0
+   networks:
+     - default
   <%- end -%>
 
 volumes:
   db_data:
+
+networks:
+  development:
+    external: true
+    name: development
+  traefik-proxy:
+    external: true
+    name: traefik-proxy
+  default:

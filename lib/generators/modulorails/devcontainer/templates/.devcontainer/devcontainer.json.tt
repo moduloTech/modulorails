@@ -1,0 +1,45 @@
+{
+  "name": "${localEnv:COMPOSE_PROJECT_NAME:<%= @project_name %>}",
+  "dockerComposeFile": "./compose.yml",
+  "service": "app",
+  "workspaceFolder": "/rails",
+  "shutdownAction": "stopCompose",
+  "overrideCommand": true,
+
+  "features": {
+    "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
+  },
+
+  "forwardPorts": [],
+
+  "remoteEnv": {
+    "COMPOSE_PROJECT_NAME": "${localEnv:COMPOSE_PROJECT_NAME:<%= @project_name %>}",
+    "RAILS_ENV": "development",
+    "EDITOR": "code --wait"
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "rebornix.ruby",
+        "wingrunr21.vscode-ruby",
+        "castwide.solargraph",
+        "kaiwood.endwise",
+        "misogi.ruby-rubocop",
+        "bung87.rails",
+        "aki77.rails-db-schema",
+        "crazyurus.rails-routes",
+        "hridoy.rails-snippets"
+      ],
+      "settings": {
+        "editor.tabSize": 2,
+        "editor.formatOnSave": true,
+        "files.trimTrailingWhitespace": true,
+        "files.insertFinalNewline": true
+      }
+    }
+  },
+
+  "postCreateCommand": "bundle install && rails db:prepare",
+  "postStartCommand": "rails server -b 0.0.0.0"
+}

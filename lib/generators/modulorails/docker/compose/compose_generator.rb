@@ -21,8 +21,16 @@ module Modulorails
         @image_name = @data.name.parameterize
 
         create_new_file('docker-compose.yml', 'compose.yml', executable: false)
+        create_env_file
       rescue StandardError => e
         warn("[Modulorails] Error: cannot generate Docker Compose configuration: #{e.message}")
+      end
+
+      def create_env_file
+        env_file = Rails.root.join('.env')
+        return if File.exist?(env_file)
+
+        template '.env', '.env'
       end
 
     end

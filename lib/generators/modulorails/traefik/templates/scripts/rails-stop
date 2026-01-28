@@ -1,0 +1,23 @@
+#!/bin/bash
+
+PROJECT_NAME=$(basename "$PWD")
+export COMPOSE_PROJECT_NAME="$PROJECT_NAME"
+
+if [ -d ".devcontainer" ]; then
+    echo "Arret du devcontainer $PROJECT_NAME..."
+    docker compose -f .devcontainer/compose.yml down
+else
+    echo "Arret de $PROJECT_NAME..."
+
+    # Detecter le fichier compose
+    if [ -f "compose.yml" ]; then
+        docker compose down
+    elif [ -f "docker-compose.yml" ]; then
+        docker compose down
+    else
+        echo "Aucun fichier compose trouve!"
+        exit 1
+    fi
+fi
+
+echo "$PROJECT_NAME arrete."

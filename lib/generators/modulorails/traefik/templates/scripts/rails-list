@@ -1,0 +1,33 @@
+#!/bin/bash
+
+echo "Projets Rails actifs :"
+echo ""
+
+# Lister les containers avec Traefik
+docker ps --filter "label=traefik.enable=true" --format "{{.Names}}\t{{.Status}}" 2>/dev/null | while read -r line; do
+    container=$(echo "$line" | awk '{print $1}')
+    status=$(echo "$line" | cut -f2-)
+
+    # Extraire le nom du projet depuis le nom du container
+    # Les containers sont nommes: {project}-{service}-{number}
+    project=$(echo "$container" | sed -E 's/-(app|web|rails)-[0-9]+$//' | sed -E 's/-[0-9]+$//')
+
+    if [ -n "$project" ]; then
+        echo "  [ACTIF] $project -> http://$project.localhost ($status)"
+    fi
+done
+
+# Si aucun projet trouve
+if ! docker ps --filter "label=traefik.enable=true" --format "{{.Names}}" 2>/dev/null | grep -q .; then
+    echo "  Aucun projet actif."
+fi
+
+echo ""
+echo "Dashboard Traefik : http://traefik.localhost"
+
+# Verifier si Traefik tourne
+if docker ps | grep -q traefik; then
+    echo "  [OK] Traefik est actif"
+else
+    echo "  [ARRET] Traefik n'est pas demarre"
+fi

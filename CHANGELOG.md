@@ -4,6 +4,29 @@ This file is used to list changes made in each version of the gem.
 
 # Unreleased
 
+## Added
+
+- Traefik integration for multi-project development without port conflicts.
+- New generator `modulorails:traefik` for installing Traefik infrastructure.
+- New generator `modulorails:traefik_migration` for migrating existing projects.
+- New generator `modulorails:devcontainer` for generating devcontainer configuration.
+- Utility scripts `rails-dev`, `rails-stop`, `rails-list` for managing projects.
+- `.env` file generation with `COMPOSE_PROJECT_NAME` variable.
+- Documentation for Traefik migration and reference.
+
+## Changed
+
+- Docker Compose template now includes Traefik labels and network configuration.
+- Services no longer expose ports directly; they are routed through Traefik.
+- URLs changed from `localhost:3000` to `{project}.localhost`.
+
+## Migration Required
+
+Projects using the old Docker Compose configuration should run:
+```bash
+rails generate modulorails:traefik_migration
+```
+
 # 1.5.2
 
 - Fix typo in `database.yml` template for test database.

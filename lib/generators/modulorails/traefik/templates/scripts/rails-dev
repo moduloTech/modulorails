@@ -1,0 +1,52 @@
+#!/bin/bash
+
+PROJECT_NAME=$(basename "$PWD")
+TRAEFIK_DIR="${TRAEFIK_DIR:-$HOME/traefik}"
+
+# Verifier que Traefik tourne
+if ! docker ps | grep -q traefik; then
+    echo "Traefik n'est pas demarre. Demarrage..."
+    (cd "$TRAEFIK_DIR" && docker compose up -d)
+    sleep 2
+fi
+
+# Creer les reseaux si necessaire
+docker network create traefik-proxy 2>/dev/null || true
+docker network create development 2>/dev/null || true
+
+# Definir le nom du projet
+export COMPOSE_PROJECT_NAME="$PROJECT_NAME"
+
+# Demarrer selon le type de projet
+if [ -d ".devcontainer" ]; then
+    echo "Demarrage du devcontainer pour $PROJECT_NAME..."
+
+    # Verifier si VS Code est disponible
+    if command -v code &> /dev/null; then
+        code --folder-uri "vscode-remote://dev-container+$(echo "$PWD" | xxd -p | tr -d '\n')/rails"
+    else
+        echo "VS Code n'est pas installe. Demarrage manuel avec docker compose..."
+        docker compose -f .devcontainer/compose.yml up -d
+    fi
+else
+    echo "Demarrage de Docker Compose pour $PROJECT_NAME..."
+
+    # Detecter le fichier compose
+    if [ -f "compose.yml" ]; then
+        docker compose up -d
+    elif [ -f "docker-compose.yml" ]; then
+        docker compose up -d
+    else
+        echo "Aucun fichier compose trouve!"
+        exit 1
+    fi
+fi
+
+echo ""
+echo "$PROJECT_NAME est accessible via :"
+echo "   Application : http://$PROJECT_NAME.localhost"
+echo "   Mailcatcher : http://mail.$PROJECT_NAME.localhost"
+echo "   MinIO Console : http://minio.$PROJECT_NAME.localhost"
+echo "   MinIO API : http://s3.$PROJECT_NAME.localhost"
+echo ""
+echo "Dashboard Traefik : http://traefik.localhost"

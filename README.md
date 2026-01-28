@@ -32,7 +32,60 @@ Modulorails.configure do |config|
   config.staging_url 'The url for the staging environment'          # optional
   config.production_url 'The url for the production environment'    # optional
 end
-``` 
+```
+
+## Traefik Integration
+
+Modulorails supports Traefik for running multiple Rails projects simultaneously without port conflicts.
+
+### Setup Traefik Infrastructure
+
+```bash
+rails generate modulorails:traefik
+```
+
+This installs:
+- Traefik configuration in `~/traefik/`
+- Utility scripts (`rails-dev`, `rails-stop`, `rails-list`) in `~/.local/bin/`
+
+### DNS Configuration (macOS)
+
+```bash
+brew install dnsmasq
+echo 'address=/.localhost/127.0.0.1' > $(brew --prefix)/etc/dnsmasq.conf
+sudo brew services start dnsmasq
+sudo mkdir -p /etc/resolver
+echo "nameserver 127.0.0.1" | sudo tee /etc/resolver/localhost
+```
+
+### Start Traefik
+
+```bash
+cd ~/traefik && docker compose up -d
+```
+
+### New Projects
+
+New projects generated with `rails generate modulorails:docker` automatically include Traefik configuration.
+
+### Existing Projects
+
+Migrate existing projects:
+
+```bash
+rails generate modulorails:traefik_migration
+```
+
+### Service URLs
+
+- Application: `http://{project}.localhost`
+- Mailcatcher: `http://mail.{project}.localhost`
+- MinIO Console: `http://minio.{project}.localhost`
+- Traefik Dashboard: `http://traefik.localhost`
+
+For more details, see:
+- [Migration Guide](docs/TRAEFIK_MIGRATION.md)
+- [Reference Documentation](docs/TRAEFIK_REFERENCE.md)
 
 ## Development
 
