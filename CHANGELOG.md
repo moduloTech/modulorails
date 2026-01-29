@@ -6,26 +6,45 @@ This file is used to list changes made in each version of the gem.
 
 # 1.6.0
 
+The devcontainer release.
+
+## Features
+
+- Add devcontainer support (`.devcontainer/` with Dockerfile, compose.yml, devcontainer.json).
+- Add Claude Code generator for devcontainer (native installation).
+- Add `Bun` JS engine support.
+- Add `bin/dc` and `bin/dcr` scripts to wrap `docker compose` commands.
+
+## Improvements
+
+- Split DockerGenerator in multiple sub-generators for individual versioning.
+- Merge all keepfiles into `.modulorails.yml`.
+- Force overwrite of keepfile and config files.
+- Speed-up git hooks by checking if regeneration is needed in `refresh_generations.sh`.
+- Add `Modulorails.deprecator` for Rails 7.2+ compatibility.
+- Wrap health_check initializer in `reloader.to_prepare` block.
+- Update Rubocop rules:
+  - Allow `class_methods`/`included` blocks in Concerns to break `Metrics/BlockLength`.
+  - Allow commented lines to break `Layout/LineLength`.
+- Update generators for devcontainers (Sidekiq, GitLab CI).
+- Update production.rb template for Rails 8.
+- Replace old `Dockerfile.prod` with Rails-standard one.
+
+## Fixes
+
 - Fix typo in `database.yml` template for test database.
-- Fix removal of rails' server's pidfile in docker entrypoint.
-- Split DockerGenerator in multiple sub-generators to version each one individually.
-- Merge all keepfiles in one.
-- Wrap health_check initializer in a reloader.to_prepare block.
-- Add `Modulorails.deprecator` for better compatibility with Rails 7.2.
-- Check if generated files have to be regenerated in `refresh_generations.sh` to speed-up hook.
-- Allow `class_methods` and `included` blocks in Concerns to break the `Metrics/BlockLength` Rubocop rule.
-- Add devcontainer support and update Docker-related structure.
-- Force overwrite of keep_file.
-- Force overwrite of config files.
-- Replace old Modulotech `Dockerfile.prod` with Rails one.
-- Update production.rb from ModuloprojectGenerator to fit Rails 8.
-- Replace `dockeruby.rb` with two bash scripts: `dc` to wrap `docker compose` and `dcr` for `docker compose run`.
-- Update Sidekiq generator to fit devcontainers.
-- Add support for `Bun` JS engine.
-- Update Gitlab CI generator to fit devcontainers.
-- Update Gitlab CI generator for better test environment.
-- Allow commented lines to break the `Layout/LineLength` Rubocop rule.
-- Add a generator to install Claude Code in devcontainer.
+- Fix removal of rails server's pidfile in docker entrypoint.
+
+## Deprecations (will be removed in 2.0)
+
+- Configuration options: `config.staging_url`, `config.review_base_url`, `config.production_url`, `config.no_auto_update`.
+- `Modulorails::SelfUpdateGenerator`.
+- Infrastructure generators (use Moduloproject 3.0, available later):
+  - `DockerGenerator` and all sub-generators
+  - `GitlabciGenerator`
+  - `ClaudeCodeGenerator`
+  - `ModuloprojectGenerator`
+  - `SidekiqGenerator`
 
 # 1.5.1
 

@@ -11,6 +11,11 @@ class Modulorails::ClaudeCodeGenerator < Modulorails::Generators::Base
   protected
 
   def create_config
+    Modulorails.deprecator.warn(<<~MESSAGE)
+      Modulorails::ClaudeCodeGenerator is deprecated and will be removed in version 2.0.
+      Use Moduloproject 3.0 (available later) to initialize new projects with Claude Code configuration.
+    MESSAGE
+
     @data = Modulorails.data
     @image_name = @data.name.parameterize
     @environment_name = @data.environment_name
@@ -40,8 +45,6 @@ class Modulorails::ClaudeCodeGenerator < Modulorails::Generators::Base
       <<-DOCKERFILE
 ENV DEVCONTAINER=true
 
-#{"RUN apk add npm" unless File.read(Rails.root.join('.devcontainer/Dockerfile')).match?(/npm/)}
-
 # Persist bash history.
 RUN SNIPPET="export PROMPT_COMMAND='history -a' && export HISTFILE=/commandhistory/.bash_history" \
   && mkdir /commandhistory \
@@ -49,12 +52,8 @@ RUN SNIPPET="export PROMPT_COMMAND='history -a' && export HISTFILE=/commandhisto
 
 RUN mkdir -p /root/.claude
 
-# Install global packages
-ENV NPM_CONFIG_PREFIX=/usr/local/share/npm-global
-ENV PATH=$PATH:/usr/local/share/npm-global/bin
-
-# Install Claude
-RUN npm install -g @anthropic-ai/claude-code
+# Install Claude Code (native installation)
+RUN curl -fsSL https://claude.ai/install.sh | bash
 
       DOCKERFILE
     end

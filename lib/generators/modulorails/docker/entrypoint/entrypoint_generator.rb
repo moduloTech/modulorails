@@ -16,6 +16,11 @@ module Modulorails
       protected
 
       def create_config
+        Modulorails.deprecator.warn(<<~MESSAGE)
+          Modulorails::Docker::EntrypointGenerator is deprecated and will be removed in version 2.0.
+          Use Moduloproject 3.0 (available later) to initialize new projects with Docker configuration.
+        MESSAGE
+
         create_docker_entrypoint
         remove_webpack_entrypoint
 

@@ -16,17 +16,27 @@ module Modulorails
     #   config.project_manager 'pm@modulotech.fr'
     #   config.endpoint "intranet's endpoint"
     #   config.api_key "intranet's api key"
-    #   config.production_url "production.app.com"
-    #   config.staging_url "staging.app.com"
-    #   config.review_base_url "review.app.com"
     # end
-    %i[
-      name main_developer project_manager endpoint api_key no_auto_update production_url staging_url
-      review_base_url
-    ].each do |field|
+    %i[name main_developer project_manager endpoint api_key].each do |field|
       define_method(field) do |value=nil|
         # No value means we want to get the field
         return send("_#{field}") unless value
+
+        # Else we want to set the field
+        send("_#{field}=", value)
+      end
+    end
+
+    # Deprecated configuration options - will be removed in 2.0
+    %i[no_auto_update production_url staging_url review_base_url].each do |field|
+      define_method(field) do |value=nil|
+        # No value means we want to get the field
+        return send("_#{field}") unless value
+
+        # Warn only when setting the value (i.e., in the initializer)
+        Modulorails.deprecator.warn(
+          "Modulorails configuration `#{field}` is deprecated and will be removed in version 2.0."
+        )
 
         # Else we want to set the field
         send("_#{field}=", value)

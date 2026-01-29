@@ -8,6 +8,13 @@ class Modulorails::SidekiqGenerator < Rails::Generators::Base
 
   desc 'This generator adds Sidekiq to the project'
 
+  def deprecation_warning
+    Modulorails.deprecator.warn(<<~MESSAGE)
+      Modulorails::SidekiqGenerator is deprecated and will be removed in version 2.0.
+      Use Moduloproject 3.0 (available later) to initialize new projects with Sidekiq configuration.
+    MESSAGE
+  end
+
   def add_to_docker_compose
     add_to_docker_compose_yml_file(Rails.root.join('.devcontainer/compose.yml'))
   end

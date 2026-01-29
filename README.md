@@ -1,4 +1,4 @@
-# Modulorails [![Build Status](https://travis-ci.com/Ezveus/modulorails.svg?branch=master)](https://travis-ci.com/Ezveus/modulorails)
+# Modulorails
 
 **Modulorails** is the common base for the Ruby on Rails project at [Modulotech](https://www.modulotech.fr/).
 
@@ -28,11 +28,73 @@ Modulorails.configure do |config|
   config.project_manager 'The email of the project manager of the application'
   config.endpoint 'The url to the intranet'
   config.api_key 'The API key'
-  config.review_base_url 'The base url for the review environments' # optional
-  config.staging_url 'The url for the staging environment'          # optional
-  config.production_url 'The url for the production environment'    # optional
 end
-``` 
+```
+
+## Features
+
+### Devcontainer Support
+
+Modulorails automatically generates a `.devcontainer/` configuration for VS Code and compatible IDEs:
+- `Dockerfile` for the development container
+- `compose.yml` with database, Redis, and mailcatcher services
+- `devcontainer.json` for VS Code integration
+
+### Docker Scripts
+
+Two helper scripts are provided in `bin/`:
+- `bin/dc` - Wrapper for `docker compose` commands targeting the devcontainer
+- `bin/dcr` - Wrapper for `docker compose run` with proper TTY and Git configuration
+
+Usage:
+```bash
+bin/dc up -d          # Start services in background
+bin/dc logs -f app    # Follow app logs
+bin/dcr rails console # Run Rails console in container
+bin/dcr rspec         # Run tests in container
+```
+
+### Claude Code Integration
+
+Modulorails can configure your devcontainer for efficient use with Claude Code:
+- Persistent bash history across container restarts
+- Claude Code configuration volume
+- Firewall initialization script
+
+### Bun JS Engine Support
+
+Modulorails detects and supports the Bun JavaScript runtime. When `bun.config.js` is present, the devcontainer will include appropriate JS and CSS build services.
+
+### Other Generators
+
+- **RubocopGenerator** - Configures `.rubocop.yml` with Modulotech standards
+- **BundlerauditGenerator** - Sets up bundler-audit for security checks
+- **GithooksGenerator** - Installs git hooks for automated checks
+- **HealthCheckGenerator** - Configures the health_check gem
+- **SidekiqGenerator** - Adds Sidekiq background job processing
+
+## Deprecations (will be removed in 2.0)
+
+The following features are deprecated and will be removed in version 2.0:
+
+### Configuration options
+- `config.staging_url`
+- `config.review_base_url`
+- `config.production_url`
+- `config.no_auto_update`
+
+### Services
+- `Modulorails::BaseService#log` - Use `Rails.logger.debug` directly
+- `Modulorails::LogsForMethodService` - Use `Rails.logger.debug` directly
+
+### Generators
+The following generators are deprecated and will be moved to Moduloproject 3.0:
+- `Modulorails::DockerGenerator` (and all sub-generators)
+- `Modulorails::GitlabciGenerator`
+- `Modulorails::ClaudeCodeGenerator`
+- `Modulorails::ModuloprojectGenerator`
+- `Modulorails::SidekiqGenerator`
+- `Modulorails::SelfUpdateGenerator` (will be removed entirely)
 
 ## Development
 
@@ -47,10 +109,8 @@ There are tests in `spec`. To run tests:
   - Ruby 3.1: `docker compose run ruby31`
 
 [Appraisal](https://github.com/thoughtbot/appraisal) is used to test the gem against many supported Rails versions:
-  - Rails 5.2, 6.0 and 6.1 on Ruby 2.5 and 2.6. 
-  - Rails 5.2, 6.0, 6.1 and 7.0 on Ruby 2.7, 3.0 and 3.1. 
-
-Travis CI is configured to automatically run tests in all supported Ruby versions and dependency sets after each push.
+  - Rails 5.2, 6.0 and 6.1 on Ruby 2.5 and 2.6.
+  - Rails 5.2, 6.0, 6.1 and 7.0 on Ruby 2.7, 3.0 and 3.1.
 
 ## Contributing
 

@@ -16,6 +16,11 @@ module Modulorails
       protected
 
       def create_config
+        Modulorails.deprecator.warn(<<~MESSAGE)
+          Modulorails::Docker::DevcontainerGenerator is deprecated and will be removed in version 2.0.
+          Use Moduloproject 3.0 (available later) to initialize new projects with Docker configuration.
+        MESSAGE
+
         remove_old_dockerfiles
         create_template_files
       rescue StandardError => e

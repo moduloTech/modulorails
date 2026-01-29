@@ -9,6 +9,11 @@ class Modulorails::ModuloprojectGenerator < Modulorails::Generators::Base
   desc 'This generator creates templates for Moduloproject'
 
   def create_config
+    Modulorails.deprecator.warn(<<~MESSAGE)
+      Modulorails::ModuloprojectGenerator is deprecated and will be removed in version 2.0.
+      This generator will be moved to Moduloproject 3.0 (available later).
+    MESSAGE
+
     remove_old_keepfile(".modulorails-#{generator_name}")
     template 'config/environments/production.rb', force: true
     copy_file('config/environments/production.rb', 'config/environments/staging.rb')

@@ -12,6 +12,10 @@ class Modulorails::SelfUpdateGenerator < Rails::Generators::Base
   LATEST_VERSION_URL = 'https://rubygems.org/api/v1/versions/modulorails.json'
 
   def create_config_file
+    Modulorails.deprecator.warn(<<~MESSAGE)
+      Modulorails::SelfUpdateGenerator is deprecated and will be removed in version 2.0.
+    MESSAGE
+
     # Get the last published version
     versions = HTTParty.get(LATEST_VERSION_URL).parsed_response
     last_published_version = versions&.reject { |version| Gem::Version.new(version['number']).prerelease? }&.first

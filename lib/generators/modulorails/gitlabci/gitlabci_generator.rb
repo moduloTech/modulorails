@@ -11,6 +11,11 @@ class Modulorails::GitlabciGenerator < Modulorails::Generators::Base
   protected
 
   def create_config
+    Modulorails.deprecator.warn(<<~MESSAGE)
+      Modulorails::GitlabciGenerator is deprecated and will be removed in version 2.0.
+      Use Moduloproject 3.0 (available later) to initialize new projects with GitLab CI configuration.
+    MESSAGE
+
     remove_old_keepfile('.modulorails-gitlab-ci')
     remove_old_keepfile('.modulorails-gitlabci')
 
