@@ -166,6 +166,8 @@ module Modulorails
       # Theorically, origin is the main repository of the project and git is the sole VCS we use
       # at Modulotech
       @repository = Git.open(::Rails.root).config('remote.origin.url')
+    rescue ArgumentError, Git::GitExecuteError => e
+      warn("[Modulorails] Error: #{e.message}")
     end
 
     def to_project_data_params

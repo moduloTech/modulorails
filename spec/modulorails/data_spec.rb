@@ -104,6 +104,20 @@ RSpec.describe Modulorails do
       expect(subject.adapter_version).to eq('1.2.3')
     end
 
+    context 'when Git.open fails' do
+      it 'leaves repository nil when Git.open raises ArgumentError' do
+        allow(Git).to receive(:open).and_raise(ArgumentError, 'not a directory')
+        expect { subject }.not_to raise_error
+        expect(subject.repository).to be_nil
+      end
+
+      it 'leaves repository nil when Git.open raises Git::GitExecuteError' do
+        allow(Git).to receive(:open).and_raise(Git::GitExecuteError, 'git failed')
+        expect { subject }.not_to raise_error
+        expect(subject.repository).to be_nil
+      end
+    end
+
     it 'to_params returns the valid hash' do
       h = {
         'name'            => 'name',
