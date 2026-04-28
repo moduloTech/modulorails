@@ -98,14 +98,14 @@ module Modulorails
         # went wrong with an `errors` field. We do not want to raise since the gem's user is not
         # (necessarily) responsible for the error but we still need to display it somewhere to warn
         # the user something went wrong.
-        Rails.logger.debug { "[Modulorails] Error: #{response['errors'].join(', ')}" } if response.code == 400
+        Rails.logger&.debug { "[Modulorails] Error: #{response['errors'].join(', ')}" } if response.code == 400
 
         # Return the response to allow users to do some more
         response
       rescue StandardError => e
         # Still need to notify the user
-        Rails.logger.debug { "[Modulorails] Error: Could not post to #{configuration.endpoint}" }
-        Rails.logger.debug e.message
+        Rails.logger&.debug { "[Modulorails] Error: Could not post to #{configuration.endpoint}" }
+        Rails.logger&.debug e.message
         nil
       end
     end
@@ -135,7 +135,7 @@ module Modulorails
 
       Modulorails::SelfUpdateGenerator.new([], {}, {}).invoke_all
     rescue StandardError => e
-      Rails.logger.debug { "[Modulorails] An error occured: #{e.class} - #{e.message}" }
+      Rails.logger&.debug { "[Modulorails] An error occured: #{e.class} - #{e.message}" }
     end
 
     # @author Matthieu 'ciappa_m' Ciappara

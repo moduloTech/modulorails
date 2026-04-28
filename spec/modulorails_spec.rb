@@ -28,11 +28,22 @@ RSpec.describe Modulorails do
   let(:success) { instance_double(Test::MockResponse, body: { id: 662 }, code: 200, success?: true) }
 
   before :each do
+    # Reset the configuration before each example to prevent leakage from sibling spec files
+    # (e.g. data_spec.rb configures Modulorails but does not reset it after).
+    Modulorails.configuration = nil
+
     # Mock required methods to simulate the dynamic fetchs
     allow(db_connection).to receive(:select_value).and_return('1.2.3')
     allow(ActiveRecord::Base).to receive(:connection).and_return(db_connection)
     allow(Gem).to receive(:loaded_specs).and_return(loaded_specs)
     allow(Rails).to receive(:root).and_return(Test::RAILS_ROOT)
+
+    # The minimal Test::Application stub does not set up a logger; provide a real Logger backed
+    # by an in-memory StringIO so Rails.logger.debug calls don't blow up the nominal-path specs
+    # while still evaluating their blocks. (A null-object double or Logger.new(File::NULL) would
+    # skip block evaluation, breaking assertions that depend on side effects inside the block —
+    # File::NULL triggers a short-circuit optimization in Ruby's Logger.)
+    allow(Rails).to receive(:logger).and_return(Logger.new(StringIO.new))
   end
 
   after :each do
@@ -142,6 +153,27 @@ RSpec.describe Modulorails do
         headers = { 'Content-Type' => 'application/json', 'X-MODULORAILS-TOKEN' => 'key' }
         params  = Modulorails.data.to_params.to_json
         expect(HTTParty).to have_received(:post).with('endpoint', headers: headers, body: params)
+      end
+
+      context 'when Rails.logger is nil' do
+        # Rails is not always booted with a logger (e.g. early initialization, minimal apps).
+        # `send_data` must not crash on debug logging in that case.
+        before :each do
+          allow(Rails).to receive(:logger).and_return(nil)
+        end
+
+        it 'does not raise on the rescue path when the server does not respond' do
+          allow(HTTParty).to receive(:post).and_raise(SocketError)
+
+          expect { subject.send_data }.not_to raise_error
+        end
+
+        it 'does not raise on the bad-request logging path' do
+          allow(HTTParty).to receive(:post).and_return(bad_request)
+          allow(bad_request).to receive(:[]).with('errors').and_return(bad_request.body['errors'])
+
+          expect { subject.send_data }.not_to raise_error
+        end
       end
     end
   end

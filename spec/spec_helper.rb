@@ -1,4 +1,5 @@
 require 'bundler/setup'
+require 'logger'
 require 'modulorails'
 
 # Author: Matthieu 'ciappa_m' Ciappara

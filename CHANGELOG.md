@@ -11,6 +11,7 @@ This file is used to list changes made in each version of the gem.
 ## Fixes
 
 - Fix `initialize_from_git` when the git repository is not available (no `.git`, missing `git` binary, or no `origin` remote): rescue the error, warn, and leave `repository` as `nil` instead of crashing the application boot.
+- Fix `send_data` and `self_update` crashing with `NoMethodError` when `Rails.logger` is `nil` (e.g. early initialization or minimal apps): use safe navigation on debug logging.
 
 # 1.6.0
 
