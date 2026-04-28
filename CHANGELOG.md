@@ -4,6 +4,10 @@ This file is used to list changes made in each version of the gem.
 
 # Unreleased
 
+# 1.7.1
+
+The boot-resilience release. Hardens the gem against several boot-time crash paths so that information gathering and configuration generation can never prevent the host application from starting.
+
 ## Fixes
 
 - Fix `initialize_from_database` when the database is unreachable on Rails 7.1+. Connections are now established lazily at query time, so errors surface from `select_value` as `ActiveRecord::StatementInvalid` or adapter-level errors (e.g. `PG::ConnectionBad`) that don't inherit from `ActiveRecordError`. The rescue is broadened to `StandardError` so that DB metadata collection never prevents the application from booting (e.g. running `bin/rails db:create` on a fresh checkout).
