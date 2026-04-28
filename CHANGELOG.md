@@ -4,6 +4,10 @@ This file is used to list changes made in each version of the gem.
 
 # Unreleased
 
+## Improvements
+
+- Make the Rubocop generator idempotent: `.rubocop.yml` is no longer rewritten on every Rails boot. Like the other generators, `RubocopGenerator` now uses the `.modulorails.yml` keepfile and a `VERSION` constant — the config is only (re)generated on the first run or when the generator's version is bumped.
+
 ## Fixes
 
 - Fix `initialize_from_git` when the git repository is not available (no `.git`, missing `git` binary, or no `origin` remote): rescue the error, warn, and leave `repository` as `nil` instead of crashing the application boot.

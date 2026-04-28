@@ -148,7 +148,8 @@ module Modulorails
 
     # @author Matthieu 'ciappa_m' Ciappara
     #
-    # Generate a rubocop configuration.
+    # Generate a rubocop configuration unless it was already done.
+    # The check is done using a 'keepfile'.
     def generate_rubocop_template
       Modulorails::RubocopGenerator.new([], {}, {}).invoke_all
     end
