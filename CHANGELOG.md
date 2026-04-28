@@ -4,6 +4,12 @@ This file is used to list changes made in each version of the gem.
 
 # Unreleased
 
+## Fixes
+
+- Fix `initialize_from_database` when the database is unreachable on Rails 7.1+. Connections are now established lazily at query time, so errors surface from `select_value` as `ActiveRecord::StatementInvalid` or adapter-level errors (e.g. `PG::ConnectionBad`) that don't inherit from `ActiveRecordError`. The rescue is broadened to `StandardError` so that DB metadata collection never prevents the application from booting (e.g. running `bin/rails db:create` on a fresh checkout).
+- Guard `Modulorails::Data#initialize_from_configuration` against a missing `config.name`: fall back to the Rails application class name and use safe navigation when deriving `@environment_name`, so a forgotten `config.name '...'` no longer crashes the boot with `NoMethodError: undefined method 'parameterize' for nil`.
+- Move the body construction in `Modulorails.send_data` inside its `begin`/`rescue` block so that an unexpected failure in `Modulorails::Data.new` (e.g. a malformed configuration) is caught instead of bubbling out of `after_initialize` and breaking Rails boot.
+
 # 1.7.0
 
 ## Improvements

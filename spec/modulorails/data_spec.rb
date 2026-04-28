@@ -118,6 +118,48 @@ RSpec.describe Modulorails do
       end
     end
 
+    context 'when configuration.name is nil' do
+      # The host application may forget `config.name '...'`. Falling back to the Rails
+      # application class name keeps the gem from crashing the boot.
+      before :each do
+        allow(Modulorails.configuration).to receive(:name).and_return(nil)
+      end
+
+      it 'falls back to the Rails application class name for @name' do
+        expect(subject.name).to eq('Test')
+      end
+
+      it 'derives @environment_name from the fallback' do
+        expect(subject.environment_name).to eq('TEST')
+      end
+
+      it 'does not raise during initialization' do
+        expect { subject }.not_to raise_error
+      end
+    end
+
+    context 'when the database query fails' do
+      # On Rails 7.1+ the connection is established lazily at query time, so errors can surface
+      # from select_value as ActiveRecord::StatementInvalid or even adapter-level errors like
+      # PG::ConnectionBad which does not inherit from ActiveRecordError.
+      it 'leaves db_version nil when select_value raises ActiveRecord::StatementInvalid' do
+        allow(db_connection).to receive(:select_value)
+          .and_raise(ActiveRecord::StatementInvalid, 'connection refused')
+        expect { subject }.not_to raise_error
+        expect(subject.db_version).to be_nil
+      end
+
+      it 'leaves db_version nil when select_value raises a non-ActiveRecord error' do
+        # Simulate an adapter-level error like PG::ConnectionBad that does not inherit from
+        # ActiveRecord::ActiveRecordError.
+        adapter_error = Class.new(StandardError)
+        allow(db_connection).to receive(:select_value)
+          .and_raise(adapter_error, 'PQconnectdb failed')
+        expect { subject }.not_to raise_error
+        expect(subject.db_version).to be_nil
+      end
+    end
+
     it 'to_params returns the valid hash' do
       h = {
         'name'            => 'name',

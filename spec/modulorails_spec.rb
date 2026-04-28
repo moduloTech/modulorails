@@ -155,6 +155,25 @@ RSpec.describe Modulorails do
         expect(HTTParty).to have_received(:post).with('endpoint', headers: headers, body: params)
       end
 
+      context 'when data collection fails' do
+        # `data.to_params.to_json` used to live outside the begin/rescue, so any failure in
+        # Modulorails::Data.new (e.g. a malformed configuration) would propagate out of
+        # send_data and crash Rails boot in `after_initialize`. It must now be swallowed.
+        before :each do
+          allow(Modulorails).to receive(:data).and_raise(StandardError, 'boom')
+        end
+
+        it 'does not raise' do
+          expect { subject.send_data }.not_to raise_error
+        end
+
+        it 'does not attempt the HTTP call' do
+          allow(HTTParty).to receive(:post)
+          subject.send_data
+          expect(HTTParty).not_to have_received(:post)
+        end
+      end
+
       context 'when Rails.logger is nil' do
         # Rails is not always booted with a logger (e.g. early initialization, minimal apps).
         # `send_data` must not crash on debug logging in that case.

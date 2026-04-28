@@ -86,11 +86,13 @@ module Modulorails
         'Content-Type' => 'application/json', 'X-MODULORAILS-TOKEN' => configuration.api_key
       }
 
-      # Define the JSON body of the request
-      body = data.to_params.to_json
-
-      # Prevent HTTParty to raise error and crash the server in dev
+      # Prevent HTTParty *and* data collection failures from crashing the server in dev.
+      # `data` lazily instantiates `Modulorails::Data`, which gathers DB/git/gem metadata; any
+      # unexpected failure there must not propagate out of `send_data`.
       begin
+        # Build the JSON body of the request
+        body = data.to_params.to_json
+
         # Post to the configured endpoint on the Intranet
         response = HTTParty.post(configuration.endpoint, headers: headers, body: body)
 

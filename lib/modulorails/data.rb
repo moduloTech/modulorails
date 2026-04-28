@@ -74,12 +74,16 @@ module Modulorails
       # Get the gem's configuration to get the application's usual name, main dev and PM
       configuration = Modulorails.configuration
 
-      # The data written by the user in the configuration
-      # The name is the usual name of the project, the one used in conversations at Modulotech
-      @name = configuration.name
+      # The data written by the user in the configuration.
+      # The name is the usual name of the project, the one used in conversations at Modulotech.
+      # Fall back to the Rails application class name if the user forgot to call `config.name`,
+      # so the gem does not crash the host application's boot.
+      @name = configuration.name || @rails_name
 
-      # A version of the name suitable to name environment variables
-      @environment_name = @name.parameterize.gsub('-', '_').gsub(/\b(\d)/, 'MT_\1').upcase
+      # A version of the name suitable to name environment variables.
+      # Use safe navigation so a fully unnamed application (no configuration name *and* no
+      # detectable Rails class name) leaves @environment_name as nil rather than raising.
+      @environment_name = @name&.parameterize&.gsub('-', '_')&.gsub(/\b(\d)/, 'MT_\1')&.upcase
 
       # The main developer, the lead developer, in short the developer to call when something's
       # wrong with the application ;)
@@ -116,7 +120,11 @@ module Modulorails
       # The version of the database engine; this request works only on MySQL and PostgreSQL
       # It should not be a problem since those are the sole database engines used at Modulotech
       @db_version = db_connection.select_value('SELECT version()')
-    rescue ActiveRecord::NoDatabaseError, ActiveRecord::ConnectionNotEstablished => e
+      # Rescue broadly: on Rails 7.1+ the connection is established lazily at query time, so the
+      # error class can be ActiveRecord::StatementInvalid or even an adapter-level error like
+      # PG::ConnectionBad that does not inherit from ActiveRecordError. Collecting DB metadata
+      # must never prevent the application from booting.
+    rescue StandardError => e
       warn("[Modulorails] Error: #{e.message}")
     end
 
